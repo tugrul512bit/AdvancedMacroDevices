@@ -1,13 +1,15 @@
 #include "AppStructure.h"
+#include<functional>
 namespace Window
 {
 	class ButtonItem : public AppStructure
 	{
 	public:
-		static std::shared_ptr<AppStructure> Create(std::string name, std::string content)
+		static std::shared_ptr<AppStructure> Create(std::string name, std::string content,std::function<void(void)> onClick)
 		{
 			std::shared_ptr<AppStructure> node = std::shared_ptr<ButtonItem>(new ButtonItem(name), [](ButtonItem* b) { delete b; });
 			((ButtonItem*)node.get())->_content = content;
+			((ButtonItem*)node.get())->_onClick = onClick;
 			return node;
 		}
 
@@ -20,7 +22,10 @@ namespace Window
 
 		void PreRender() override
 		{
-			ImGui::Button(_content.c_str());
+			if (ImGui::Button(_content.c_str()))
+			{
+				_onClick();
+			}
 		}
 
 		void PostRender() override
@@ -29,5 +34,6 @@ namespace Window
 		}
 	private:
 		std::string _content;
+		std::function<void(void)> _onClick;
 	};
 }

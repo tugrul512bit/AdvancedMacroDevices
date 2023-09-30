@@ -22,8 +22,10 @@ namespace Window
 	public:
 		AppStructure(ItemType type = ItemType::WINDOW, std::string name = "item")
 		{
-			_type = type;
+			_type = type; 
 			_name = name;
+			_visible = true;
+			_enabled = true;
 		}
 
 		virtual void PreRender() {}
@@ -45,14 +47,21 @@ namespace Window
 
 		void Render()
 		{
-			PreRender();
+			if (_visible && !_enabled)
+				ImGui::BeginDisabled();
+			if(_visible)
+				PreRender();
 			
 			for (auto node : _childNodes)
 			{
 				node->Render();
 			}
 
-			PostRender();
+			if(_visible)
+				PostRender();
+
+			if (_visible && !_enabled)
+				ImGui::EndDisabled();
 		}
 
 		void AddNode(std::shared_ptr<AppStructure> node)
@@ -60,12 +69,32 @@ namespace Window
 			_childNodes.push_back(node);
 		}
 
+		void Enable()
+		{
+			_enabled = true;
+		}
+		void Disable()
+		{
+			_enabled = false;
+		}
+
+		void Hide()
+		{
+			_visible = false;
+		}
+
+		void Show()
+		{
+			_visible = true;
+		}
 
 	protected:
 		ItemType _type;
 		std::string _name;
 		int _renderWidth;
 		int _renderHeight;
+		bool _visible;
+		bool _enabled;
 		std::vector<std::shared_ptr<AppStructure>> _childNodes;
 	};
 

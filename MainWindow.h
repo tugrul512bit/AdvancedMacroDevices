@@ -79,7 +79,7 @@ namespace Window
                 // Advanced Macro Devices
                 _fields->structure.Compute();
                 _fields->structure.Render();
-                
+
 
                 ImGui::Render();
                 int display_w, display_h;
@@ -103,14 +103,21 @@ namespace Window
         window->AddNode(TextItem::Create("text item", "Welcome to Advanced Macro Devices"));
         app.AddComponent(window);
 
+        auto createCharacter = AppWindow::Create("Character Creation");
+        createCharacter->AddNode(TextItem::Create("Stats", "Stats"));
+        createCharacter->Hide();
+        app.AddComponent(createCharacter);
+
         auto menu = AppWindow::Create("Menu");
-        menu->AddNode(ButtonItem::Create("New Game", "New Game"));
-        menu->AddNode(ButtonItem::Create("Create Character", "Create Character"));
-        menu->AddNode(ButtonItem::Create("Load Game", "Load Game"));
-        menu->AddNode(ButtonItem::Create("Design CPU", "Design CPU"));
-        menu->AddNode(ButtonItem::Create("Exit", "Exit"));
+        menu->AddNode(ButtonItem::Create("New Game", "New Game", []() {}));
+        menu->AddNode(ButtonItem::Create("Create Character", "Create Character", [createCharacter]() { createCharacter->Show(); }));
+        menu->AddNode(ButtonItem::Create("Load Game", "Load Game", []() {}));
+        menu->AddNode(ButtonItem::Create("Design CPU", "Design CPU", []() {}));
+        menu->AddNode(ButtonItem::Create("Exit", "Exit", []() {}));
         app.AddComponent(menu);
-        
+
+
+
         return app;
     }
 }
