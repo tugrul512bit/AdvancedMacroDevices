@@ -118,8 +118,9 @@ namespace Window
         createCharacter->AddNode(ButtonItem::Create("Learning Increment", "+",  [app]() mutable { app.GetCurrentCharacter()->IncrementLearning(); }, true));
 
         createCharacter->AddNode(TextItem::Create("Rnd", []() {return "R&D          "; }, 2, false));
-        createCharacter->AddNode(ButtonItem::Create("Rnd Decrement", "-", []() {}, true));
-        createCharacter->AddNode(ButtonItem::Create("Rnd Increment", "+", []() {}, true));
+        createCharacter->AddNode(ButtonItem::Create("Rnd Decrement", "-",       [app]() mutable { app.GetCurrentCharacter()->DecrementRnd(); }, true));
+        createCharacter->AddNode(TextItem::Create("Rnd Value",                  [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetRnd()); }, 2, true));
+        createCharacter->AddNode(ButtonItem::Create("Rnd Increment", "+",       [app]() mutable { app.GetCurrentCharacter()->IncrementRnd(); }, true));
 
 
         createCharacter->AddNode(TextItem::Create("Strength", []() {return "Strength"; }, 2, false));

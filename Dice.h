@@ -28,4 +28,40 @@ struct Dice
             result += distribution1d6(mersenneTwister);
         return result;
     }
+
+    // Nd8 throw
+    int D8(int n)
+    {
+        int result = 0;
+        for (int i = 0; i < n; i++)
+            result += distribution1d8(mersenneTwister);
+        return result;
+    }
+
+    // Nd10 throw
+    int D10(int n)
+    {
+        int result = 0;
+        for (int i = 0; i < n; i++)
+            result += distribution1d10(mersenneTwister);
+        return result;
+    }
+
+    // Nd12 throw
+    int D12(int n)
+    {
+        int result = 0;
+        for (int i = 0; i < n; i++)
+            result += distribution1d12(mersenneTwister);
+        return result;
+    }
+
+    // Nd20 throw
+    int D20(int n)
+    {
+        int result = 0;
+        for (int i = 0; i < n; i++)
+            result += distribution1d20(mersenneTwister);
+        return result;
+    }
 };

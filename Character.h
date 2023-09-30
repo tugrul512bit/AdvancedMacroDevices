@@ -38,6 +38,21 @@ public:
 	{
 		return _learning;
 	}
+
+	void IncrementRnd(int n = 1)
+	{
+		_rnd += n;
+	}
+
+	void DecrementRnd(int n = 1)
+	{
+		_rnd -= n;
+	}
+
+	int GetRnd()
+	{
+		return _rnd;
+	}
 private:
 	// every character has own dice (for future parallelizations & fairness)
 	Dice dice;

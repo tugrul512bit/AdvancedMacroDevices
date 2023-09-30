@@ -55,6 +55,7 @@ namespace Window
 				if (!_enabled)
 					ImGui::BeginDisabled();
 
+				ImGui::PushID(_name.c_str());
 				PreRender();
 
 				for (auto node : _childNodes)
@@ -63,6 +64,7 @@ namespace Window
 				}
 				
 				PostRender();
+				ImGui::PopID();
 
 				if (!_enabled)
 					ImGui::EndDisabled();
