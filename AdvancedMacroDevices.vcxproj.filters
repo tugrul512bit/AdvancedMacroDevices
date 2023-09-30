@@ -74,5 +74,8 @@
     <ClInclude Include="Class.h">
       <Filter>Character</Filter>
     </ClInclude>
+    <ClInclude Include="Equivalence.h">
+      <Filter>Global</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

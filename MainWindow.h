@@ -15,6 +15,9 @@ namespace Window
     {
         AppFields()
         {
+            // initialize player data
+            freeStatPoints = 10;
+
             if (!glfwInit())
                 exit(1);
 
@@ -51,6 +54,7 @@ namespace Window
         ImGuiIO* io;
         AppStructure structure;
         Character currentCharacter;
+        int freeStatPoints;
     };
 
     class App
@@ -93,7 +97,18 @@ namespace Window
                 glfwSwapBuffers(_fields->window);
             }
         }
-
+        int GetFreeStatPoints()
+        {
+            return _fields->freeStatPoints;
+        }
+        void IncrementFreeStatPoints()
+        {
+            _fields->freeStatPoints++;
+        }
+        void DecrementFreeStatPoints()
+        {
+            _fields->freeStatPoints--;
+        }
         Character* GetCurrentCharacter()
         {
             return &_fields->currentCharacter;
@@ -113,41 +128,53 @@ namespace Window
         createCharacter->AddNode(TextItem::Create("Stats", []() {return "Stats"; },3,false));
 
         createCharacter->AddNode(TextItem::Create("Learning", []() {return "Learning     "; },2, false));
-        createCharacter->AddNode(ButtonItem::Create("Learning Decrement", "-",      [app]() mutable { app.GetCurrentCharacter()->DecrementLearning(); }, true));
+        createCharacter->AddNode(ButtonItem::Create("Learning Decrement", "-",      [app]() mutable { app.GetCurrentCharacter()->DecrementLearning(); app.IncrementFreeStatPoints(); }, true));
         createCharacter->AddNode(TextItem::Create("Learning Value",                 [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetLearning()); },2,true));
-        createCharacter->AddNode(ButtonItem::Create("Learning Increment", "+",      [app]() mutable { app.GetCurrentCharacter()->IncrementLearning(); }, true));
+        createCharacter->AddNode(ButtonItem::Create("Learning Increment", "+", [app]() mutable { if (app.GetFreeStatPoints() > 0) { app.GetCurrentCharacter()->IncrementLearning(); app.DecrementFreeStatPoints(); } }, true));
 
         createCharacter->AddNode(TextItem::Create("Rnd", []() {return "R&D          "; }, 2, false));
-        createCharacter->AddNode(ButtonItem::Create("Rnd Decrement", "-",           [app]() mutable { app.GetCurrentCharacter()->DecrementRnd(); }, true));
+        createCharacter->AddNode(ButtonItem::Create("Rnd Decrement", "-",           [app]() mutable { app.GetCurrentCharacter()->DecrementRnd(); app.IncrementFreeStatPoints(); }, true));
         createCharacter->AddNode(TextItem::Create("Rnd Value",                      [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetRnd()); }, 2, true));
-        createCharacter->AddNode(ButtonItem::Create("Rnd Increment", "+",           [app]() mutable { app.GetCurrentCharacter()->IncrementRnd(); }, true));
+        createCharacter->AddNode(ButtonItem::Create("Rnd Increment", "+", [app]() mutable { if (app.GetFreeStatPoints() > 0) { app.GetCurrentCharacter()->IncrementRnd(); app.DecrementFreeStatPoints(); } }, true));
 
         createCharacter->AddNode(TextItem::Create("Strength", []() {return "Strength     "; }, 2, false));
-        createCharacter->AddNode(ButtonItem::Create("Strength Decrement", "-",      [app]() mutable { app.GetCurrentCharacter()->DecrementStrength(); }, true));
+        createCharacter->AddNode(ButtonItem::Create("Strength Decrement", "-",      [app]() mutable { app.GetCurrentCharacter()->DecrementStrength(); app.IncrementFreeStatPoints(); }, true));
         createCharacter->AddNode(TextItem::Create("Strength Value",                 [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetStrength()); }, 2, true));
-        createCharacter->AddNode(ButtonItem::Create("Strength Increment", "+",      [app]() mutable { app.GetCurrentCharacter()->IncrementStrength(); }, true));
+        createCharacter->AddNode(ButtonItem::Create("Strength Increment", "+", [app]() mutable { if (app.GetFreeStatPoints() > 0) { app.GetCurrentCharacter()->IncrementStrength(); app.DecrementFreeStatPoints(); } }, true));
 
         createCharacter->AddNode(TextItem::Create("Health", []() {return "Health       "; }, 2, false));
-        createCharacter->AddNode(ButtonItem::Create("Health Decrement", "-",        [app]() mutable { app.GetCurrentCharacter()->DecrementHealth(); }, true));
+        createCharacter->AddNode(ButtonItem::Create("Health Decrement", "-",        [app]() mutable { app.GetCurrentCharacter()->DecrementHealth(); app.IncrementFreeStatPoints(); }, true));
         createCharacter->AddNode(TextItem::Create("Health Value",                   [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetHealth()); }, 2, true));
-        createCharacter->AddNode(ButtonItem::Create("Health Increment", "+",        [app]() mutable { app.GetCurrentCharacter()->IncrementHealth(); }, true));
+        createCharacter->AddNode(ButtonItem::Create("Health Increment", "+", [app]() mutable { if (app.GetFreeStatPoints() > 0) { app.GetCurrentCharacter()->IncrementHealth(); app.DecrementFreeStatPoints(); } }, true));
 
         createCharacter->AddNode(TextItem::Create("Intellligence", []() {return "Intelligence "; }, 2, false));
-        createCharacter->AddNode(ButtonItem::Create("Intelligence Decrement", "-",  [app]() mutable { app.GetCurrentCharacter()->DecrementIntelligence(); }, true));
+        createCharacter->AddNode(ButtonItem::Create("Intelligence Decrement", "-",  [app]() mutable { app.GetCurrentCharacter()->DecrementIntelligence(); app.IncrementFreeStatPoints(); }, true));
         createCharacter->AddNode(TextItem::Create("Intelligence Value",             [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetIntelligence()); }, 2, true));
-        createCharacter->AddNode(ButtonItem::Create("Intelligence Increment", "+",  [app]() mutable { app.GetCurrentCharacter()->IncrementIntelligence(); }, true));
+        createCharacter->AddNode(ButtonItem::Create("Intelligence Increment", "+", [app]() mutable { if (app.GetFreeStatPoints() > 0) { app.GetCurrentCharacter()->IncrementIntelligence(); app.DecrementFreeStatPoints(); } }, true));
 
         createCharacter->AddNode(TextItem::Create("Charisma", []() {return "Charisma     "; }, 2, false));
-        createCharacter->AddNode(ButtonItem::Create("Charisma Decrement", "-",      [app]() mutable { app.GetCurrentCharacter()->DecrementCharisma(); }, true));
+        createCharacter->AddNode(ButtonItem::Create("Charisma Decrement", "-",      [app]() mutable { app.GetCurrentCharacter()->DecrementCharisma(); app.IncrementFreeStatPoints(); }, true));
         createCharacter->AddNode(TextItem::Create("Charisma Value",                 [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetCharisma()); }, 2, true));
-        createCharacter->AddNode(ButtonItem::Create("Charisma Increment", "+",      [app]() mutable { app.GetCurrentCharacter()->IncrementCharisma(); }, true));
+        createCharacter->AddNode(ButtonItem::Create("Charisma Increment", "+", [app]() mutable { if (app.GetFreeStatPoints() > 0) { app.GetCurrentCharacter()->IncrementCharisma(); app.DecrementFreeStatPoints(); } }, true));
 
         createCharacter->AddNode(TextItem::Create("Leadership", []() {return "Leadership   "; }, 2, false));
-        createCharacter->AddNode(ButtonItem::Create("Leadership Decrement", "-",    [app]() mutable { app.GetCurrentCharacter()->DecrementLeadership(); }, true));
+        createCharacter->AddNode(ButtonItem::Create("Leadership Decrement", "-", [app]() mutable { app.GetCurrentCharacter()->DecrementLeadership(); app.IncrementFreeStatPoints(); }, true));
         createCharacter->AddNode(TextItem::Create("Leadership Value",               [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetLeadership()); }, 2, true));
-        createCharacter->AddNode(ButtonItem::Create("Leadership Increment", "+",    [app]() mutable { app.GetCurrentCharacter()->IncrementLeadership(); }, true));
+        createCharacter->AddNode(ButtonItem::Create("Leadership Increment", "+", [app]() mutable { if (app.GetFreeStatPoints() > 0) { app.GetCurrentCharacter()->IncrementLeadership(); app.DecrementFreeStatPoints(); } }, true));
 
+        createCharacter->AddNode(TextItem::Create("Free Points", []() {return "Free Stat Points     "; }, 2, false));
+        
+        createCharacter->AddNode(TextItem::Create("Free Points Value", [app]() mutable { return std::to_string(app.GetFreeStatPoints()); }, 2, true));
+        
 
+        createCharacter->AddNode(TextItem::Create("New Line", []() {return " "; }, 3, false));
+        createCharacter->AddNode(TextItem::Create("Inventory", []() {return "Inventory"; }, 3, false));
+        createCharacter->AddNode(TextItem::Create("Coins", []() {return "Coins        "; }, 2, false));
+        createCharacter->AddNode(TextItem::Create("Coins Value", [app]() mutable 
+            { 
+                int extra = app.GetCurrentCharacter()->GetCoinsEquivalentOfMissingStats(app.GetFreeStatPoints());
+                return std::to_string(app.GetCurrentCharacter()->GetCoins() + extra);
+            }, 2, true));
 
         createCharacter->Hide();
         app.AddComponent(createCharacter);

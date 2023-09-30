@@ -1,20 +1,21 @@
 #pragma once
 #include"Skill.h"
 #include"Dice.h"
+#include"Equivalence.h"
 class Character
 {
 public:
 	Character()
 	{
 		// 3d6 for stats
-		_learning = dice.D6(3); 
-		_rnd = dice.D6(3);
-		_strength = dice.D6(3);
-		_health = dice.D6(3);
-		_intelligence = dice.D6(3);
-		_charisma = dice.D6(3);
-		_leadership = dice.D6(3);
-
+		_learning = 10; 
+		_rnd = 10;
+		_strength = 10;
+		_health = 10;
+		_intelligence = 10;
+		_charisma = 10;
+		_leadership = 10;
+		_coins = 1000;
 		_experience = 0;
 		_level = 1;
 	}
@@ -129,9 +130,40 @@ public:
 	{
 		return _leadership;
 	}
+
+	void IncrementCoins(int n = 1)
+	{
+		_coins += n;
+	}
+
+	void DecrementCoins(int n = 1)
+	{
+		_coins -= n;
+	}
+
+	int GetCoins()
+	{
+		return _coins;
+	}
+
+
+	int GetCoinsEquivalentOfMissingStats(int freeStatPoints)
+	{
+		return
+			Equivalence::FreeStatPointsToCredits(freeStatPoints) +
+			Equivalence::LearningPointsToCredits(std::max(18 - _learning, 0)) +
+			Equivalence::RndPointsToCredits(std::max(18 - _rnd, 0)) +
+			Equivalence::StrengthPointsToCredits(std::max(18 - _strength, 0)) +
+			Equivalence::HealthPointsToCredits(std::max(18 - _health, 0)) +
+			Equivalence::IntelligencePointsToCredits(std::max(18 - _intelligence, 0)) +
+			Equivalence::CharismaPointsToCredits(std::max(18 - _charisma, 0)) +
+			Equivalence::LeadershipPointsToCredits(std::max(18 - _leadership, 0));		
+	}
+
+	Dice dice;
 private:
 	// every character has own dice (for future parallelizations & fairness)
-	Dice dice;
+
 
 	// stats
 	int _learning;
@@ -148,4 +180,7 @@ private:
 	// basic info
 	int _level;
 	int _experience;
+
+	// inventory
+	int _coins;
 };
