@@ -23,6 +23,21 @@ public:
 	{
 		return _experience >= std::pow(_level, 2) * 10;
 	}
+
+	void IncrementLearning(int n=1)
+	{
+		_learning += n;
+	}
+
+	void DecrementLearning(int n = 1)
+	{
+		_learning -= n;
+	}
+
+	int GetLearning()
+	{
+		return _learning;
+	}
 private:
 	// every character has own dice (for future parallelizations & fairness)
 	Dice dice;

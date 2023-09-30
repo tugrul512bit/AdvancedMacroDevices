@@ -50,6 +50,7 @@ namespace Window
         GLFWwindow* window;
         ImGuiIO* io;
         AppStructure structure;
+        Character currentCharacter;
     };
 
     class App
@@ -92,6 +93,11 @@ namespace Window
                 glfwSwapBuffers(_fields->window);
             }
         }
+
+        Character* GetCurrentCharacter()
+        {
+            return &_fields->currentCharacter;
+        }
     private:
         std::shared_ptr<AppFields> _fields;
     };
@@ -100,21 +106,38 @@ namespace Window
     {
         App app;
         auto window = AppWindow::Create(States::GetVersion());
-        window->AddNode(TextItem::Create("text item", "Welcome to Advanced Macro Devices",3));
+        window->AddNode(TextItem::Create("text item", []() {return "Welcome to Advanced Macro Devices"; }, 3, false));
         app.AddComponent(window);
 
         auto createCharacter = AppWindow::Create("Character Creation");
-        createCharacter->AddNode(TextItem::Create("Stats", "Stats",3));
-        createCharacter->AddNode(TextItem::Create("Learning", "Learning",2));
+        createCharacter->AddNode(TextItem::Create("Stats", []() {return "Stats"; },3,false));
+
+        createCharacter->AddNode(TextItem::Create("Learning", []() {return "Learning     "; },2, false));
+        createCharacter->AddNode(ButtonItem::Create("Learning Decrement", "-",  [app]() mutable { app.GetCurrentCharacter()->DecrementLearning(); }, true));
+        createCharacter->AddNode(TextItem::Create("Learning Value",             [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetLearning()); },2,true));
+        createCharacter->AddNode(ButtonItem::Create("Learning Increment", "+",  [app]() mutable { app.GetCurrentCharacter()->IncrementLearning(); }, true));
+
+        createCharacter->AddNode(TextItem::Create("Rnd", []() {return "R&D          "; }, 2, false));
+        createCharacter->AddNode(ButtonItem::Create("Rnd Decrement", "-", []() {}, true));
+        createCharacter->AddNode(ButtonItem::Create("Rnd Increment", "+", []() {}, true));
+
+
+        createCharacter->AddNode(TextItem::Create("Strength", []() {return "Strength"; }, 2, false));
+        createCharacter->AddNode(TextItem::Create("Health", []() {return "Health"; }, 2, false));
+        createCharacter->AddNode(TextItem::Create("Intellligence", []() {return "Intelligence"; }, 2, false));
+        createCharacter->AddNode(TextItem::Create("Charisma", []() {return "Charisma"; }, 2, false));
+        createCharacter->AddNode(TextItem::Create("Leadership", []() {return "Leadership"; }, 2, false));
+
+
         createCharacter->Hide();
         app.AddComponent(createCharacter);
 
         auto menu = AppWindow::Create("Menu");
-        menu->AddNode(ButtonItem::Create("New Game", "New Game", []() {}));
-        menu->AddNode(ButtonItem::Create("Create Character", "Create Character", [createCharacter]() { createCharacter->Show(); }));
-        menu->AddNode(ButtonItem::Create("Load Game", "Load Game", []() {}));
-        menu->AddNode(ButtonItem::Create("Design CPU", "Design CPU", []() {}));
-        menu->AddNode(ButtonItem::Create("Exit", "Exit", []() {}));
+        menu->AddNode(ButtonItem::Create("New Game", "New Game", []() {},false));
+        menu->AddNode(ButtonItem::Create("Create Character", "Create Character", [createCharacter]() { createCharacter->Show(); },false));
+        menu->AddNode(ButtonItem::Create("Load Game", "Load Game", []() {},false));
+        menu->AddNode(ButtonItem::Create("Design CPU", "Design CPU", []() {},false));
+        menu->AddNode(ButtonItem::Create("Exit", "Exit", []() {},false));
         app.AddComponent(menu);
 
 

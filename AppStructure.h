@@ -26,6 +26,7 @@ namespace Window
 			_name = name;
 			_visible = true;
 			_enabled = true;
+			_sameLine = false;
 		}
 
 		virtual void PreRender() {}
@@ -46,9 +47,11 @@ namespace Window
 		}
 
 		void Render()
-		{
+		{			
 			if (_visible)
 			{
+				if (_sameLine)
+					ImGui::SameLine();
 				if (!_enabled)
 					ImGui::BeginDisabled();
 
@@ -97,6 +100,7 @@ namespace Window
 		int _renderHeight;
 		bool _visible;
 		bool _enabled;
+		bool _sameLine;
 		std::vector<std::shared_ptr<AppStructure>> _childNodes;
 	};
 

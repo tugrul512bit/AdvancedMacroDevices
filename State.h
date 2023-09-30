@@ -1,5 +1,6 @@
 #pragma once
 #include<string>
+#include"Character.h"
 namespace States
 {
 	const static int versionMajor = 0;
