@@ -138,8 +138,12 @@
   <ItemGroup>
     <ClInclude Include="AppStructure.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="Character.h" />
     <ClInclude Include="MainWindow.h" />
+    <ClInclude Include="Module.h" />
+    <ClInclude Include="Skill.h" />
     <ClInclude Include="State.h" />
+    <ClInclude Include="Tech.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>

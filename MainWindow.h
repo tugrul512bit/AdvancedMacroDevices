@@ -105,6 +105,7 @@ namespace Window
 
         auto menu = AppWindow::Create("Menu");
         menu->AddNode(ButtonItem::Create("New Game", "New Game"));
+        menu->AddNode(ButtonItem::Create("New Character", "New Character"));
         menu->AddNode(ButtonItem::Create("Load Game", "Load Game"));
         menu->AddNode(ButtonItem::Create("Design CPU", "Design CPU"));
         menu->AddNode(ButtonItem::Create("Exit", "Exit"));

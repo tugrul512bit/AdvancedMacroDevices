@@ -22,6 +22,12 @@
     <Filter Include="Global">
       <UniqueIdentifier>{354a6ab3-e885-4dc5-907d-e2901ea0520b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Design">
+      <UniqueIdentifier>{6a1b109e-32a0-4150-89dc-129f4754d746}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Character">
+      <UniqueIdentifier>{f3f3a957-7b88-4798-9986-87ca8d84e656}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AdvancedMacroDevices.cpp">
@@ -49,6 +55,18 @@
     </ClInclude>
     <ClInclude Include="Button.h">
       <Filter>Window\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Module.h">
+      <Filter>Design</Filter>
+    </ClInclude>
+    <ClInclude Include="Tech.h">
+      <Filter>Design</Filter>
+    </ClInclude>
+    <ClInclude Include="Skill.h">
+      <Filter>Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Character.h">
+      <Filter>Character</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
