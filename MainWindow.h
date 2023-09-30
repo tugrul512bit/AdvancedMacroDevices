@@ -17,6 +17,7 @@ namespace Window
         {
             // initialize player data
             freeStatPoints = 10;
+            running = true;
 
             if (!glfwInit())
                 exit(1);
@@ -55,6 +56,7 @@ namespace Window
         AppStructure structure;
         Character currentCharacter;
         int freeStatPoints;
+        bool running;
     };
 
     class App
@@ -70,11 +72,17 @@ namespace Window
             _fields->structure.AddNode(component);
         }
 
+        void Stop()
+        {
+            _fields->running = false;
+        }
 
         void Loop()
         {
             // Main loop
             while (!glfwWindowShouldClose(_fields->window)) {
+                if (!_fields->running)
+                    break;
                 glfwPollEvents();
 
                 ImGui_ImplOpenGL3_NewFrame();
@@ -180,13 +188,15 @@ namespace Window
         app.AddComponent(createCharacter);
 
         auto menu = AppWindow::Create("Menu");
-        menu->AddNode(ButtonItem::Create("New Game", "New Game", []() {},false));
-        menu->AddNode(ButtonItem::Create("Create Character", "Create Character", [createCharacter]() { createCharacter->Show(); },false));
-        menu->AddNode(ButtonItem::Create("Load Game", "Load Game", []() {},false));
-        menu->AddNode(ButtonItem::Create("Design CPU", "Design CPU", []() {},false));
-        menu->AddNode(ButtonItem::Create("Exit", "Exit", []() {},false));
+        menu->AddNode(ButtonItem::Create("New Game", "New Game",                    []() {},false));
+        menu->AddNode(ButtonItem::Create("Create Character", "Create Character",    [createCharacter]() { createCharacter->Show(); },false));
+        menu->AddNode(ButtonItem::Create("Load Game", "Load Game",                  []() {},false));
+        menu->AddNode(ButtonItem::Create("Design CPU", "Design CPU",                []() {},false));
+        menu->AddNode(ButtonItem::Create("Exit", "Exit", [app]() mutable { app.Stop(); }, false));
         app.AddComponent(menu);
 
+        createCharacter->AddNode(TextItem::Create("New Line", []() {return " "; }, 3, false));
+        createCharacter->AddNode(ButtonItem::Create("Create Character", "Create", [app]() mutable { }, false));
 
 
         return app;
