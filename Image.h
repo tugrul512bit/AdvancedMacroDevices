@@ -21,11 +21,14 @@ namespace Window
 			_name = name;
 			_sameLine = sameLine;
 			_img = cv::Mat(height, width, CV_8UC4);
-	
-			cv::circle(_img, cv::Point2f(32, 32), 15, cv::Scalar(100, 59, 24,255),-1);
-            _texture = ToTexture();
+			for (int i = 0; i < height * width * 4; i++)
+				_img.at<unsigned char>(i) = 155;
+			cv::circle(_img, cv::Point2f(32, 32), 15, cv::Scalar(255, 255, 255,255),2);
+			cv::line(_img, cv::Point2f(0, 32), cv::Point2f(64, 32), cv::Scalar(255, 255, 255, 255), 4);
 			_width = width;
 			_height = height;
+			_vec1 = ImVec2(_width, _height);
+			_texture = ToTexture();
 		}
 
 		void Compute() override
@@ -34,8 +37,8 @@ namespace Window
 		}
 
 		void PreRender() override
-		{
-			ImGui::Image((ImTextureID)_texture, ImVec2(_width, _height));	
+		{			
+			ImGui::Image((void*)(intptr_t)_texture, _vec1);
 		}
 
 		void PostRender() override
@@ -46,6 +49,7 @@ namespace Window
 		int _height;
 		GLuint  _texture;
 		cv::Mat _img;
+		ImVec2 _vec1;
 
         GLuint ToTexture() {
             GLuint textureID;
@@ -55,12 +59,12 @@ namespace Window
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            GLenum inputColourFormat = GL_BGRA;
+            GLenum inputColourFormat = GL_RGBA;
 
          
             glTexImage2D(GL_TEXTURE_2D,
                 0,                
-                GL_BGRA,          
+                GL_RGBA,          
 				_width,
 				_height,
                 0,                 
