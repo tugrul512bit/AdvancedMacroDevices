@@ -4,19 +4,20 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <GLFW/glfw3.h>
-#include"AppStructure.h"
 
+#include"State.h"
+#include"Window.h"
+#include"Text.h"
 namespace Window
 {
     struct AppFields
     {
         AppFields()
         {
-            // Initialize GLFW
             if (!glfwInit())
                 exit(1);
 
-            window = glfwCreateWindow(1280, 720, "ImGui Example", NULL, NULL);
+            window = glfwCreateWindow(1280, 720, "Advanced Macro Devices", NULL, NULL);
             if (!window)
             {
                 glfwTerminate();
@@ -98,8 +99,8 @@ namespace Window
     App InitApp()
     {
         App app;
-        auto window = AppWindow::Create("Main Window");
-        window->AddNode(TextItem::Create("text item", "this is a text"));
+        auto window = AppWindow::Create(States::GetVersion());
+        window->AddNode(TextItem::Create("text item", "Welcome to Advanced Macro Devices"));
         app.AddComponent(window);
         
         return app;

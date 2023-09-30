@@ -16,6 +16,12 @@
     <Filter Include="Window">
       <UniqueIdentifier>{82b069ff-26d9-4ff8-b9d3-8ceb25ed6b06}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Window\Component">
+      <UniqueIdentifier>{5957ffd9-dde8-4569-b138-a3d00574704f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Global">
+      <UniqueIdentifier>{354a6ab3-e885-4dc5-907d-e2901ea0520b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AdvancedMacroDevices.cpp">
@@ -31,6 +37,15 @@
     </ClInclude>
     <ClInclude Include="AppStructure.h">
       <Filter>Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Window\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Text.h">
+      <Filter>Window\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>Global</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -138,6 +138,9 @@
   <ItemGroup>
     <ClInclude Include="AppStructure.h" />
     <ClInclude Include="MainWindow.h" />
+    <ClInclude Include="State.h" />
+    <ClInclude Include="Text.h" />
+    <ClInclude Include="Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
