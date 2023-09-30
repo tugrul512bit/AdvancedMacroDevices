@@ -100,11 +100,12 @@ namespace Window
     {
         App app;
         auto window = AppWindow::Create(States::GetVersion());
-        window->AddNode(TextItem::Create("text item", "Welcome to Advanced Macro Devices"));
+        window->AddNode(TextItem::Create("text item", "Welcome to Advanced Macro Devices",3));
         app.AddComponent(window);
 
         auto createCharacter = AppWindow::Create("Character Creation");
-        createCharacter->AddNode(TextItem::Create("Stats", "Stats"));
+        createCharacter->AddNode(TextItem::Create("Stats", "Stats",3));
+        createCharacter->AddNode(TextItem::Create("Learning", "Learning",2));
         createCharacter->Hide();
         app.AddComponent(createCharacter);
 

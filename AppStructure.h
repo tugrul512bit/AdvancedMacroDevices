@@ -47,21 +47,23 @@ namespace Window
 
 		void Render()
 		{
-			if (_visible && !_enabled)
-				ImGui::BeginDisabled();
-			if(_visible)
-				PreRender();
-			
-			for (auto node : _childNodes)
+			if (_visible)
 			{
-				node->Render();
-			}
+				if (!_enabled)
+					ImGui::BeginDisabled();
 
-			if(_visible)
+				PreRender();
+
+				for (auto node : _childNodes)
+				{
+					node->Render();
+				}
+				
 				PostRender();
 
-			if (_visible && !_enabled)
-				ImGui::EndDisabled();
+				if (!_enabled)
+					ImGui::EndDisabled();
+			}
 		}
 
 		void AddNode(std::shared_ptr<AppStructure> node)
