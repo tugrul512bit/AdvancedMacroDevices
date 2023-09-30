@@ -113,21 +113,40 @@ namespace Window
         createCharacter->AddNode(TextItem::Create("Stats", []() {return "Stats"; },3,false));
 
         createCharacter->AddNode(TextItem::Create("Learning", []() {return "Learning     "; },2, false));
-        createCharacter->AddNode(ButtonItem::Create("Learning Decrement", "-",  [app]() mutable { app.GetCurrentCharacter()->DecrementLearning(); }, true));
-        createCharacter->AddNode(TextItem::Create("Learning Value",             [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetLearning()); },2,true));
-        createCharacter->AddNode(ButtonItem::Create("Learning Increment", "+",  [app]() mutable { app.GetCurrentCharacter()->IncrementLearning(); }, true));
+        createCharacter->AddNode(ButtonItem::Create("Learning Decrement", "-",      [app]() mutable { app.GetCurrentCharacter()->DecrementLearning(); }, true));
+        createCharacter->AddNode(TextItem::Create("Learning Value",                 [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetLearning()); },2,true));
+        createCharacter->AddNode(ButtonItem::Create("Learning Increment", "+",      [app]() mutable { app.GetCurrentCharacter()->IncrementLearning(); }, true));
 
         createCharacter->AddNode(TextItem::Create("Rnd", []() {return "R&D          "; }, 2, false));
-        createCharacter->AddNode(ButtonItem::Create("Rnd Decrement", "-",       [app]() mutable { app.GetCurrentCharacter()->DecrementRnd(); }, true));
-        createCharacter->AddNode(TextItem::Create("Rnd Value",                  [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetRnd()); }, 2, true));
-        createCharacter->AddNode(ButtonItem::Create("Rnd Increment", "+",       [app]() mutable { app.GetCurrentCharacter()->IncrementRnd(); }, true));
+        createCharacter->AddNode(ButtonItem::Create("Rnd Decrement", "-",           [app]() mutable { app.GetCurrentCharacter()->DecrementRnd(); }, true));
+        createCharacter->AddNode(TextItem::Create("Rnd Value",                      [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetRnd()); }, 2, true));
+        createCharacter->AddNode(ButtonItem::Create("Rnd Increment", "+",           [app]() mutable { app.GetCurrentCharacter()->IncrementRnd(); }, true));
 
+        createCharacter->AddNode(TextItem::Create("Strength", []() {return "Strength     "; }, 2, false));
+        createCharacter->AddNode(ButtonItem::Create("Strength Decrement", "-",      [app]() mutable { app.GetCurrentCharacter()->DecrementStrength(); }, true));
+        createCharacter->AddNode(TextItem::Create("Strength Value",                 [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetStrength()); }, 2, true));
+        createCharacter->AddNode(ButtonItem::Create("Strength Increment", "+",      [app]() mutable { app.GetCurrentCharacter()->IncrementStrength(); }, true));
 
-        createCharacter->AddNode(TextItem::Create("Strength", []() {return "Strength"; }, 2, false));
-        createCharacter->AddNode(TextItem::Create("Health", []() {return "Health"; }, 2, false));
-        createCharacter->AddNode(TextItem::Create("Intellligence", []() {return "Intelligence"; }, 2, false));
-        createCharacter->AddNode(TextItem::Create("Charisma", []() {return "Charisma"; }, 2, false));
-        createCharacter->AddNode(TextItem::Create("Leadership", []() {return "Leadership"; }, 2, false));
+        createCharacter->AddNode(TextItem::Create("Health", []() {return "Health       "; }, 2, false));
+        createCharacter->AddNode(ButtonItem::Create("Health Decrement", "-",        [app]() mutable { app.GetCurrentCharacter()->DecrementHealth(); }, true));
+        createCharacter->AddNode(TextItem::Create("Health Value",                   [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetHealth()); }, 2, true));
+        createCharacter->AddNode(ButtonItem::Create("Health Increment", "+",        [app]() mutable { app.GetCurrentCharacter()->IncrementHealth(); }, true));
+
+        createCharacter->AddNode(TextItem::Create("Intellligence", []() {return "Intelligence "; }, 2, false));
+        createCharacter->AddNode(ButtonItem::Create("Intelligence Decrement", "-",  [app]() mutable { app.GetCurrentCharacter()->DecrementIntelligence(); }, true));
+        createCharacter->AddNode(TextItem::Create("Intelligence Value",             [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetIntelligence()); }, 2, true));
+        createCharacter->AddNode(ButtonItem::Create("Intelligence Increment", "+",  [app]() mutable { app.GetCurrentCharacter()->IncrementIntelligence(); }, true));
+
+        createCharacter->AddNode(TextItem::Create("Charisma", []() {return "Charisma     "; }, 2, false));
+        createCharacter->AddNode(ButtonItem::Create("Charisma Decrement", "-",      [app]() mutable { app.GetCurrentCharacter()->DecrementCharisma(); }, true));
+        createCharacter->AddNode(TextItem::Create("Charisma Value",                 [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetCharisma()); }, 2, true));
+        createCharacter->AddNode(ButtonItem::Create("Charisma Increment", "+",      [app]() mutable { app.GetCurrentCharacter()->IncrementCharisma(); }, true));
+
+        createCharacter->AddNode(TextItem::Create("Leadership", []() {return "Leadership   "; }, 2, false));
+        createCharacter->AddNode(ButtonItem::Create("Leadership Decrement", "-",    [app]() mutable { app.GetCurrentCharacter()->DecrementLeadership(); }, true));
+        createCharacter->AddNode(TextItem::Create("Leadership Value",               [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetLeadership()); }, 2, true));
+        createCharacter->AddNode(ButtonItem::Create("Leadership Increment", "+",    [app]() mutable { app.GetCurrentCharacter()->IncrementLeadership(); }, true));
+
 
 
         createCharacter->Hide();

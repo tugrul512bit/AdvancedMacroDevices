@@ -53,6 +53,82 @@ public:
 	{
 		return _rnd;
 	}
+
+	void IncrementStrength(int n = 1)
+	{
+		_strength += n;
+	}
+
+	void DecrementStrength(int n = 1)
+	{
+		_strength -= n;
+	}
+
+	int GetStrength()
+	{
+		return _strength;
+	}
+
+	void IncrementHealth(int n = 1)
+	{
+		_health += n;
+	}
+
+	void DecrementHealth(int n = 1)
+	{
+		_health -= n;
+	}
+
+	int GetHealth()
+	{
+		return _health;
+	}
+
+
+	void IncrementIntelligence(int n = 1)
+	{
+		_intelligence += n;
+	}
+
+	void DecrementIntelligence(int n = 1)
+	{
+		_intelligence -= n;
+	}
+
+	int GetIntelligence()
+	{
+		return _intelligence;
+	}
+
+	void IncrementCharisma(int n = 1)
+	{
+		_charisma += n;
+	}
+
+	void DecrementCharisma(int n = 1)
+	{
+		_charisma -= n;
+	}
+
+	int GetCharisma()
+	{
+		return _charisma;
+	}
+
+	void IncrementLeadership(int n = 1)
+	{
+		_leadership += n;
+	}
+
+	void DecrementLeadership(int n = 1)
+	{
+		_leadership -= n;
+	}
+
+	int GetLeadership()
+	{
+		return _leadership;
+	}
 private:
 	// every character has own dice (for future parallelizations & fairness)
 	Dice dice;
