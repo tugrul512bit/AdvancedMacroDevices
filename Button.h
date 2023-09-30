@@ -5,27 +5,29 @@ namespace Window
 	class ButtonItem : public AppStructure
 	{
 	public:
-		static std::shared_ptr<AppStructure> Create(std::string name, std::string content,std::function<void(void)> onClick, bool sameLine)
+		static std::shared_ptr<AppStructure> Create(std::string name, std::string content,std::function<void(void)> onClick, bool sameLine, std::function<bool(void)> isDisabled)
 		{
-			std::shared_ptr<AppStructure> node = std::shared_ptr<ButtonItem>(new ButtonItem(name,content,onClick,sameLine), [](ButtonItem* b) { delete b; });						
+			std::shared_ptr<AppStructure> node = std::shared_ptr<ButtonItem>(new ButtonItem(name,content,onClick,sameLine,isDisabled), [](ButtonItem* b) { delete b; });						
 			return node;
 		}
 
-		ButtonItem(std::string name = "button", std::string content = "this is a button", std::function<void(void)> onClick = []() {}, bool sameLine=false)
+		ButtonItem(std::string name = "button", std::string content = "this is a button", std::function<void(void)> onClick = []() {}, bool sameLine = false, std::function<bool(void)> isDisabled = []() {return false; })
 		{ 
 			_name = name; 
 			_content = content; 
 			_onClick = onClick;
 			_sameLine = sameLine;
+			_isDisabled = isDisabled;				
 		}
 
 		void Compute() override
 		{
-
+			_enabled = !_isDisabled();
 		}
 
 		void PreRender() override
 		{
+			
 			if (ImGui::Button(_content.c_str()))
 			{
 				_onClick();
@@ -39,5 +41,6 @@ namespace Window
 	private:
 		std::string _content;
 		std::function<void(void)> _onClick;
+		std::function<bool(void)> _isDisabled;
 	};
 }

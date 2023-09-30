@@ -160,6 +160,16 @@ public:
 			Equivalence::LeadershipPointsToCredits(std::max(18 - _leadership, 0));		
 	}
 
+	int GetLearningModifier()
+	{
+		return ( (_learning >= 10) ? (_learning - 10) / 2 : -(10 - _learning + 1)/2);
+	}
+
+	int GetRndModifier()
+	{
+		return ((_rnd >= 10) ? (_rnd - 10) / 2 : -(10 - _rnd + 1) / 2);
+	}
+
 	Dice dice;
 private:
 	// every character has own dice (for future parallelizations & fairness)

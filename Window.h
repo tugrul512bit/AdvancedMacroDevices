@@ -5,13 +5,13 @@ namespace Window
 	class AppWindow : public AppStructure
 	{
 	public:
-		static std::shared_ptr<AppStructure> Create(std::string name)
+		static std::shared_ptr<AppStructure> Create(std::string name, std::string title)
 		{
-			std::shared_ptr<AppStructure> node = std::shared_ptr<AppWindow>(new AppWindow(name), [](AppWindow* w) { delete w; });
+			std::shared_ptr<AppStructure> node = std::shared_ptr<AppWindow>(new AppWindow(name,title), [](AppWindow* w) { delete w; });
 			return node;
 		}
 
-		AppWindow(std::string name = "item") { _name = name; }
+		AppWindow(std::string name = "item", std::string title = "title") { _name = name; _title = title; }
 
 		void Compute() override
 		{
@@ -20,13 +20,15 @@ namespace Window
 
 		void PreRender() override
 		{
-			ImGui::Begin(_name.c_str());
+			ImGui::Begin(_title.c_str());
 		}
 
 		void PostRender() override
 		{
 			ImGui::End();
 		}
+	private:
+		std::string _title;
 	};
 
 }

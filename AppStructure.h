@@ -32,18 +32,16 @@ namespace Window
 		virtual void PreRender() {}
 		virtual void PostRender() {}
 
-		virtual void Compute() 
-		{
-		
-		}
+		virtual void Compute() {}
 
 		void Calculate()
 		{
+			Compute();
 			for (auto node : _childNodes)
 			{
-				node->Compute();
+				node->Calculate();
 			}
-			Compute();
+			
 		}
 
 		void Render()
