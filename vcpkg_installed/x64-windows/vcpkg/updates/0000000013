@@ -3,4 +3,4 @@ Feature: opengl3-binding
 Architecture: x64-windows
 Multi-Arch: same
 Description: Make available OpenGL3/ES/ES2 (modern) binding
-Status: purge ok not-installed
+Status: install ok installed

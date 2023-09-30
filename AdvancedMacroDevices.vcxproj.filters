@@ -77,5 +77,11 @@
     <ClInclude Include="Equivalence.h">
       <Filter>Global</Filter>
     </ClInclude>
+    <ClInclude Include="List.h">
+      <Filter>Window\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Image.h">
+      <Filter>Window\Component</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

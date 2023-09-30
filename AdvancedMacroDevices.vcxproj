@@ -142,6 +142,8 @@
     <ClInclude Include="Class.h" />
     <ClInclude Include="Dice.h" />
     <ClInclude Include="Equivalence.h" />
+    <ClInclude Include="Image.h" />
+    <ClInclude Include="List.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="Module.h" />
     <ClInclude Include="Skill.h" />

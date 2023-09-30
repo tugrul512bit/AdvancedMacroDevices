@@ -4,4 +4,4 @@ Depends: glfw3
 Architecture: x64-windows
 Multi-Arch: same
 Description: Make available GLFW binding
-Status: purge ok not-installed
+Status: install ok half-installed

@@ -170,6 +170,35 @@ public:
 		return ((_rnd >= 10) ? (_rnd - 10) / 2 : -(10 - _rnd + 1) / 2);
 	}
 
+	int GetStrengthModifier()
+	{
+		return ((_strength >= 10) ? (_strength - 10) / 2 : -(10 - _strength + 1) / 2);
+	}
+
+
+	int GetHealthModifier()
+	{
+		return ((_health >= 10) ? (_health - 10) / 2 : -(10 - _health + 1) / 2);
+	}
+
+
+	int GetIntelligenceModifier()
+	{
+		return ((_intelligence >= 10) ? (_intelligence - 10) / 2 : -(10 - _intelligence + 1) / 2);
+	}
+
+
+	int GetCharismaModifier()
+	{
+		return ((_charisma >= 10) ? (_charisma - 10) / 2 : -(10 - _charisma + 1) / 2);
+	}
+
+
+	int GetLeadershipModifier()
+	{
+		return ((_leadership >= 10) ? (_leadership - 10) / 2 : -(10 - _leadership + 1) / 2);
+	}
+
 	Dice dice;
 private:
 	// every character has own dice (for future parallelizations & fairness)
