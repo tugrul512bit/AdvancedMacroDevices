@@ -1,7 +1,7 @@
 #include"MainWindow.h"
 
 int main(int argc, char** argv) {
-    App app;
+    Window::App app = Window::InitApp();
     app.Loop();
 
     return 0;
