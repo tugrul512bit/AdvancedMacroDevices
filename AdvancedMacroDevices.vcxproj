@@ -137,6 +137,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppStructure.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="Text.h" />

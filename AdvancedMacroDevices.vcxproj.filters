@@ -47,5 +47,8 @@
     <ClInclude Include="State.h">
       <Filter>Global</Filter>
     </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Window\Component</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

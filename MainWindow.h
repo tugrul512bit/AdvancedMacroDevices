@@ -8,6 +8,7 @@
 #include"State.h"
 #include"Window.h"
 #include"Text.h"
+#include"Button.h"
 namespace Window
 {
     struct AppFields
@@ -75,11 +76,10 @@ namespace Window
                 ImGui_ImplGlfw_NewFrame();
                 ImGui::NewFrame();
 
-                // Your ImGui code here
+                // Advanced Macro Devices
+                _fields->structure.Compute();
                 _fields->structure.Render();
-                //ImGui::Begin("Hello, world!");
-                //ImGui::Text("This is a simple ImGui application.");
-                //ImGui::End();
+                
 
                 ImGui::Render();
                 int display_w, display_h;
@@ -102,6 +102,13 @@ namespace Window
         auto window = AppWindow::Create(States::GetVersion());
         window->AddNode(TextItem::Create("text item", "Welcome to Advanced Macro Devices"));
         app.AddComponent(window);
+
+        auto menu = AppWindow::Create("Menu");
+        menu->AddNode(ButtonItem::Create("New Game", "New Game"));
+        menu->AddNode(ButtonItem::Create("Load Game", "Load Game"));
+        menu->AddNode(ButtonItem::Create("Design CPU", "Design CPU"));
+        menu->AddNode(ButtonItem::Create("Exit", "Exit"));
+        app.AddComponent(menu);
         
         return app;
     }
