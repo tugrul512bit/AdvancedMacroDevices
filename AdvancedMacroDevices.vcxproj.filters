@@ -68,5 +68,11 @@
     <ClInclude Include="Character.h">
       <Filter>Character</Filter>
     </ClInclude>
+    <ClInclude Include="Dice.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Class.h">
+      <Filter>Character</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
