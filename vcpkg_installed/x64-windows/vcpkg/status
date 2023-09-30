@@ -1,0 +1,253 @@
+Package: vcpkg-cmake-config
+Version: 2022-02-06
+Port-Version: 1
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 55ff33c70e234a6f4680c2f668847672748eec759629bef543255e298b6fb997
+Status: install ok installed
+
+Package: vcpkg-cmake
+Version: 2023-05-04
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 8e4c7f30a47ac01c42dda6f3b7dddffabaf2e637cd3c5de651e83df2ee31c583
+Status: install ok installed
+
+Package: libwebp
+Version: 1.3.0
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 3a663105108cc279a2f15d39f5156aa0f4b33435253e701b99be994cfb8e7380
+Description: WebP codec: library to encode and decode images in WebP format
+Default-Features: libwebpmux, nearlossless, simd
+Status: install ok installed
+
+Package: libwebp
+Feature: libwebpmux
+Architecture: x64-windows
+Multi-Arch: same
+Description: Build the libwebpmux library
+Status: install ok installed
+
+Package: libwebp
+Feature: nearlossless
+Architecture: x64-windows
+Multi-Arch: same
+Description: Enable near-lossless encoding
+Status: install ok installed
+
+Package: libwebp
+Feature: simd
+Architecture: x64-windows
+Multi-Arch: same
+Description: Enable any SIMD optimization.
+Status: install ok installed
+
+Package: libwebp
+Feature: unicode
+Architecture: x64-windows
+Multi-Arch: same
+Description: Build Unicode executables. (Adds definition UNICODE and _UNICODE)
+Status: install ok installed
+
+Package: zlib
+Version: 1.2.13
+Depends: vcpkg-cmake
+Architecture: x64-windows
+Multi-Arch: same
+Abi: d7a48ff2a7006ec2cf456e47c9779c879782df0f5d389ba8f69b5b61a223e125
+Description: A compression library
+Status: install ok installed
+
+Package: liblzma
+Version: 5.4.3
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: b7e33a0b615c1bef51fac8e96d0a71e40a28333cdc1d95776edad2e62fc38d60
+Description: Compression library with an API similar to that of zlib.
+Status: install ok installed
+
+Package: libjpeg-turbo
+Version: 2.1.5.1
+Port-Version: 1
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 9ef7b5b47a78ce2b5b6e3d5ec43913be4898d92618a8d57a417a3cd5bc6902ac
+Description: libjpeg-turbo is a JPEG image codec that uses SIMD instructions (MMX, SSE2, NEON, AltiVec) to accelerate baseline JPEG compression and decompression on x86, x86-64, ARM, and PowerPC systems.
+Status: install ok installed
+
+Package: tiff
+Version: 4.5.0
+Port-Version: 3
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 103d0324710fc9cc94a8e040fb9b5b1a199094d0a5c730a5b0addf56abfa98e2
+Description: A library that supports the manipulation of TIFF image files
+Default-Features: jpeg, lzma, zip
+Status: install ok installed
+
+Package: tiff
+Feature: jpeg
+Depends: libjpeg-turbo
+Architecture: x64-windows
+Multi-Arch: same
+Description: Support JPEG compression in TIFF image files
+Status: install ok installed
+
+Package: tiff
+Feature: lzma
+Depends: liblzma
+Architecture: x64-windows
+Multi-Arch: same
+Description: Support LZMA compression in TIFF image files
+Status: install ok installed
+
+Package: tiff
+Feature: zip
+Depends: zlib
+Architecture: x64-windows
+Multi-Arch: same
+Description: Support ZIP/deflate compression in TIFF image files
+Status: install ok installed
+
+Package: quirc
+Version: 1.1
+Port-Version: 3
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 3564090a29b96cf92982cc43c794cabea6bd83ca86bd4afe1a158f01525c7fb3
+Description: quirc is one of the C library available for scanning QR Codes
+Status: install ok installed
+
+Package: libpng
+Version: 1.6.39
+Port-Version: 1
+Depends: vcpkg-cmake, vcpkg-cmake-config, zlib
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 7651c395cb028ada2c89fbdc1441fd477da457e71a6a5fe15f0032dec7f6701c
+Description: libpng is a library implementing an interface for reading and writing PNG (Portable Network Graphics) format files
+Status: install ok installed
+
+Package: protobuf
+Version: 3.21.12
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: f9779dd50731d218516f35144a1a9baf734c7afca562b3d2865f0832a2599915
+Description: Protocol Buffers - Google's data interchange format
+Status: install ok installed
+
+Package: vcpkg-get-python-packages
+Version: 2022-06-30
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 67173b6e7555877485ef6ddf31d076ce3ebc1b6394c2d8d0c6a40d72fc227c97
+Status: install ok installed
+
+Package: opencv4
+Version: 4.7.0
+Port-Version: 6
+Depends: vcpkg-cmake, vcpkg-cmake-config, vcpkg-get-python-packages, zlib
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 77f20c7d7b6a989a721c7d72ddb1506aef1200fc464d3230c2bf38d66dabdd29
+Description: computer vision library
+Default-Features: default-features
+Status: install ok installed
+
+Package: opencv4
+Feature: default-features
+Architecture: x64-windows
+Multi-Arch: same
+Description: Platform-dependent default features
+Status: install ok installed
+
+Package: opencv4
+Feature: dnn
+Depends: protobuf
+Architecture: x64-windows
+Multi-Arch: same
+Description: Enable dnn module
+Status: install ok installed
+
+Package: opencv4
+Feature: jpeg
+Depends: libjpeg-turbo
+Architecture: x64-windows
+Multi-Arch: same
+Description: JPEG support for opencv
+Status: install ok installed
+
+Package: opencv4
+Feature: png
+Depends: libpng
+Architecture: x64-windows
+Multi-Arch: same
+Description: PNG support for opencv
+Status: install ok installed
+
+Package: opencv4
+Feature: quirc
+Depends: quirc
+Architecture: x64-windows
+Multi-Arch: same
+Description: Enable QR code module
+Status: install ok installed
+
+Package: opencv4
+Feature: tiff
+Depends: tiff
+Architecture: x64-windows
+Multi-Arch: same
+Description: TIFF support for opencv
+Status: install ok installed
+
+Package: opencv4
+Feature: webp
+Depends: libwebp
+Architecture: x64-windows
+Multi-Arch: same
+Description: WebP support for opencv
+Status: install ok installed
+
+Package: imgui
+Version: 1.89.6
+Port-Version: 1
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 58370cc66daa862fe67d2e787622cd2db174daa8136de2646b2b17aeccede7ab
+Description: Bloat-free Immediate Mode Graphical User interface for C++ with minimal dependencies.
+Status: install ok installed
+
+Package: glfw3
+Version: 3.3.8
+Port-Version: 2
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: afba36e1a2e76dcd6ec18d80783a26f8d2e179b85052ac4dc9910b87c95c5ca6
+Description: GLFW is a free, Open Source, multi-platform library for OpenGL, OpenGL ES and Vulkan application development. It provides a simple, platform-independent API for creating windows, contexts and surfaces, reading input, handling events, etc.
+Status: install ok installed
+
+Package: imgui
+Feature: glfw-binding
+Depends: glfw3
+Architecture: x64-windows
+Multi-Arch: same
+Description: Make available GLFW binding
+Status: install ok installed
+
+Package: imgui
+Feature: opengl3-binding
+Architecture: x64-windows
+Multi-Arch: same
+Description: Make available OpenGL3/ES/ES2 (modern) binding
+Status: install ok installed
+
