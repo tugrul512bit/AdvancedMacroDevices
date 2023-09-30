@@ -13,9 +13,14 @@ namespace Window
 
 		TextItem(std::string name = "text", std::string content = "this is a text") { _name = name; _content = content; }
 
+		void Compute() override
+		{
+
+		}
+
 		void PreRender() override
 		{
-			ImGui::Text(_content.c_str());
+			ImGui::Text(_content.c_str());			
 		}
 
 		void PostRender() override

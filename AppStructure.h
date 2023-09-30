@@ -29,10 +29,24 @@ namespace Window
 		virtual void PreRender() {}
 		virtual void PostRender() {}
 
+		virtual void Compute() 
+		{
+		
+		}
+
+		void Calculate()
+		{
+			for (auto node : _childNodes)
+			{
+				node->Compute();
+			}
+			Compute();
+		}
+
 		void Render()
 		{
 			PreRender();
-
+			
 			for (auto node : _childNodes)
 			{
 				node->Render();
@@ -50,6 +64,8 @@ namespace Window
 	protected:
 		ItemType _type;
 		std::string _name;
+		int _renderWidth;
+		int _renderHeight;
 		std::vector<std::shared_ptr<AppStructure>> _childNodes;
 	};
 

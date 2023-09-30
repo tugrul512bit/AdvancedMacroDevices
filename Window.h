@@ -13,6 +13,11 @@ namespace Window
 
 		AppWindow(std::string name = "item") { _name = name; }
 
+		void Compute() override
+		{
+
+		}
+
 		void PreRender() override
 		{
 			ImGui::Begin(_name.c_str());
