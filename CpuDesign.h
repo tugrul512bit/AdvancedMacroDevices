@@ -66,7 +66,7 @@ namespace Window
         leftRightMid3->AddNode(TextItem::Create("Thermal Dissipation Power", []() { return "Thermal Dissipation Power"; }, 3, true));
 
         auto testAlgorithm = TextItem::Create("Test Algorithm", []() { return "Test Algorithm"; }, 3, false);
-        testAlgorithm->AddHoverPopup(TextItem::Create("Test Algorithm Name", []() { return "Mona Lisa Render (by Maxxon Sinebench)"; }, 2, false));
+        testAlgorithm->AddHoverPopup(TextItem::Create("Test Algorithm Name", []() { return "Sinebench Mona Lisa Render (by Maxxon)"; }, 2, false));
         leftRightMid4->AddNode(testAlgorithm);
         leftRightMid4->AddNode(TextItem::Create("Empty Column", []() { return "     "; }, 3, true));
         leftRightMid4->AddNode(TextItem::Create("Production Failure Probability", []() { return "Production Failure Probability"; }, 3, true));
