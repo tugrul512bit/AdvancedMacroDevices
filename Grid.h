@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AppStructure.h"
+#include"Image.h"
 #include<functional>
 #include<vector>
 #include<string>
@@ -21,6 +22,13 @@ namespace Window
 			_name = name;
 			_sameLine = sameLine;
 			_fontScale = fontScale;
+			for (int j = 0; j < ROWS; j++)
+			{
+				for (int i = 0; i < COLS; i++)
+				{
+					_cells[j][i] = ImageItem::Create(std::string("grid_cell_") + std::to_string(i + j * COLS), false, Images::EmptyGridCellImage());
+				}
+			}
 		}
 
 		void Compute() override
@@ -31,18 +39,25 @@ namespace Window
 		void PreRender() override
 		{
 			ImGui::SetWindowFontScale(_fontScale);
-			for (int j = 0; j < _rows; j++)
+			ImGui::BeginGroup();
+			for (int j = 0; j < ROWS; j++)
 			{
-				ImGui::BeginGroup();
-				for (int j = 0; j < _columns; j++)
+				
+				for (int i = 0; i < COLS; i++)
 				{
-					ImGui::SameLine();
-					ImGui::BeginGroup();
-					_cells[j][i]->PreRender();
-					_cells[j][i]->PostRender();
-					ImGui::EndGroup();
+					if(i>0)
+						ImGui::SameLine();
+				
+					if (_cells[j][i].get() != nullptr)
+					{
+						_cells[j][i]->PreRender();
+						_cells[j][i]->PostRender();
+					}
+					
 				}
+				
 			}
+			ImGui::EndGroup();
 		}
 
 		void PostRender() override

@@ -200,5 +200,18 @@ namespace Window
 			cv::line(img, cv::Point2f(36, 35), cv::Point2f(63, 35), cv::Scalar(255, 255, 255, 255), 1);
 			return img;
 		}
+
+		cv::Mat EmptyGridCellImage()
+		{
+			cv::Mat img(64, 64, CV_8UC4);
+			img = 0;
+			// border
+			cv::line(img, cv::Point2f(0, 0), cv::Point2f(63, 0), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(63, 0), cv::Point2f(63, 63), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(63, 63), cv::Point2f(0, 63), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(0, 63), cv::Point2f(0, 0), cv::Scalar(255, 255, 255, 255), 1);
+
+			return img;
+		}
 	}
 }

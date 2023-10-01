@@ -4,12 +4,19 @@
 #include"Character.h"
 #include"List.h"
 #include"Image.h"
+#include"Grid.h"
 namespace Window
 {
     std::shared_ptr<AppStructure> CpuDesign(Character* character)
     {
         auto cpuDesign = AppWindow::Create("CPU Design", "CPU Design");
+        cpuDesign->AddNode(TextItem::Create("Drag drop hint", []() { return "Drag & drop modules to the grid to build your CPU."; }, 3, false));
+        cpuDesign->AddNode(TextItem::Create("New Line", []() { return " "; }, 4, false));
+
+        auto leftRightMid = ListItem::Create("Left and right of Cpu Design", 3, false);
+        
         auto techList = ListItem::Create("Tech List", 3, false);
+        
         auto aluItem = ListItem::Create("ALU item", 2, false);
         aluItem->AddNode(TextItem::Create("ALU Tech Name", []() { return "ALU"; }, 3, false));
         aluItem->AddNode(ImageItem::Create("ALU Image", true, Images::AluImage()));
@@ -32,8 +39,13 @@ namespace Window
         techList->AddNode(registerItem);
         techList->AddNode(busItem);
 
-        cpuDesign->AddNode(techList);
+        auto cpuGrid = GridItem<8, 8>::Create("CpuGrid", 1.0, true);
 
+        leftRightMid->AddNode(techList);
+        leftRightMid->AddNode(TextItem::Create("New Column", []() { return "   "; }, 4, true));
+        leftRightMid->AddNode(cpuGrid);
+
+        cpuDesign->AddNode(leftRightMid);
         cpuDesign->Hide();
         return cpuDesign;
     }
