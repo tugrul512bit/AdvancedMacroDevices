@@ -98,5 +98,8 @@
     <ClInclude Include="Grid.h">
       <Filter>Window\Component</Filter>
     </ClInclude>
+    <ClInclude Include="Cpu.h">
+      <Filter>Design</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

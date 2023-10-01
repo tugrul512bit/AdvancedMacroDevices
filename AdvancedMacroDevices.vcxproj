@@ -140,6 +140,7 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Class.h" />
+    <ClInclude Include="Cpu.h" />
     <ClInclude Include="CpuDesign.h" />
     <ClInclude Include="CreateCharacter.h" />
     <ClInclude Include="Dice.h" />
