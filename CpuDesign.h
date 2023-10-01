@@ -15,6 +15,8 @@ namespace Window
 
         auto leftRightMid = ListItem::Create("Left and right of Cpu Design", 3, false);
         auto leftRightMid2 = ListItem::Create("Left and right of Cpu Design 2", 3, false);
+        auto leftRightMid3 = ListItem::Create("Left and right of Cpu Design 3", 3, false);
+        auto leftRightMid4 = ListItem::Create("Left and right of Cpu Design 4", 3, false);
 
         auto techList = ListItem::Create("Tech List", 3, false);
         
@@ -59,8 +61,19 @@ namespace Window
         leftRightMid2->AddNode(TextItem::Create("Empty Column", []() { return "     "; }, 3, true));
         leftRightMid2->AddNode(TextItem::Create("Requirements For Production", []() { return "Requirements For Production"; }, 3, true));
 
+        leftRightMid3->AddNode(TextItem::Create("Transistors", []() { return "Transistors"; }, 3, false));
+        leftRightMid3->AddNode(TextItem::Create("Empty Column", []() { return "     "; }, 3, true));
+        leftRightMid3->AddNode(TextItem::Create("Thermal Dissipation Power", []() { return "Thermal Dissipation Power"; }, 3, true));
+
+        leftRightMid4->AddNode(TextItem::Create("Test Algorithm", []() { return "Test Algorithm"; }, 3, false));
+        leftRightMid4->AddNode(TextItem::Create("Empty Column", []() { return "     "; }, 3, true));
+        leftRightMid4->AddNode(TextItem::Create("Production Failure Probability", []() { return "Production Failure Probability"; }, 3, true));
+
+
         cpuDesign->AddNode(leftRightMid);
         cpuDesign->AddNode(leftRightMid2);
+        cpuDesign->AddNode(leftRightMid3);
+        cpuDesign->AddNode(leftRightMid4);
         cpuDesign->Hide();
         return cpuDesign;
     }
