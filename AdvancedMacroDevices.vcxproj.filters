@@ -28,6 +28,9 @@
     <Filter Include="Character">
       <UniqueIdentifier>{f3f3a957-7b88-4798-9986-87ca8d84e656}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Global\ImageProcessing">
+      <UniqueIdentifier>{98402358-75b5-4fad-91f2-dfdce7532503}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AdvancedMacroDevices.cpp">
@@ -82,6 +85,12 @@
     </ClInclude>
     <ClInclude Include="Image.h">
       <Filter>Window\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="CreateCharacter.h">
+      <Filter>Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Paint.h">
+      <Filter>Global\ImageProcessing</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

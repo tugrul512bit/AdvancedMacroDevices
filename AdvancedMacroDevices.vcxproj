@@ -140,12 +140,14 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Class.h" />
+    <ClInclude Include="CreateCharacter.h" />
     <ClInclude Include="Dice.h" />
     <ClInclude Include="Equivalence.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="List.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="Module.h" />
+    <ClInclude Include="Paint.h" />
     <ClInclude Include="Skill.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="Tech.h" />

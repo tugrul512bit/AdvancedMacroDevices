@@ -11,14 +11,13 @@
 #include"Button.h"
 #include"List.h"
 #include"Image.h"
+#include"CreateCharacter.h"
 namespace Window
 {
     struct AppFields
     {
         AppFields()
         {
-            // initialize player data
-            freeStatPoints = 10;
             running = true;
 
             if (!glfwInit())
@@ -60,7 +59,6 @@ namespace Window
         ImGuiIO* io;
         AppStructure structure;
         Character currentCharacter;
-        int freeStatPoints;
         bool running;
     };
 
@@ -111,21 +109,15 @@ namespace Window
                 glfwSwapBuffers(_fields->window);
             }
         }
-        int GetFreeStatPoints()
-        {
-            return _fields->freeStatPoints;
-        }
-        void IncrementFreeStatPoints(int n=1)
-        {
-            _fields->freeStatPoints+=n;
-        }
-        void DecrementFreeStatPoints(int n=1)
-        {
-            _fields->freeStatPoints-=n;
-        }
+
         Character* GetCurrentCharacter()
         {
             return &_fields->currentCharacter;
+        }
+
+        void CreateNewCharacter()
+        {
+            _fields->currentCharacter = Character();
         }
     private:
         std::shared_ptr<AppFields> _fields;
@@ -138,61 +130,7 @@ namespace Window
         window->AddNode(TextItem::Create("text item", []() {return "Welcome to Advanced Macro Devices"; }, 3, false));
         app.AddComponent(window);
 
-        auto createCharacter = AppWindow::Create("Character Creation","Character Generator");
-        createCharacter->AddNode(TextItem::Create("Stats", []() {return "Stats"; },3,false));
-
-        createCharacter->AddNode(TextItem::Create("Learning", []() {return "Learning     "; },2, false));
-        createCharacter->AddNode(ButtonItem::Create("Learning Decrement", "-", [app]() mutable { app.GetCurrentCharacter()->DecrementLearning(); app.IncrementFreeStatPoints(std::max(app.GetCurrentCharacter()->GetLearningModifier(), 1)); }, true, []() {return false; }));
-        createCharacter->AddNode(TextItem::Create("Learning Value",                 [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetLearning()); },2,true));
-        createCharacter->AddNode(ButtonItem::Create("Learning Increment", "+",      [app]() mutable { if (app.GetFreeStatPoints() > 0) { app.DecrementFreeStatPoints(std::max(app.GetCurrentCharacter()->GetLearningModifier(), 1)); app.GetCurrentCharacter()->IncrementLearning(); } }, true, []() {return false; }));
-
-        createCharacter->AddNode(TextItem::Create("Rnd", []() {return "R&D          "; }, 2, false));
-        createCharacter->AddNode(ButtonItem::Create("Rnd Decrement", "-",           [app]() mutable { app.GetCurrentCharacter()->DecrementRnd(); app.IncrementFreeStatPoints(std::max(app.GetCurrentCharacter()->GetRndModifier(), 1)); }, true, []() {return false; }));
-        createCharacter->AddNode(TextItem::Create("Rnd Value",                      [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetRnd()); }, 2, true));
-        createCharacter->AddNode(ButtonItem::Create("Rnd Increment", "+",           [app]() mutable { if (app.GetFreeStatPoints() > 0) {  app.DecrementFreeStatPoints(std::max(app.GetCurrentCharacter()->GetRndModifier(), 1)); app.GetCurrentCharacter()->IncrementRnd(); } }, true, []() {return false; }));
-
-        createCharacter->AddNode(TextItem::Create("Strength", []() {return "Strength     "; }, 2, false));
-        createCharacter->AddNode(ButtonItem::Create("Strength Decrement", "-",      [app]() mutable { app.GetCurrentCharacter()->DecrementStrength(); app.IncrementFreeStatPoints(std::max(app.GetCurrentCharacter()->GetStrengthModifier(), 1)); }, true, []() {return false; }));
-        createCharacter->AddNode(TextItem::Create("Strength Value",                 [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetStrength()); }, 2, true));
-        createCharacter->AddNode(ButtonItem::Create("Strength Increment", "+",      [app]() mutable { if (app.GetFreeStatPoints() > 0) {  app.DecrementFreeStatPoints(std::max(app.GetCurrentCharacter()->GetStrengthModifier(), 1)); app.GetCurrentCharacter()->IncrementStrength(); } }, true, []() {return false; }));
-
-        createCharacter->AddNode(TextItem::Create("Health", []() {return "Health       "; }, 2, false));
-        createCharacter->AddNode(ButtonItem::Create("Health Decrement", "-",        [app]() mutable { app.GetCurrentCharacter()->DecrementHealth(); app.IncrementFreeStatPoints(std::max(app.GetCurrentCharacter()->GetHealthModifier(), 1)); }, true, []() {return false; }));
-        createCharacter->AddNode(TextItem::Create("Health Value",                   [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetHealth()); }, 2, true));
-        createCharacter->AddNode(ButtonItem::Create("Health Increment", "+",        [app]() mutable { if (app.GetFreeStatPoints() > 0) {  app.DecrementFreeStatPoints(std::max(app.GetCurrentCharacter()->GetHealthModifier(), 1)); app.GetCurrentCharacter()->IncrementHealth(); } }, true, []() {return false; }));
-
-        createCharacter->AddNode(TextItem::Create("Intellligence", []() {return "Intelligence "; }, 2, false));
-        createCharacter->AddNode(ButtonItem::Create("Intelligence Decrement", "-",  [app]() mutable { app.GetCurrentCharacter()->DecrementIntelligence(); app.IncrementFreeStatPoints(std::max(app.GetCurrentCharacter()->GetIntelligenceModifier(), 1)); }, true, []() {return false; }));
-        createCharacter->AddNode(TextItem::Create("Intelligence Value",             [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetIntelligence()); }, 2, true));
-        createCharacter->AddNode(ButtonItem::Create("Intelligence Increment", "+",  [app]() mutable { if (app.GetFreeStatPoints() > 0) {  app.DecrementFreeStatPoints(std::max(app.GetCurrentCharacter()->GetIntelligenceModifier(), 1)); app.GetCurrentCharacter()->IncrementIntelligence(); } }, true, []() {return false; }));
-
-        createCharacter->AddNode(TextItem::Create("Charisma", []() {return "Charisma     "; }, 2, false));
-        createCharacter->AddNode(ButtonItem::Create("Charisma Decrement", "-",      [app]() mutable { app.GetCurrentCharacter()->DecrementCharisma(); app.IncrementFreeStatPoints(std::max(app.GetCurrentCharacter()->GetCharismaModifier(), 1)); }, true, []() {return false; }));
-        createCharacter->AddNode(TextItem::Create("Charisma Value",                 [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetCharisma()); }, 2, true));
-        createCharacter->AddNode(ButtonItem::Create("Charisma Increment", "+",      [app]() mutable { if (app.GetFreeStatPoints() > 0) {  app.DecrementFreeStatPoints(std::max(app.GetCurrentCharacter()->GetCharismaModifier(), 1)); app.GetCurrentCharacter()->IncrementCharisma(); } }, true, []() {return false; }));
-
-        createCharacter->AddNode(TextItem::Create("Leadership", []() {return "Leadership   "; }, 2, false));
-        createCharacter->AddNode(ButtonItem::Create("Leadership Decrement", "-",    [app]() mutable { app.GetCurrentCharacter()->DecrementLeadership(); app.IncrementFreeStatPoints(std::max(app.GetCurrentCharacter()->GetLeadershipModifier(), 1)); }, true, []() {return false; }));
-        createCharacter->AddNode(TextItem::Create("Leadership Value",               [app]() mutable { return std::to_string(app.GetCurrentCharacter()->GetLeadership()); }, 2, true));
-        createCharacter->AddNode(ButtonItem::Create("Leadership Increment", "+",    [app]() mutable { if (app.GetFreeStatPoints() > 0) {  app.DecrementFreeStatPoints(std::max(app.GetCurrentCharacter()->GetLeadershipModifier(), 1)); app.GetCurrentCharacter()->IncrementLeadership(); } }, true, []() {return false; }));
-
-        createCharacter->AddNode(TextItem::Create("Free Points", []() {return "Free Stat Points     "; }, 2, false));
-        
-        createCharacter->AddNode(TextItem::Create("Free Points Value", [app]() mutable { return std::to_string(app.GetFreeStatPoints()); }, 2, true));
-        
-
-        createCharacter->AddNode(TextItem::Create("New Line", []() {return " "; }, 3, false));
-        createCharacter->AddNode(TextItem::Create("Inventory", []() {return "Inventory"; }, 3, false));
-        createCharacter->AddNode(TextItem::Create("Coins", []() {return "Coins        "; }, 2, false));
-        createCharacter->AddNode(TextItem::Create("Coins Value", [app]() mutable 
-            { 
-                int extra = app.GetCurrentCharacter()->GetCoinsEquivalentOfMissingStats(app.GetFreeStatPoints());
-                return std::to_string(app.GetCurrentCharacter()->GetCoins() + extra);
-            }, 2, true));
-
-        createCharacter->AddNode(TextItem::Create("New Line", []() {return " "; }, 3, false));
-        createCharacter->AddNode(ButtonItem::Create("Create Character Button", "Create", [app]() mutable {}, false, [app]()mutable { return app.GetFreeStatPoints() < 0; }));
-        createCharacter->Hide();
+        auto createCharacter = CreateCharacter(app.GetCurrentCharacter());
         app.AddComponent(createCharacter);
 
 
@@ -200,9 +138,15 @@ namespace Window
         auto cpuDesign = AppWindow::Create("CPU Design","CPU Design");
 
         auto techList = ListItem::Create("Tech List", 3, false);
+
         auto aluItem = ListItem::Create("ALU item", 2, false);
         aluItem->AddNode(TextItem::Create("ALU Tech Name", []() { return "ALU"; }, 3, false));
-        aluItem->AddNode(ImageItem::Create("ALU Image", true, 64, 64));
+        aluItem->AddNode(ImageItem::Create("ALU Image", true, Images::AluImage()));
+
+        auto cacheItem = ListItem::Create("Cache item", 2, false);
+        aluItem->AddNode(TextItem::Create("Cache Tech Name", []() { return "Cache"; }, 3, false));
+        aluItem->AddNode(ImageItem::Create("Cache Image", true, Images::CacheImage()));
+
         techList->AddNode(aluItem);
 
         cpuDesign->AddNode(techList);
@@ -212,7 +156,7 @@ namespace Window
 
         auto menu = AppWindow::Create("Menu","Menu");
         menu->AddNode(ButtonItem::Create("New Game", "New Game",                    []() {},false, []() {return false; }));
-        menu->AddNode(ButtonItem::Create("Create Character", "Create Character",    [createCharacter]() { createCharacter->Show(); },false, []() {return false; }));
+        menu->AddNode(ButtonItem::Create("Create Character", "Create Character", [createCharacter, app]() mutable { app.CreateNewCharacter();  createCharacter->Show(); }, false, []() {return false; }));
         menu->AddNode(ButtonItem::Create("Load Game", "Load Game",                  []() {},false, []() {return false; }));
         menu->AddNode(ButtonItem::Create("Design CPU", "Design CPU", [cpuDesign]() { cpuDesign->Show(); }, false, []() {return false; }));
         menu->AddNode(ButtonItem::Create("Exit", "Exit", [app]() mutable { app.Stop(); }, false, []() {return false; }));

@@ -1,3 +1,4 @@
+#pragma once
 #include "AppStructure.h"
 #include<functional>
 namespace Window

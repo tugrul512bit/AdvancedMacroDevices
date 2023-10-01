@@ -20,6 +20,7 @@ struct Dice
         
     }
 
+
     // Nd6 throw
     int D6(int n)
     {

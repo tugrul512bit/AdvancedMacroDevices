@@ -6,18 +6,51 @@ class Character
 {
 public:
 	Character()
-	{
-		// 3d6 for stats
-		_learning = 10; 
-		_rnd = 10;
-		_strength = 10;
-		_health = 10;
-		_intelligence = 10;
-		_charisma = 10;
-		_leadership = 10;
-		_coins = 1000;
+	{	
+		_freeStatPoints = 10;
+		_learning = dice.D6(3);
+		_rnd = dice.D6(3);
+		_strength = dice.D6(3);
+		_health = dice.D6(3);
+		_intelligence = dice.D6(3);
+		_charisma = dice.D6(3);
+		_leadership = dice.D6(3);
+		_coins = 2500000;
 		_experience = 0;
 		_level = 1;
+	}
+
+	Character(const Character & cha)
+	{
+		_freeStatPoints = cha._freeStatPoints;
+		_learning = cha._learning;
+		_rnd = cha._rnd;
+		_strength = cha._strength;
+		_health = cha._health;
+		_intelligence = cha._intelligence;
+		_charisma = cha._charisma;
+		_leadership = cha._leadership;
+		_coins = cha._coins;
+		_experience = cha._experience;
+		_level = cha._level;
+		_skills = cha._skills;
+	}
+
+	Character& operator = (const Character& cha)
+	{
+		_freeStatPoints = cha._freeStatPoints;
+		_learning = cha._learning;
+		_rnd = cha._rnd;
+		_strength = cha._strength;
+		_health = cha._health;
+		_intelligence = cha._intelligence;
+		_charisma = cha._charisma;
+		_leadership = cha._leadership;
+		_coins = cha._coins;
+		_experience = cha._experience;
+		_level = cha._level;
+		_skills = cha._skills;
+		return *this;
 	}
 
 	bool LevelupPossible()
@@ -149,15 +182,25 @@ public:
 
 	int GetCoinsEquivalentOfMissingStats(int freeStatPoints)
 	{
-		return
-			Equivalence::FreeStatPointsToCredits(freeStatPoints) +
-			Equivalence::LearningPointsToCredits(std::max(18 - _learning, 0)) +
-			Equivalence::RndPointsToCredits(std::max(18 - _rnd, 0)) +
-			Equivalence::StrengthPointsToCredits(std::max(18 - _strength, 0)) +
-			Equivalence::HealthPointsToCredits(std::max(18 - _health, 0)) +
-			Equivalence::IntelligencePointsToCredits(std::max(18 - _intelligence, 0)) +
-			Equivalence::CharismaPointsToCredits(std::max(18 - _charisma, 0)) +
-			Equivalence::LeadershipPointsToCredits(std::max(18 - _leadership, 0));		
+		int total = 0;
+		for (int i = 0; i < freeStatPoints; i++)
+			total += Equivalence::FreeStatPointsToCredits(i);
+		for (int i = 0; i < _learning; i++)
+			total -= Equivalence::LearningPointsToCredits(i);
+		for (int i = 0; i < _rnd; i++)
+			total -= Equivalence::RndPointsToCredits(i);
+
+		for (int i = 0; i < _strength; i++)
+			total -= Equivalence::StrengthPointsToCredits(i);
+		for (int i = 0; i < _health; i++)
+			total -= Equivalence::HealthPointsToCredits(i);
+		for (int i = 0; i < _intelligence; i++)
+			total -= Equivalence::IntelligencePointsToCredits(i);
+		for (int i = 0; i < _charisma; i++)
+			total -= Equivalence::CharismaPointsToCredits(i);
+		for (int i = 0; i < _leadership; i++)
+			total -= Equivalence::LeadershipPointsToCredits(i);
+		return total;
 	}
 
 	int GetLearningModifier()
@@ -199,12 +242,31 @@ public:
 		return ((_leadership >= 10) ? (_leadership - 10) / 2 : -(10 - _leadership + 1) / 2);
 	}
 
+	int GetFreeStatPoints()
+	{
+		return _freeStatPoints;
+	}
+	void IncrementFreeStatPoints(int n = 1)
+	{
+		_freeStatPoints += n;
+	}
+	void DecrementFreeStatPoints(int n = 1)
+	{
+		_freeStatPoints -= n;
+	}
+
+	void SetCoins(int n)
+	{
+		_coins = n;
+	}
+
 	Dice dice;
 private:
 	// every character has own dice (for future parallelizations & fairness)
 
 
 	// stats
+	int _freeStatPoints;
 	int _learning;
 	int _rnd;
 	int _strength;
