@@ -27,6 +27,7 @@ namespace Window
 			_visible = true;
 			_enabled = true;
 			_sameLine = false;
+			_canDragDrop = false;
 		}
 
 		virtual void PreRender() {}
@@ -48,6 +49,8 @@ namespace Window
 		{			
 			if (_visible)
 			{
+
+
 				if (_sameLine)
 					ImGui::SameLine();
 				if (!_enabled)
@@ -55,6 +58,15 @@ namespace Window
 
 				ImGui::PushID(_name.c_str());
 				PreRender();
+
+				if (ImGui::IsItemHovered() && _hoverPopup.get()!=nullptr)
+				{
+					ImGui::BeginTooltip();
+					ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+					_hoverPopup->Render();
+					ImGui::PopTextWrapPos();
+					ImGui::EndTooltip();
+				}
 
 				for (auto node : _childNodes)
 				{
@@ -66,6 +78,7 @@ namespace Window
 
 				if (!_enabled)
 					ImGui::EndDisabled();
+
 			}
 		}
 
@@ -93,6 +106,16 @@ namespace Window
 			_visible = true;
 		}
 
+		void AddHoverPopup(std::shared_ptr<AppStructure> structure)
+		{
+			_hoverPopup = structure;
+		}
+
+		void MakeDraggable()
+		{
+			_canDragDrop = true;
+		}
+
 	protected:
 		ItemType _type;
 		std::string _name;
@@ -101,7 +124,9 @@ namespace Window
 		bool _visible;
 		bool _enabled;
 		bool _sameLine;
+		bool _canDragDrop;
 		std::vector<std::shared_ptr<AppStructure>> _childNodes;
+		std::shared_ptr<AppStructure> _hoverPopup;
 	};
 
 }
