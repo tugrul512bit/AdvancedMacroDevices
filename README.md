@@ -9,6 +9,8 @@ Design your own CPU in a simple way, produce it with an outsourced factory or wi
 - imgui (corporation management, character specs, cpu design)
 - opencl (gpgpu for simulated-annealing to auto-design processors for all players when required)
 
+# Features
+
 - millions of simulated consumers in a free (cpu) market simulation.
 - run benchmarks (with assembler specific to your cpu) on designed cpus & have influence on gamers, data-centers and miners, to sell more. 
 - tune production costs to optimize profit
