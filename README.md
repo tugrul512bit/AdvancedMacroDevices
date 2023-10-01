@@ -2,6 +2,13 @@
 
 Design your own CPU in a simple way, produce it with an outsourced factory or with your own factory, optimize the design, sell it more and beat other corporations in the market: Imtel, Nvideo and IMB.
 
+# Dependencies
+
+- C++14
+- vcpkg (for installing other dependencies)
+- imgui (corporation management, character specs, cpu design)
+- opencl (gpgpu for simulated-annealing to auto-design processors for all players when required)
+
 - millions of simulated consumers in a free (cpu) market simulation.
 - run benchmarks (with assembler specific to your cpu) on designed cpus & have influence on gamers, data-centers and miners, to sell more. 
 - tune production costs to optimize profit
@@ -169,10 +176,4 @@ Researcher categories:
 
 Various braches that help on logical parts of CPU, physical capabilities of CPU and efficiency of r&d.
 
-
-# Dependencies
-
-- vcpkg (for installing other dependencies)
-- imgui (corporation charts, reports, etc)
-- opencl (gpgpu)
 
