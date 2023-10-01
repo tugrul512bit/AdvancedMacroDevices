@@ -27,7 +27,7 @@ namespace Window
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); 
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-            window = glfwCreateWindow(1280, 720, "Advanced Macro Devices", NULL, NULL);
+            window = glfwCreateWindow(1600, 900, "Advanced Macro Devices", NULL, NULL);
             if (!window)
             {
                 glfwTerminate();
@@ -95,7 +95,6 @@ namespace Window
 
                 // Advanced Macro Devices
                 _fields->structure.Calculate();
-                _fields->structure.Compute();
                 _fields->structure.Render();
 
 
@@ -134,8 +133,6 @@ namespace Window
         auto createCharacter = CreateCharacter(app.GetCurrentCharacter());
         app.AddComponent(createCharacter);
 
-
-
         auto cpuDesign = CpuDesign(app.GetCurrentCharacter());
         app.AddComponent(cpuDesign);
 
@@ -147,8 +144,6 @@ namespace Window
         menu->AddNode(ButtonItem::Create("Exit", "Exit", [app]() mutable { app.Stop(); }, false, []() {return false; }));
         app.AddComponent(menu);
 
-
-     
         return app;
     }
 }
