@@ -155,5 +155,50 @@ namespace Window
 			}
 			return img;
 		}
+
+		cv::Mat RegisterImage()
+		{
+			cv::Mat img(64, 64, CV_8UC4);
+			img = 0;
+			// border
+			cv::line(img, cv::Point2f(0, 0), cv::Point2f(63, 0), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(63, 0), cv::Point2f(63, 63), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(63, 63), cv::Point2f(0, 63), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(0, 63), cv::Point2f(0, 0), cv::Scalar(255, 255, 255, 255), 1);
+
+			// content
+			for (int j = 0; j < 5; j++)
+			for (int i = 0; i < 5; i++)
+			{
+				cv::line(img, cv::Point2f(4 + j*12, 4 + i * 12), cv::Point2f(11 + j * 12, 4 + i * 12), cv::Scalar(255, 255, 255, 255), 1);
+				cv::line(img, cv::Point2f(11 + j * 12, 4 + i * 12), cv::Point2f(11 + j* 12, 11 + i * 12), cv::Scalar(255, 255, 255, 255), 1);
+				cv::line(img, cv::Point2f(11 + j * 12, 11 + i * 12), cv::Point2f(4 + j * 12, 11 + i * 12), cv::Scalar(255, 255, 255, 255), 1);
+				cv::line(img, cv::Point2f(4 + j * 12, 11 + i * 12), cv::Point2f(4 + j * 12, 4 + i * 12), cv::Scalar(255, 255, 255, 255), 1);
+
+				img = Global::ImageProcessing::FloodFill(8+j* 12, 8 + i * 12, img, 255, 255, 255, 255);
+				cv::putText(img, cv::String("R"), cv::Point2f(5+j* 12, 10 + i * 12), 1, 0.4, cv::Scalar(0, 0, 0, 255));
+			}
+			return img;
+		}
+
+		cv::Mat BusImage()
+		{
+			cv::Mat img(64, 64, CV_8UC4);
+			img = 0;
+			
+			// content			
+			cv::line(img, cv::Point2f(28, 0), cv::Point2f(28, 28), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(36, 0), cv::Point2f(36, 28), cv::Scalar(255, 255, 255, 255), 1);
+
+			cv::line(img, cv::Point2f(28, 63), cv::Point2f(28, 35), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(36, 63), cv::Point2f(36, 35), cv::Scalar(255, 255, 255, 255), 1);
+
+			cv::line(img, cv::Point2f(0, 28), cv::Point2f(28, 28), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(0, 35), cv::Point2f(28, 35), cv::Scalar(255, 255, 255, 255), 1);
+
+			cv::line(img, cv::Point2f(36, 28), cv::Point2f(63, 28), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(36, 35), cv::Point2f(63, 35), cv::Scalar(255, 255, 255, 255), 1);
+			return img;
+		}
 	}
 }

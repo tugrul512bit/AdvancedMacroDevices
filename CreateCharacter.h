@@ -63,10 +63,11 @@ namespace Window
 
         createCharacter->AddNode(TextItem::Create("New Line", []() {return " "; }, 3, false));
         createCharacter->AddNode(ButtonItem::Create("Create Character Button", "Create", 
-            [character]() mutable 
+            [character,createCharacter]() mutable 
             {
                 int extra = character->GetCoinsEquivalentOfMissingStats(character->GetFreeStatPoints());
                 character->SetCoins(character->GetCoins()+extra);
+                createCharacter->Hide();
             }, false, 
             [character]()mutable 
             { 
