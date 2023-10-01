@@ -23,16 +23,19 @@ namespace Design
 				for (int i = 0; i < _width; i++)
 				{
 					// auto & curModule = _moduleGrid[i + j*_width];
-					// auto output = curModule.ComputeOutput();
-					// auto neighbors = GetAdjacentModules(i + j*_width);
-					/*
-					for (auto& n : neighbors)
-					{
-						n.Input(output);
-						auto out = n.ComputeOutput();
-						curModule.Input(out);
-					}
-					*/
+					// curModule.ComputeOutput();
+				}
+			}
+
+			for (int j = 0; j < _height; j++)
+			{
+				for (int i = 0; i < _width; i++)
+				{
+					// auto & curModule = _moduleGrid[i + j*_width];
+					// auto output = curModule.GetOutput();
+					// auto neighborList = GetNeighbors(i+j*_width);
+					// for(auto & n:neighborList)
+					// { n.AddInput(output); }
 				}
 			}
 		}
