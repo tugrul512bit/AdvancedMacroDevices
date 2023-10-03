@@ -107,5 +107,11 @@
     <ClInclude Include="CacheController.h">
       <Filter>Design\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="CacheBank.h">
+      <Filter>Design\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="BranchPredictor.h">
+      <Filter>Design\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

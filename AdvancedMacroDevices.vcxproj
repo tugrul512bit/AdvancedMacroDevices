@@ -137,7 +137,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppStructure.h" />
+    <ClInclude Include="BranchPredictor.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="CacheBank.h" />
     <ClInclude Include="CacheController.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Class.h" />
