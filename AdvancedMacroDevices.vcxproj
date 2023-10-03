@@ -138,6 +138,7 @@
   <ItemGroup>
     <ClInclude Include="AppStructure.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="CacheController.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Class.h" />
     <ClInclude Include="Cpu.h" />

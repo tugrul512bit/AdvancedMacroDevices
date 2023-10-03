@@ -4,6 +4,15 @@
 #include<queue>
 namespace Design
 {
+	// work flow of "build"
+	// prepare module-module connections (top,right,bottom,left)
+	// prepare module relations (cache controller -  cache banks, control unit - alus, etc)
+
+	// work flow of "run"
+	// push to outputs
+	// push to inputs
+	// compute
+
 	// for simple processors, some instructions generate many micro operations (like 1 square root = a lot of multiplications, additions, etc)
 	enum DataType
 	{
@@ -34,16 +43,65 @@ namespace Design
 		MicroOpParameter4,
 		MicroOpParameter5,
 		MicroOpBranchPrediction,
-		MicroOpSync
+		MicroOpSync,
+
+		// result (which has a target module type or id to go)
+		Result
+	};
+
+	enum FpuInstructionType
+	{
+		Add,
+		Mul,
+		Sub,
+		Div
+	};
+
+	enum ModuleType
+	{
+		// bus
+		Connection,
+
+		// alu, fpu
+		Computation,
+
+		// ram, cache bank
+		Storage,
+
+		// control unit, cache controller
+		Control
 	};
 
 	// the data that is passing between modules
 	struct Data
 	{
+		// type of module to take this data
+		// if input queue of module is full, it goes to another module
+		ModuleType targetModuleType;
 		DataType type;
-		int valueInt;
-		float valueFloat;
+
+		// can be instruction or parameter
+		/*
+			fpu:
+				0=add
+				1=mul
+				2=sub
+				3=div
+				4=sqrt
+				5=pow
+				6=exp
+				7=log
+				8=mod
+				9=less than
+				10=greater than
+				11=equal
+				12=fma
+
+		*/
+		int value; 
 	};
+
+
 
 	// adjacent modules (top,bot,left,right) make connections automatically.
 	// output is broadcasted to 4 neighbors
@@ -53,70 +111,50 @@ namespace Design
 	{
 	public:
 		Module()
-		{
-			_isPipelined = false;
+		{			
+			for (int i = 0; i < 4; i++)
+				connectedModules[i] = nullptr;
 			_isBusy = false;
 			_failProbability = 0.0f;
 			_nanometer = 1000;
+			_type = ModuleType::Connection;
 		}
-
+		
 		virtual void ComputeOutput() {}
 		virtual void AddInput(Data input) {}
 		virtual Data GetOutput() {}
-	protected:
-		bool _isPipelined; // pipelining overlaps execution and i/o. rest of the pipelining is modeled as "less/more latency"
+		virtual int GetModuleType() {}
+
+		std::vector<Module*> GetConnectedModules(Module* source = nullptr)
+		{
+			std::vector<Module*> result;
+			for (int i = 0; i < 4; i++)
+			{
+				if (connectedModules[i])
+				{
+					if (connectedModules[i] != source)
+						result.push_back(connectedModules[i]);
+				}
+			}
+			return result;
+		}
+
+		virtual void Compute(){	}
+	protected:		
+		ModuleType _type;
 		bool _isBusy; // when it is computing something, it is busy and producing heat
 		float _failProbability; // all transistors have a failure probability, hence the module failure, per clock. the more transistors the more failure chance.
 		int _nanometer;
+		int _numTransistors;
+		
+		int _thermalDissipationPower;
 		std::vector<SkillRequirement> _skillRequirements;
 		std::vector<StatRequirement> _statRequirements;
-		std::queue<Data> _commandQueue; // for ease of design, control-logic is exchanged with simple command queue per module
-		std::queue<Data> _dataQueue;
+		std::queue<Data> _inputQueue;
+		std::queue<Data> _outputQueue;
 		std::vector<DataType> _commandFilter; // takes only these kind of commands to work
+		Module* connectedModules[4];
 	};
 
-	class Cache :public Module
-	{
-	public:
-		Cache(int capacity, int latencyHit, int latencyMiss, int ways, int eviction):Module()
-		{
-			_capacity = capacity;
-			_latencyHit = latencyHit;
-			_latencyMiss = latencyMiss;
-			_numWays = ways;
-			_evictionPolicy = eviction;
 
-			// requirements to create a cache
-			_skillRequirements.push_back(SkillRequirement(ElectronicsSkill().GetName(), 5 + capacity * 5 - latencyHit * 4 - latencyMiss + ways * 3 + (eviction==1 ? 4 : 0)));
-			_statRequirements.push_back(StatRequirement("Intelligence", 11));
-
-			// cache takes only these commands
-			// read: MicroOpMemRead + MicroOpParameter1
-			// write: MicroOpMemWrite + MicroOpParameter1 + MicroOpParameter2
-			_commandFilter.push_back(DataType::MicroOpMemRead);
-			_commandFilter.push_back(DataType::MicroOpMemWrite);
-			_commandFilter.push_back(DataType::MicroOpParameter1); // address to read/write
-			_commandFilter.push_back(DataType::MicroOpParameter2); // data chunk to read/write
-		}
-	private:
-		// cache size in number of maximum "Data"
-		// increases with electronics, physics skills
-		int _capacity; 
-
-		// number of cycles for cache-hit
-		// decreases with electronics, algorithm, physics skills
-		int _latencyHit; 
-
-		// number of cycles for cache-miss, excluding RAM latency
-		// decreases with electronics, algorithm, physics skills
-		int _latencyMiss; 
-
-		// number of parallel data lines to serve multiple clients concurrently or single client with more data
-		// increases with electronics
-		int _numWays; 
-
-		// 0=direct-mapped, 1=fully associative LRU
-		// unlocks LRU with algorithm & electronics
-		int _evictionPolicy; 
-	};
 }

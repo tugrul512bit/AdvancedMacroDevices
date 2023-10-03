@@ -31,6 +31,9 @@
     <Filter Include="Global\ImageProcessing">
       <UniqueIdentifier>{98402358-75b5-4fad-91f2-dfdce7532503}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Design\Modules">
+      <UniqueIdentifier>{0df9ca81-9686-46fa-8f5f-4e3ae26c70cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AdvancedMacroDevices.cpp">
@@ -100,6 +103,9 @@
     </ClInclude>
     <ClInclude Include="Cpu.h">
       <Filter>Design</Filter>
+    </ClInclude>
+    <ClInclude Include="CacheController.h">
+      <Filter>Design\Modules</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
