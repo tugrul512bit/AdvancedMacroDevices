@@ -1,6 +1,16 @@
-# AdvancedMacroDevices
+# Advanced Macro Devices: Deadlock Tycoon
 
-Design your own CPU in a simple way, produce it with an outsourced factory or with your own factory, optimize the design, sell it more and beat other corporations in the market: Imtel, Nvideo and IMB.
+- Design your unique modular CPU on a uniform grid of cells
+- Reprogram modules (like "control unit") for more performance or leave them at their default setting and focus on more fun
+- Try to evade deadlock as much as possible
+- Pass as many benchmarks as possible
+- Beat Imtel, Nvideo and IMB in CPU performance, quality, power and sell more CPUs
+- Level-up your character and distribute skill points
+- Unlock better technologies
+- Buy factories to produce more CPUs
+- Iterate your next CPU design
+
+
 
 # Dependencies
 
