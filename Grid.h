@@ -7,28 +7,35 @@
 #include<string>
 namespace Window
 {
-	template<int COLS=2,int ROWS=2>
+
 	class GridItem : public AppStructure
 	{
 	public:
-		static std::shared_ptr<AppStructure> Create(std::string name, int fontScale, bool sameLine)
+		static std::shared_ptr<AppStructure> Create(std::string name,int rows, int cols, int fontScale, bool sameLine)
 		{
-			std::shared_ptr<AppStructure> node = std::shared_ptr<GridItem>(new GridItem(name, sameLine, fontScale), [](GridItem* g) { delete g; });
+			std::shared_ptr<AppStructure> node = std::shared_ptr<GridItem>(new GridItem(name, rows, cols, sameLine, fontScale), [](GridItem* g) { delete g; });
 			return node;
 		}
 
-		GridItem(std::string name = "text", bool sameLine = false, float fontScale = 1.0f)
+		GridItem(std::string name = "text", int rows=2, int cols=2, bool sameLine = false, float fontScale = 1.0f)
 		{
 			_name = name;
 			_sameLine = sameLine;
 			_fontScale = fontScale;
-			for (int j = 0; j < ROWS; j++)
+			_rows = rows;
+			_cols = cols;
+			for (int j = 0; j < _rows; j++)
 			{
-				for (int i = 0; i < COLS; i++)
+				for (int i = 0; i < _cols; i++)
 				{
-					_cells[j][i] = ImageItem::Create(std::string("grid_cell_") + std::to_string(i + j * COLS), false, Images::EmptyGridCellImage());
+					_cells.push_back(ImageItem::Create(std::string("grid_cell_") + std::to_string(i + j * _cols), false, Images::EmptyGridCellImage()));
 				}
 			}
+		}
+
+		void SetCell(int col, int row, std::shared_ptr<AppStructure> structure)
+		{
+			_cells[row*_cols + col] = structure;
 		}
 
 		void Compute() override
@@ -40,18 +47,18 @@ namespace Window
 		{
 			ImGui::SetWindowFontScale(_fontScale);
 			ImGui::BeginGroup();
-			for (int j = 0; j < ROWS; j++)
+			for (int j = 0; j < _rows; j++)
 			{
 				
-				for (int i = 0; i < COLS; i++)
+				for (int i = 0; i < _cols; i++)
 				{
 					if(i>0)
 						ImGui::SameLine();
 				
-					if (_cells[j][i].get() != nullptr)
+					if (_cells[j*_cols + i].get() != nullptr)
 					{
-						_cells[j][i]->PreRender();
-						_cells[j][i]->PostRender();
+						_cells[j * _cols + i]->PreRender();
+						_cells[j * _cols + i]->PostRender();
 					}
 					
 				}
@@ -66,6 +73,8 @@ namespace Window
 		}
 	private:
 		float _fontScale;
-		std::shared_ptr<AppStructure> _cells[ROWS][COLS];
+		int _rows;
+		int _cols;
+		std::vector<std::shared_ptr<AppStructure>> _cells;
 	};
 }

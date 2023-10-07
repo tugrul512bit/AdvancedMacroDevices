@@ -40,7 +40,8 @@ namespace Window
 			Compute();
 			for (auto node : _childNodes)
 			{
-				node->Calculate();
+				if(node.get())
+					node->Calculate();
 			}
 			
 		}
@@ -49,8 +50,6 @@ namespace Window
 		{			
 			if (_visible)
 			{
-
-
 				if (_sameLine)
 					ImGui::SameLine();
 				if (!_enabled)
@@ -63,14 +62,16 @@ namespace Window
 				{
 					ImGui::BeginTooltip();
 					ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-					_hoverPopup->Render();
+					if(_hoverPopup.get())
+						_hoverPopup->Render();
 					ImGui::PopTextWrapPos();
 					ImGui::EndTooltip();
 				}
 
 				for (auto node : _childNodes)
 				{
-					node->Render();
+					if(node.get())
+						node->Render();
 				}
 				
 				PostRender();
@@ -80,6 +81,17 @@ namespace Window
 					ImGui::EndDisabled();
 
 			}
+		}
+
+		template<typename T>
+		T* AsPtr()
+		{
+			return (T*)this;
+		}
+
+		void DeleteAllNodes()
+		{
+			_childNodes.clear();
 		}
 
 		void AddNode(std::shared_ptr<AppStructure> node)

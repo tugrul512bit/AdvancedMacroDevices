@@ -12,6 +12,7 @@
 #include"List.h"
 #include"Image.h"
 #include"CreateCharacter.h"
+#include"UnitTest.h"
 #include"CpuDesign.h"
 #include<mutex>
 namespace Window
@@ -160,13 +161,21 @@ namespace Window
         auto cpuDesign = CpuDesign(app.GetCurrentCharacter());
         app.AddComponent(cpuDesign);
 
+
+        auto unitTest = UnitTest();
+        app.AddComponent(unitTest);
+
         auto menu = AppWindow::Create("Menu","Menu");
         menu->AddNode(ButtonItem::Create("New Game", "New Game",                    []() {},false, []() {return false; }));
         menu->AddNode(ButtonItem::Create("Create Character", "Create Character", [createCharacter, app]() mutable { app.CreateNewCharacter();  createCharacter->Show(); }, false, []() {return false; }));
         menu->AddNode(ButtonItem::Create("Load Game", "Load Game",                  []() {},false, []() {return false; }));
         menu->AddNode(ButtonItem::Create("Design CPU", "Design CPU", [cpuDesign]() { cpuDesign->Show(); }, false, []() {return false; }));
+        menu->AddNode(ButtonItem::Create("Unit Test Main", "Unit Test", [unitTest]() { unitTest->Show(); }, false, []() {return false; }));
         menu->AddNode(ButtonItem::Create("Exit", "Exit", [app]() mutable { app.Stop(); }, false, []() {return false; }));
         app.AddComponent(menu);
+
+
+
 
         return app;
     }

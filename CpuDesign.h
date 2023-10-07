@@ -51,7 +51,7 @@ namespace Window
         techList->AddNode(decoderItem);
         techList->AddNode(fpuItem);
 
-        auto cpuGrid = GridItem<8, 8>::Create("CpuGrid", 1.0, true);
+        auto cpuGrid = GridItem::Create("CpuGrid",8,8, 1.0, true);
 
         leftRightMid->AddNode(techList);
         leftRightMid->AddNode(TextItem::Create("New Column", []() { return "   "; }, 4, true));

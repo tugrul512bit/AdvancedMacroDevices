@@ -61,20 +61,17 @@ namespace Design
 
 	enum ModuleType
 	{
-		// bus
-		Connection,
-
-		// alu, fpu
-		Computation,
-
-		// ram, cache bank
-		Storage,
-
-		// control unit, cache controller
-		Control,
+		BUS,
+		CONTROL_UNIT,
+		CACHE_CONTROL,
+		MEMORY_CONTROL,
+		ALU,
+		FPU,
+		CACHE_BANK,
+		BRANCH_PREDICTOR,
 
 		// for searching modules through bus connections
-		Any
+		ANY
 	};
 
 	// the data that is passing between modules
@@ -117,20 +114,22 @@ namespace Design
 	public:
 		Module()
 		{			
+			_directConnectedModules.resize(4);
 			for (int i = 0; i < 4; i++)
 				_directConnectedModules[i] = nullptr;
 			_isBusy = false;
 			_failProbability = 0.0f;
-			_litography = 1000;
-			_type = ModuleType::Connection;
+			_lithography = 1000;
+			_type = ModuleType::ANY; // just a default
 			_numTransistors = 0;
 			_thermalDissipationPower = 0;
+			_frequency = 1; // 1 means equal frequency to outer source. 2 means 2x frequency or 2 iterations per cycle
 		}
 		
 		virtual void ComputeOutput() {}
 		virtual void AddInput(Data input) {}
-		virtual Data GetOutput() {}
-		virtual int GetModuleType() {}
+		virtual Data GetOutput() { return Data(); }
+		virtual ModuleType GetModuleType() { return ModuleType::ANY; }
 
 		std::vector<Module*> GetConnectedModulesExceptThis(Module* source = nullptr)
 		{
@@ -153,6 +152,8 @@ namespace Design
 		bool _isBusy; 
 		float _failProbability; // all transistors have a failure probability, hence the module failure, per clock. the more transistors the more failure chance.
 		int _lithography;
+
+		// actual frequency is controlled from outside, this is just a multiplier (that is checked for triggering compute at signal)
 		int _frequency;
 		int _numTransistors;
 		int _thermalDissipationPower;

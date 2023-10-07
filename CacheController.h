@@ -30,7 +30,7 @@ namespace Design
 			_statRequirements.push_back(StatRequirement("Intelligence", 10 + std::sqrt(frequency)));
 
 			// this is a control unit, can manage other modules (such as memory banks of cache through a bus / multiple buses)
-			_type = ModuleType::Control;
+			_type = ModuleType::CACHE_CONTROL;
 
 			
 			_numTransistors = std::pow(capacity,1.5f)+300 + std::pow(frequency,1.1f)*100;
@@ -38,6 +38,7 @@ namespace Design
 			_capacity = capacity;
 			_lithography = lithography;
 			_evictionPolicy = evictionPolicy;
+
 		}
 
 		void Compute() override
@@ -67,11 +68,11 @@ namespace Design
 			std::vector<Module*> banks;
 			for (int i = 0; i < 4; i++)
 			{
-				if (connectedModules[i])
+				if (_directConnectedModules[i].get())
 				{
-					if (connectedModules[i]->GetModuleType() == ModuleType::Connection || connectedModules[i]->GetModuleType() == ModuleType::Storage)
+					if (_directConnectedModules[i]->GetModuleType() == ModuleType::BUS || _directConnectedModules[i]->GetModuleType() == ModuleType::CACHE_BANK)
 					{
-						q.push({ connectedModules[i],(Module*)this });
+						q.push({ _directConnectedModules[i].get(),(Module*)this});
 					}
 				}
 			}
@@ -82,14 +83,14 @@ namespace Design
 				ModuleWithSource m = q.front();
 				q.pop();
 
-				if (m.target->GetModuleType() == ModuleType::Storage)
+				if (m.target->GetModuleType() == ModuleType::CACHE_BANK)
 				{
 					banks.push_back(m.target);
 				}
 
-				if (m.target->GetModuleType() == ModuleType::Connection)
+				if (m.target->GetModuleType() == ModuleType::BUS)
 				{
-					std::vector<Module*> conn = m.target->GetConnectedModules(m.source);
+					std::vector<Module*> conn = m.target->GetConnectedModulesExceptThis(m.source);
 					for (auto& c : conn)
 					{
 						q.push({ c,m.target });

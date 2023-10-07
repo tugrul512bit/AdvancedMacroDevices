@@ -66,6 +66,7 @@ namespace Design
 		{
 			_lithography = lithography;		
 			_frequency = frequency;
+			_type = ModuleType::BUS;
 		}
 
 		void Compute() override

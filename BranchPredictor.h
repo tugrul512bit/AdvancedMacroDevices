@@ -20,7 +20,7 @@ namespace Design
 		{
 			_capacity = capacity;
 			_lithography = lithography;	
-			
+			_type = ModuleType::BRANCH_PREDICTOR;			
 		}
 
 		void Compute() override

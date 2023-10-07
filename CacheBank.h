@@ -19,6 +19,7 @@ namespace Design
 			_capacity = capacity;
 			_lithography = lithography;
 			_evictionPolicy = evictionPolicy;
+			_type = ModuleType::CACHE_BANK;
 		}
 
 		void Compute() override

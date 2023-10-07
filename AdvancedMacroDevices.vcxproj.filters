@@ -116,5 +116,8 @@
     <ClInclude Include="Bus.h">
       <Filter>Design\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="UnitTest.h">
+      <Filter>Window</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
