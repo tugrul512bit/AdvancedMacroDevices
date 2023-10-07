@@ -142,8 +142,11 @@ namespace Design
 						}
 						else if (_moduleGrid[i + j * _width]->GetModuleType() == ModuleType::ALU)
 						{
-
-							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("alu_img_") + std::to_string(i + j * _width), false, Window::Images::AluImage()));
+							if (_moduleGrid[i + j * _width]->GetBusyness())
+								result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("alu_img_") + std::to_string(i + j * _width), false, Window::Images::AluImage()));
+							else							
+								result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("alu_img_") + std::to_string(i + j * _width), false, Window::Images::AluImage()));
+							
 						}
 						else if (_moduleGrid[i + j * _width]->GetModuleType() == ModuleType::CONTROL_UNIT)
 						{

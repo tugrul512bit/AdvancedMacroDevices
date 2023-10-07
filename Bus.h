@@ -84,6 +84,7 @@ namespace Design
 			{
 				mapPtr = std::make_shared<std::map<Module*, bool>>();
 				filter = mapPtr.get();
+				filter->operator[](this) = true;
 			}
 
 			for (int i = 0; i < 4; i++)

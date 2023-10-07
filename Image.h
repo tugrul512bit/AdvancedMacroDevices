@@ -131,6 +131,13 @@ namespace Window
 			return img;
 		}
 
+		cv::Mat AluWorkingImage()
+		{
+			auto result = AluImage();
+			result = Global::ImageProcessing::FloodFill(32, 37, result, 0, 255, 0, 255);
+			return result;
+		}
+
 		cv::Mat CacheImage()
 		{
 			cv::Mat img(64, 64, CV_8UC4);
