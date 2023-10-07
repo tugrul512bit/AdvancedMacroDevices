@@ -12,11 +12,12 @@ namespace Design
 	class Cpu
 	{
 	public:
-		Cpu(int width = 4, int height = 4)
+		Cpu(int width = 4, int height = 4, int frequency = 1)
 		{
 			_moduleGrid.resize(((size_t)width)*height);
 			_width = width;
 			_height = height;
+			_frequency = frequency;
 		}
 
 		void Compute()

@@ -8,16 +8,15 @@
 
 namespace Design
 {
-	// cache bank stores cached data
-	// input: memory request
-	// output: data	
+
+	// controls other modules
 	class ControlUnit :public Module
 	{
 	public:
 		ControlUnit(int frequency, int lithography)
 		{
 			_frequency = frequency;
-			_lithography = lithography;			
+			_lithography = lithography;
 			_type = ModuleType::CONTROL_UNIT;
 		}
 

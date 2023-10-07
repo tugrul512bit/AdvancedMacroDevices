@@ -216,6 +216,21 @@ namespace Window
 			cv::line(img, cv::Point2f(25, 15), cv::Point2f(5, 15), cv::Scalar(255, 255, 255, 255), 2);
 			cv::line(img, cv::Point2f(5, 15), cv::Point2f(5, 5), cv::Scalar(255, 255, 255, 255), 2);
 
+
+			cv::line(img, cv::Point2f(12, 25), cv::Point2f(32, 25), cv::Scalar(255, 255, 255, 255), 2);
+			cv::line(img, cv::Point2f(32, 25), cv::Point2f(32, 35), cv::Scalar(255, 255, 255, 255), 2);
+			cv::line(img, cv::Point2f(32, 35), cv::Point2f(12, 35), cv::Scalar(255, 255, 255, 255), 2);
+			cv::line(img, cv::Point2f(12, 35), cv::Point2f(12, 25), cv::Scalar(255, 255, 255, 255), 2);
+
+			cv::line(img, cv::Point2f(35, 12), cv::Point2f(55, 12), cv::Scalar(255, 255, 255, 255), 2);
+			cv::line(img, cv::Point2f(55, 12), cv::Point2f(55, 22), cv::Scalar(255, 255, 255, 255), 2);
+			cv::line(img, cv::Point2f(55, 22), cv::Point2f(35, 22), cv::Scalar(255, 255, 255, 255), 2);
+			cv::line(img, cv::Point2f(35, 22), cv::Point2f(35, 12), cv::Scalar(255, 255, 255, 255), 2);
+
+			cv::line(img, cv::Point2f(15, 15), cv::Point2f(12, 30), cv::Scalar(255, 255, 255, 255), 1);
+
+			cv::line(img, cv::Point2f(45, 22), cv::Point2f(32, 30), cv::Scalar(255, 255, 255, 255), 1);
+
 			return img;
 		}
 

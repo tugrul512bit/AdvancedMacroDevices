@@ -20,7 +20,7 @@ namespace Window
         unitTest->AddNode(column1);        
         unitTest->AddNode(column2);
         unitTest->AddNode(column3);
-        column1->AddNode(ButtonItem::Create("Bus Test 1", "Bus Test 1", 
+        column1->AddNode(ButtonItem::Create("Bus Test 1", "Bus Test 1: linear propagation", 
             [column3]()
             {
                 column3->DeleteAllNodes();
