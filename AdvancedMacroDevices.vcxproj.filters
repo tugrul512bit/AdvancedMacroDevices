@@ -119,5 +119,11 @@
     <ClInclude Include="UnitTest.h">
       <Filter>Window</Filter>
     </ClInclude>
+    <ClInclude Include="ControlUnit.h">
+      <Filter>Design\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Alu.h">
+      <Filter>Design\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

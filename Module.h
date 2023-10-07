@@ -129,7 +129,7 @@ namespace Design
 		virtual void ComputeOutput() {}
 		virtual void AddInput(Data input) {}
 		virtual Data GetOutput() { return Data(); }
-		virtual ModuleType GetModuleType() { return ModuleType::ANY; }
+		virtual ModuleType GetModuleType() { return _type; }
 
 		std::vector<Module*> GetConnectedModulesExceptThis(Module* source = nullptr)
 		{

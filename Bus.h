@@ -29,9 +29,9 @@ namespace Design
 	{
 	public:
 
-		BusData(ModuleType sourceType=ModuleType::Any, ModuleType destinationType=ModuleType::Any, int sourceId=-1, int destinationId=-1,
+		BusData(ModuleType sourceType=ModuleType::ANY, ModuleType destinationType=ModuleType::ANY, int sourceId=-1, int destinationId=-1,
 				std::vector<int> path=std::vector<int>(), DataType dataType=DataType::DataChunk, Data dataValue=Data(),
-				int contextId=-1, ModuleType reservationType=ModuleType::Any, int reservationId=-1):
+				int contextId=-1, ModuleType reservationType=ModuleType::ANY, int reservationId=-1):
 			_sourceType(sourceType), _destinationType(destinationType),_sourceId(sourceId),_destinationId(destinationId),
 			_path(path),_dataType(dataType),_dataValue(dataValue),_contextId(contextId),_reservationType(reservationType),
 			_reservationId(reservationId)

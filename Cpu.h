@@ -4,6 +4,9 @@
 #include"Module.h"
 #include"Tech.h"
 #include"Grid.h"
+#include"Bus.h"
+#include"Alu.h"
+#include"ControlUnit.h"
 namespace Design
 {
 	class Cpu
@@ -41,9 +44,10 @@ namespace Design
 		}
 
 
-		void SetCell(int col, int row, Module module)
+		template<typename TypeModule>
+		void SetCell(int col, int row, int frequency, int lithography)
 		{ 
-			_moduleGrid[col + row * _width] = module; // copies
+			_moduleGrid[col + row * _width] = (std::shared_ptr<Design::Module>) std::make_shared<TypeModule>(frequency,lithography); // copies
 		}
 
 		std::shared_ptr<Window::AppStructure> GetGridView()
@@ -53,9 +57,23 @@ namespace Design
 			{
 				for (int i = 0; i < _width; i++)
 				{
-					if (_moduleGrid[i + j * _width].GetModuleType() == ModuleType::BUS)
-					{
-						result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("bus_img_") + std::to_string(i + j * _width), false, Window::Images::BusImage()));
+					if (_moduleGrid[i + j * _width].get())
+					{				
+						if (_moduleGrid[i + j * _width]->GetModuleType() == ModuleType::BUS)
+						{
+							
+							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("bus_img_") + std::to_string(i + j * _width), false, Window::Images::BusImage()));
+						}
+						else if (_moduleGrid[i + j * _width]->GetModuleType() == ModuleType::ALU)
+						{
+
+							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("alu_img_") + std::to_string(i + j * _width), false, Window::Images::AluImage()));
+						}
+						else if (_moduleGrid[i + j * _width]->GetModuleType() == ModuleType::CONTROL_UNIT)
+						{
+
+							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("control_unit_img_") + std::to_string(i + j * _width), false, Window::Images::ControlUnitImage()));
+						}
 					}
 				}
 			}
@@ -65,6 +83,7 @@ namespace Design
 	private:
 		int _width;
 		int _height;
-		std::vector<Module> _moduleGrid;
+		int _frequency;
+		std::vector<std::shared_ptr<Module>> _moduleGrid;
 	};
 }

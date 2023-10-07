@@ -25,6 +25,12 @@ namespace Window
             {
                 column3->DeleteAllNodes();
                 testCpu = Design::Cpu(4, 4);
+                testCpu.SetCell<Design::ControlUnit>(0, 0, 1,1000);
+                testCpu.SetCell<Design::Bus>(1, 0, 1, 1000);
+                testCpu.SetCell<Design::Bus>(2, 0, 1, 1000);
+                testCpu.SetCell<Design::Bus>(2, 1, 1, 1000);
+                testCpu.SetCell<Design::Bus>(2, 2, 1, 1000);
+                testCpu.SetCell<Design::Alu>(2, 3, 1, 1000);
                 auto gridView = testCpu.GetGridView();
                 column3->AddNode(gridView);
             }, true, []() {return false; }));        

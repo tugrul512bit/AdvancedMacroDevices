@@ -136,6 +136,7 @@
     <None Include="vcpkg.json" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Alu.h" />
     <ClInclude Include="AppStructure.h" />
     <ClInclude Include="BranchPredictor.h" />
     <ClInclude Include="Bus.h" />
@@ -144,6 +145,7 @@
     <ClInclude Include="CacheController.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Class.h" />
+    <ClInclude Include="ControlUnit.h" />
     <ClInclude Include="Cpu.h" />
     <ClInclude Include="CpuDesign.h" />
     <ClInclude Include="CreateCharacter.h" />

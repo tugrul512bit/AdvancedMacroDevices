@@ -5,7 +5,7 @@ namespace States
 {
 	const static int versionMajor = 0;
 	const static int versionMinor = 0;
-	const static int versionFix = 2;
+	const static int versionFix = 203;
 
 	std::string GetVersion()
 	{
