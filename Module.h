@@ -152,7 +152,8 @@ namespace Design
 		ModuleType _type;
 		bool _isBusy; 
 		float _failProbability; // all transistors have a failure probability, hence the module failure, per clock. the more transistors the more failure chance.
-		int _litography;
+		int _lithography;
+		int _frequency;
 		int _numTransistors;
 		int _thermalDissipationPower;
 

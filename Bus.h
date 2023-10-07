@@ -64,7 +64,8 @@ namespace Design
 	public:
 		Bus(int frequency, int lithography)
 		{
-			_lithography = lithography;			
+			_lithography = lithography;		
+			_frequency = frequency;
 		}
 
 		void Compute() override
