@@ -2,6 +2,8 @@
 #include"Skill.h"
 #include<vector>
 #include<queue>
+#include<memory>
+
 namespace Design
 {
 	// work flow of "build"
@@ -69,7 +71,10 @@ namespace Design
 		Storage,
 
 		// control unit, cache controller
-		Control
+		Control,
+
+		// for searching modules through bus connections
+		Any
 	};
 
 	// the data that is passing between modules
@@ -113,11 +118,13 @@ namespace Design
 		Module()
 		{			
 			for (int i = 0; i < 4; i++)
-				connectedModules[i] = nullptr;
+				_directConnectedModules[i] = nullptr;
 			_isBusy = false;
 			_failProbability = 0.0f;
-			_nanometer = 1000;
+			_litography = 1000;
 			_type = ModuleType::Connection;
+			_numTransistors = 0;
+			_thermalDissipationPower = 0;
 		}
 		
 		virtual void ComputeOutput() {}
@@ -125,15 +132,16 @@ namespace Design
 		virtual Data GetOutput() {}
 		virtual int GetModuleType() {}
 
-		std::vector<Module*> GetConnectedModules(Module* source = nullptr)
+		std::vector<Module*> GetConnectedModulesExceptThis(Module* source = nullptr)
 		{
 			std::vector<Module*> result;
 			for (int i = 0; i < 4; i++)
 			{
-				if (connectedModules[i])
+				auto ptr = _directConnectedModules[i].get();
+				if (ptr)
 				{
-					if (connectedModules[i] != source)
-						result.push_back(connectedModules[i]);
+					if (ptr != source)
+						result.push_back(ptr);
 				}
 			}
 			return result;
@@ -142,18 +150,22 @@ namespace Design
 		virtual void Compute(){	}
 	protected:		
 		ModuleType _type;
-		bool _isBusy; // when it is computing something, it is busy and producing heat
+		bool _isBusy; 
 		float _failProbability; // all transistors have a failure probability, hence the module failure, per clock. the more transistors the more failure chance.
-		int _nanometer;
+		int _litography;
 		int _numTransistors;
-		
 		int _thermalDissipationPower;
+
+
 		std::vector<SkillRequirement> _skillRequirements;
 		std::vector<StatRequirement> _statRequirements;
-		std::queue<Data> _inputQueue;
-		std::queue<Data> _outputQueue;
+
+
+		// maximum 4 modules can be connected to a module. top, right, bottom, left
+		std::vector<std::shared_ptr<Module>> _directConnectedModules;
+		
+
 		std::vector<DataType> _commandFilter; // takes only these kind of commands to work
-		Module* connectedModules[4];
 	};
 
 

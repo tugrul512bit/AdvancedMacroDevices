@@ -113,5 +113,8 @@
     <ClInclude Include="BranchPredictor.h">
       <Filter>Design\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="Bus.h">
+      <Filter>Design\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

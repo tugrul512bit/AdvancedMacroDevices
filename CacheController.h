@@ -18,7 +18,7 @@ namespace Design
 		CacheController(int frequency, int lithography, int capacity, int evictionPolicy /* 0=direct, 1=associative LRU */)
 		{
 			for (int i = 0; i < 4; i++)
-				connectedModules[i] = nullptr;
+				_directConnectedModules[i] = nullptr;
 
 			// this module can only take memory requests, nothing else, but anything can be giving them, even another cache
 			_commandFilter.push_back(DataType::InstructionMemRead);
@@ -52,7 +52,6 @@ namespace Design
 	private:
 
 		int _capacity;
-		int _lithography;
 		int _evictionPolicy;
 
 		// finds all connected cache banks and maps them to memory requests 

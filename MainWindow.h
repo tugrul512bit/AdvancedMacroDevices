@@ -13,14 +13,16 @@
 #include"Image.h"
 #include"CreateCharacter.h"
 #include"CpuDesign.h"
+#include<mutex>
 namespace Window
 {
     struct AppFields
     {
         AppFields()
         {
+           
             running = true;
-
+            
             if (!glfwInit())
                 exit(1);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -43,17 +45,24 @@ namespace Window
             ImGui::StyleColorsDark();
             ImGui_ImplGlfw_InitForOpenGL(window, true);
             ImGui_ImplOpenGL3_Init("#version 330");
+           
         }
 
-        ~AppFields()
+        void Close()
         {
+           
             // Cleanup
+            std::cout << "debug 1" << std::endl;
             ImGui_ImplOpenGL3_Shutdown();
+            std::cout << "debug 2" << std::endl;
             ImGui_ImplGlfw_Shutdown();
+            std::cout << "debug 3" << std::endl;
             ImGui::DestroyContext();
-
+            std::cout << "debug 4" << std::endl;
             glfwDestroyWindow(window);
+            std::cout << "debug 5" << std::endl;
             glfwTerminate();
+            std::cout << "window cleanup complete" << std::endl;
         }
 
         GLFWwindow* window;
@@ -61,6 +70,7 @@ namespace Window
         AppStructure structure;
         Character currentCharacter;
         bool running;
+        std::mutex mut;
     };
 
     class App
@@ -71,6 +81,8 @@ namespace Window
             _fields = std::make_shared<AppFields>();
         }
 
+
+
         void AddComponent(std::shared_ptr<AppStructure> component)
         {
             _fields->structure.AddNode(component);
@@ -78,18 +90,20 @@ namespace Window
 
         void Stop()
         {
-            _fields->running = false;
+           
+            _fields->running = false;    
         }
 
         void Loop()
         {
             // Main loop
-            while (!glfwWindowShouldClose(_fields->window)) {
-                if (!_fields->running)
-                    break;
-                glfwPollEvents();
+            bool run = true;
+            while (run && !glfwWindowShouldClose(_fields->window)) {
+             
+              
+                glfwPollEvents(); 
 
-                ImGui_ImplOpenGL3_NewFrame();
+                ImGui_ImplOpenGL3_NewFrame(); 
                 ImGui_ImplGlfw_NewFrame();
                 ImGui::NewFrame();
 
@@ -107,8 +121,16 @@ namespace Window
                 ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
                 glfwSwapBuffers(_fields->window);
+                run = _fields->running;
+                
             }
+
+            std::cout << "app closing..." << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+            _fields->Close();
         }
+
+
 
         Character* GetCurrentCharacter()
         {
@@ -119,6 +141,8 @@ namespace Window
         {
             _fields->currentCharacter = Character();
         }
+
+        ~App() {  }
     private:
         std::shared_ptr<AppFields> _fields;
     };

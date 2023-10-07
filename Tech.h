@@ -25,7 +25,7 @@ namespace Design
 
 	};
 
-	// required for out-of-order-execution, speculative-execution
+	// required for out-of-order-execution, speculative-execution, VLIW
 	class InstructionLevelParallelism : public Tech
 	{
 

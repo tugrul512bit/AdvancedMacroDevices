@@ -30,6 +30,5 @@ namespace Design
 	private:
 
 		int _capacity;
-		int _lithography;
 	};
 }
