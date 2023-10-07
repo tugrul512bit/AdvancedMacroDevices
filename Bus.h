@@ -12,7 +12,7 @@ namespace Design
 	// connection for unified circular bus
 	struct BusConnection
 	{
-		std::shared_ptr<ModuleType> moduleType;
+		ModuleType moduleType;
 		int moduleId;
 
 		// for optimizing the shortest path as easy as possible (pick the route with least jumps)
@@ -73,6 +73,60 @@ namespace Design
 		{
 			
 		}
+
+		void ComputePaths(Bus * root = nullptr, int jumps = 1, std::map<Module *,bool> * filter=nullptr)
+		{
+			if (!root)
+				root = this;
+
+			std::shared_ptr< std::map<Module*, bool>> mapPtr;			
+			if (!filter)
+			{
+				mapPtr = std::make_shared<std::map<Module*, bool>>();
+				filter = mapPtr.get();
+			}
+
+			for (int i = 0; i < 4; i++)
+			{
+				auto conn = _directConnectedModules[i];
+				
+				if (conn.get())
+				{
+					
+					if (filter->find(conn.get()) == filter->end())
+					{
+						filter->operator[](conn.get()) = true;
+
+						auto typ = conn->GetModuleType();
+						auto id = conn->GetId();
+
+						BusConnection bConn;
+						bConn.jumps = jumps;
+						bConn.moduleId = id;
+						bConn.moduleType = typ;
+						bConn.numRecentlyUsed = 0;
+						bConn.numTotalUsed = 0;
+						root->_farConnectionTypeList[typ].push_back(bConn);
+						root->_farConnectionIdList[id] = bConn;
+						
+						if (typ == ModuleType::BUS)
+						{
+							conn->AsPtr<Bus>()->ComputePaths(root, jumps + 1,filter);
+						}
+					}
+
+				}
+			}
+			
+		}
+
+		void PrintPaths()
+		{
+			std::cout << "far connections by type:" << std::endl;
+			for (auto& e : _farConnectionTypeList)
+				for (auto& f : e.second)
+					std::cout << "type:" << e.first << " id:" << f.moduleId <<" jumps:"<<f.jumps << std::endl;
+		}
 	private:
 
 		// 0: top, 1: right, 2: bottom, 3: left
@@ -82,7 +136,7 @@ namespace Design
 
 
 		// At the end of the day, I'm connected to these type of modules, it will take that amount of jumps to reach there
-		std::map<ModuleType, BusConnection> _farConnectionTypeList;
+		std::map<ModuleType, std::vector<BusConnection>> _farConnectionTypeList;
 		std::map<int, BusConnection> _farConnectionIdList;
 	};
 }

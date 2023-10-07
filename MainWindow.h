@@ -30,7 +30,7 @@ namespace Window
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); 
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-            window = glfwCreateWindow(1600, 900, "Advanced Macro Devices", NULL, NULL);
+            window = glfwCreateWindow(1600, 900, "Advanced Macro Devices: Deadlock Tycoon", NULL, NULL);
             if (!window)
             {
                 glfwTerminate();
@@ -152,7 +152,7 @@ namespace Window
     {
         App app;
         auto window = AppWindow::Create("version window",States::GetVersion());
-        window->AddNode(TextItem::Create("text item", []() {return "Welcome to Advanced Macro Devices"; }, 3, false));
+        window->AddNode(TextItem::Create("text item", []() {return "Welcome to Advanced Macro Devices: Deadlock Tycoon"; }, 3, false));
         app.AddComponent(window);
 
         auto createCharacter = CreateCharacter(app.GetCurrentCharacter());

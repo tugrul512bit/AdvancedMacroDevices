@@ -33,6 +33,10 @@ namespace Window
                 testCpu.SetCell<Design::Alu>(2, 3, 1, 1000);
                 auto gridView = testCpu.GetGridView();
                 column3->AddNode(gridView);
+
+                testCpu.ConnectModules();
+                testCpu.PrepareBusPaths();
+                testCpu.GetCell<Design::Bus>(1, 0)->PrintPaths();
             }, true, []() {return false; }));        
         unitTest->Hide();
         return unitTest;

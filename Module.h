@@ -103,7 +103,11 @@ namespace Design
 		int value; 
 	};
 
-
+	static int GetUniqueId()
+	{
+		static int id=0;
+		return id++;
+	}
 
 	// adjacent modules (top,bot,left,right) make connections automatically.
 	// output is broadcasted to 4 neighbors
@@ -114,6 +118,7 @@ namespace Design
 	public:
 		Module()
 		{			
+			_id = GetUniqueId();
 			_directConnectedModules.resize(4);
 			for (int i = 0; i < 4; i++)
 				_directConnectedModules[i] = nullptr;
@@ -126,6 +131,8 @@ namespace Design
 			_frequency = 1; // 1 means equal frequency to outer source. 2 means 2x frequency or 2 iterations per cycle
 		}
 		
+		int GetId() { return _id; }
+
 		virtual void ComputeOutput() {}
 		virtual void AddInput(Data input) {}
 		virtual Data GetOutput() { return Data(); }
@@ -147,7 +154,19 @@ namespace Design
 		}
 
 		virtual void Compute(){	}
+
+		template<typename T>
+		T* AsPtr()
+		{
+			return (T*)this;
+		}
+
+		void Connect(std::shared_ptr<Module> conn, int index)
+		{
+			_directConnectedModules[index]=conn;
+		}
 	protected:		
+		int _id;
 		ModuleType _type;
 		bool _isBusy; 
 		float _failProbability; // all transistors have a failure probability, hence the module failure, per clock. the more transistors the more failure chance.
