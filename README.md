@@ -1,5 +1,8 @@
 # Advanced Macro Devices: Deadlock Tycoon
 
+Have you ever wondered how it feels to be CEO of a processor vendor? Do you have the guts to be a processor architect? Do you compute? If yes, then wait no more. Dive into the action from the times of 8088, develop yourself until cpu market is dominated by your products and reach new goals on every play. See [wiki](https://github.com/tugrul512bit/AdvancedMacroDevices/wiki) for details.
+
+
 - Design your unique modular CPU on a uniform grid of cells
 - Reprogram modules (like "control unit") for more performance or leave them at their default setting and focus on more fun
 - Try to evade deadlock as much as possible
@@ -8,6 +11,7 @@
 - Level-up your character and distribute skill points
 - Unlock better technologies
 - Buy factories to produce more CPUs
+- watch millions of NPCs use your processors, profit
 - Iterate your next CPU design
 
 
