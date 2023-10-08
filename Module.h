@@ -18,9 +18,24 @@ namespace Design
 	// for simple processors, some instructions generate many micro operations (like 1 square root = a lot of multiplications, additions, etc)
 	enum DataType
 	{
+		// empty data
+		Null,
+
+
 		// data between RAM and decoder (may pass through cache)
 		InstructionFpu,
+
+		// dummy calc, this is only for debugging / unit-testing
 		InstructionAlu,
+
+		// real work for ALU
+		// r[i] = r[j] + r[k]
+		// i= parameter 1
+		// j= parameter 2
+		// k= parameter 3
+		InstructionAluSumRegisterRegister,
+
+
 		InstructionMemRead,
 		InstructionMemWrite,
 		InstructionParameter1,
@@ -36,7 +51,11 @@ namespace Design
 
 		// (command) data between decoder and other modules
 		MicroOpFpu,
+
+		// dummy alu operation for unit-testing
 		MicroOpAlu,
+
+
 		MicroOpMemRead,
 		MicroOpMemWrite,
 		MicroOpParameter1,
@@ -80,7 +99,14 @@ namespace Design
 		// type of module to take this data
 		// if input queue of module is full, it goes to another module
 		ModuleType targetModuleType;
-		DataType type;
+		int targetModuleId;
+		DataType dataType;
+
+		// whose context is this: id of instruction or branch prediction or thread
+		int context;
+
+		// 0: instruction, 1: branch, 2: thread
+		int contextType;
 
 		// can be instruction or parameter
 		/*
@@ -100,7 +126,18 @@ namespace Design
 				12=fma
 
 		*/
-		int value; 
+		int value; 		
+	
+		Data(DataType dataTypePrm=DataType::Null, ModuleType targetModuleTypePrm=ModuleType::ANY, int targetModuleIdPrm=-1, int valuePrm=-1)
+		{
+			targetModuleType = targetModuleTypePrm;
+			targetModuleId = targetModuleIdPrm;
+			dataType = dataTypePrm;
+			value = valuePrm;
+
+			context = -1;
+			contextType = -1;
+		}
 	};
 
 	static int GetUniqueId()
@@ -119,6 +156,9 @@ namespace Design
 		Module()
 		{			
 			_id = GetUniqueId();
+			_input.resize(4);
+			_inputRegister.resize(4);
+			_output.resize(4);
 			_directConnectedModules.resize(4);
 			for (int i = 0; i < 4; i++)
 				_directConnectedModules[i] = nullptr;
@@ -130,11 +170,24 @@ namespace Design
 			_thermalDissipationPower = 0;
 			_frequency = 1; // 1 means equal frequency to outer source. 2 means 2x frequency or 2 iterations per cycle
 		}
-		
+		void SetBusy() { _isBusy = true; }
+		void SetIdle() { _isBusy = false; }
+
 		int GetId() { return _id; }
 
 		virtual void ComputeOutput() {}
-		virtual void AddInput(Data input) {}
+		virtual void SetInput(Data input, int index) 
+		{
+			_inputRegister[index] = input;
+		}
+		virtual void ApplyInput()
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				_input[i] = _inputRegister[i];
+				_inputRegister[i] = Design::Data();
+			}
+		}
 		virtual Data GetOutput() { return Data(); }
 		virtual ModuleType GetModuleType() { return _type; }
 		virtual bool GetBusyness() { return _isBusy; }
@@ -177,6 +230,13 @@ namespace Design
 		int _numTransistors;
 		int _thermalDissipationPower;
 
+		// 0 index: top
+		// 1 index: right
+		// 2 index: bottom
+		// 3 index: left
+		std::vector<Design::Data> _input;
+		std::vector<Design::Data> _inputRegister;
+		std::vector<Design::Data> _output;
 
 		std::vector<SkillRequirement> _skillRequirements;
 		std::vector<StatRequirement> _statRequirements;
@@ -187,6 +247,7 @@ namespace Design
 		
 
 		std::vector<DataType> _commandFilter; // takes only these kind of commands to work
+
 	};
 
 

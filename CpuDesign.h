@@ -22,27 +22,27 @@ namespace Window
         
         auto aluItem = ListItem::Create("ALU item", 2, false);
         aluItem->AddNode(TextItem::Create("ALU Tech Name", []() { return "ALU"; }, 3, false));
-        aluItem->AddNode(ImageItem::Create("ALU Image", true, Images::AluImage()));
+        aluItem->AddNode(ImageItem::Create("ALU Image", true, Images::AluImage(),false));
 
         auto cacheItem = ListItem::Create("Cache item", 2, false);
         cacheItem->AddNode(TextItem::Create("Cache Tech Name", []() { return "Cache"; }, 3, false));
-        cacheItem->AddNode(ImageItem::Create("Cache Image", true, Images::CacheImage()));
+        cacheItem->AddNode(ImageItem::Create("Cache Image", true, Images::CacheImage(),false));
 
         auto registerItem = ListItem::Create("Register item", 2, false);
         registerItem->AddNode(TextItem::Create("Register Tech Name", []() { return "Register"; }, 3, false));
-        registerItem->AddNode(ImageItem::Create("Register Image", true, Images::RegisterImage()));
+        registerItem->AddNode(ImageItem::Create("Register Image", true, Images::RegisterImage(),false));
 
         auto busItem = ListItem::Create("Bus item", 2, false);
         busItem->AddNode(TextItem::Create("Bus Tech Name", []() { return "Bus"; }, 3, false));
-        busItem->AddNode(ImageItem::Create("Bus Image", true, Images::BusImage()));
+        busItem->AddNode(ImageItem::Create("Bus Image", true, Images::BusImage(),false));
 
         auto decoderItem = ListItem::Create("Decoder item", 2, false);
         decoderItem->AddNode(TextItem::Create("Decoder Tech Name", []() { return "Decoder"; }, 3, false));
-        decoderItem->AddNode(ImageItem::Create("Decoder Image", true, Images::EmptyGridCellImage()));
+        decoderItem->AddNode(ImageItem::Create("Decoder Image", true, Images::EmptyGridCellImage(),false));
 
         auto fpuItem = ListItem::Create("FPU item", 2, false);
         fpuItem->AddNode(TextItem::Create("FPU Tech Name", []() { return "FPU"; }, 3, false));
-        fpuItem->AddNode(ImageItem::Create("FPU Image", true, Images::EmptyGridCellImage()));
+        fpuItem->AddNode(ImageItem::Create("FPU Image", true, Images::EmptyGridCellImage(),false));
 
         techList->AddNode(aluItem);
         techList->AddNode(cacheItem);

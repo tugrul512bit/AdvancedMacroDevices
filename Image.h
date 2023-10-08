@@ -6,24 +6,74 @@
 #include<opencv2/opencv.hpp>
 #include <GL/glcorearb.h>
 #include "Paint.h"
+#include <map>
+#include <mutex>
 namespace Window
 {
+	static std::mutex texSync;
+	struct TextureStorage
+	{
+		std::map<std::string, GLuint> strToTex;
+		GLuint Generate(std::string name, cv::Mat img)
+		{
+			std::unique_lock<std::mutex> lck(texSync);
+			if (strToTex.find(name) == strToTex.end())
+			{
+				GLuint textureID;
+				glGenTextures(1, &textureID);
+				glBindTexture(GL_TEXTURE_2D, textureID);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+				GLenum inputColourFormat = GL_RGBA;
+
+
+				glTexImage2D(GL_TEXTURE_2D,
+					0,
+					GL_RGBA,
+					img.cols,
+					img.rows,
+					0,
+					inputColourFormat,
+					GL_UNSIGNED_BYTE,
+					img.data);
+
+				strToTex[name] = textureID;
+				return textureID;
+			}
+			else
+				return strToTex[name];
+		}
+		~TextureStorage()
+		{
+			std::unique_lock<std::mutex> lck(texSync);
+			for (auto e : strToTex)
+			{
+				std::cout << "releasing texture from video-memory" << std::endl;
+				glDeleteTextures(1, &e.second);
+			}
+		}
+	};
+	static TextureStorage globalTextures;
+
 	class ImageItem : public AppStructure
 	{
 	public:
-		static std::shared_ptr<AppStructure> Create(std::string name, bool sameLine, cv::Mat img)
+		static std::shared_ptr<AppStructure> Create(std::string name, bool sameLine, cv::Mat img, bool isBusy)
 		{
-			std::shared_ptr<AppStructure> node = std::shared_ptr<ImageItem>(new ImageItem(name, sameLine, img), [](ImageItem* i) { delete i; });
+			std::shared_ptr<AppStructure> node = std::shared_ptr<ImageItem>(new ImageItem(name, sameLine, img, isBusy), [](ImageItem* i) { delete i; });
 			return node;
 		}
 
-		ImageItem(std::string name = "text", bool sameLine = false, cv::Mat img=cv::Mat(64,64,CV_8UC4))
+		ImageItem(std::string name = "text", bool sameLine = false, cv::Mat img=cv::Mat(64,64,CV_8UC4), bool isBusy = false)
 		{
 			_name = name;
 			_sameLine = sameLine;
 			_width = img.cols;
 			_height = img.rows;
 			_img = cv::Mat(_height,_width,CV_8UC4);
+
 			if(img.dataend - img.data == _height*_width)
 				for (int i = 0; i < _height * _width; i++)
 				{
@@ -56,6 +106,18 @@ namespace Window
 					_img.at<unsigned char>(i * 4 + 2) = img.at<unsigned char>(i * 4 + 2);
 					_img.at<unsigned char>(i * 4+3) = img.at<unsigned char>(i * 4 + 3);
 				}
+			if (isBusy)
+			{
+				
+				for (int i = 0; i < _img.rows * _img.cols; i++)
+					_img.at<cv::Vec4b>(i) = cv::Vec4b
+					(
+						0,
+						_img.at<cv::Vec4b>(i).val[1],
+						0,
+						_img.at<cv::Vec4b>(i).val[3]
+					);
+			}
 			_vec1 = ImVec2(_width, _height);
 			_texture = ToTexture();
 		}
@@ -73,34 +135,16 @@ namespace Window
 		void PostRender() override
 		{
 		}
+
 	private:
 		int _width;
 		int _height;
 		GLuint  _texture;
 		cv::Mat _img;
 		ImVec2 _vec1;
-
-        GLuint ToTexture() {
-            GLuint textureID;
-            glGenTextures(1, &textureID);
-            glBindTexture(GL_TEXTURE_2D, textureID);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            GLenum inputColourFormat = GL_RGBA;
-
-         
-            glTexImage2D(GL_TEXTURE_2D,
-                0,                
-                GL_RGBA,          
-				_width,
-				_height,
-                0,                 
-                inputColourFormat, 
-                GL_UNSIGNED_BYTE,  
-                _img.data);        
-            return textureID;
+		bool _isBusy;
+        GLuint ToTexture() {       
+            return globalTextures.Generate(_name+(_isBusy?"_busy":"_normal"), _img);
         }
 	};
 
@@ -129,13 +173,6 @@ namespace Window
 			cv::putText(img, cv::String("+-/*"), cv::Point2f(15, 21 + yOffset), 1, 0.6, cv::Scalar(0, 0, 0, 255));
 			
 			return img;
-		}
-
-		cv::Mat AluWorkingImage()
-		{
-			auto result = AluImage();
-			result = Global::ImageProcessing::FloodFill(32, 37, result, 0, 255, 0, 255);
-			return result;
 		}
 
 		cv::Mat CacheImage()

@@ -6,6 +6,7 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <GLFW/glfw3.h>
+#include <mutex>
 namespace Window
 {
 	enum ItemType
@@ -22,6 +23,7 @@ namespace Window
 	public:
 		AppStructure(ItemType type = ItemType::WINDOW, std::string name = "item")
 		{
+			std::unique_lock<std::mutex> lck(_syncPoint);
 			_type = type; 
 			_name = name;
 			_visible = true;
@@ -37,6 +39,7 @@ namespace Window
 
 		void Calculate()
 		{
+			std::unique_lock<std::mutex> lck(_syncPoint);
 			Compute();
 			for (auto node : _childNodes)
 			{
@@ -48,6 +51,7 @@ namespace Window
 
 		void Render()
 		{			
+			std::unique_lock<std::mutex> lck(_syncPoint);
 			if (_visible)
 			{
 				if (_sameLine)
@@ -91,40 +95,48 @@ namespace Window
 
 		void DeleteAllNodes()
 		{
+			std::unique_lock<std::mutex> lck(_syncPoint);
 			_childNodes.clear();
 		}
 
 		void AddNode(std::shared_ptr<AppStructure> node)
 		{
+			std::unique_lock<std::mutex> lck(_syncPoint);
 			_childNodes.push_back(node);
 		}
 
 		void Enable()
 		{
+			std::unique_lock<std::mutex> lck(_syncPoint);
 			_enabled = true;
 		}
 		void Disable()
 		{
+			std::unique_lock<std::mutex> lck(_syncPoint);
 			_enabled = false;
 		}
 
 		void Hide()
 		{
+			std::unique_lock<std::mutex> lck(_syncPoint);
 			_visible = false;
 		}
 
 		void Show()
 		{
+			std::unique_lock<std::mutex> lck(_syncPoint);
 			_visible = true;
 		}
 
 		void AddHoverPopup(std::shared_ptr<AppStructure> structure)
 		{
+			std::unique_lock<std::mutex> lck(_syncPoint);
 			_hoverPopup = structure;
 		}
 
 		void MakeDraggable()
 		{
+			std::unique_lock<std::mutex> lck(_syncPoint);
 			_canDragDrop = true;
 		}
 
@@ -139,6 +151,7 @@ namespace Window
 		bool _canDragDrop;
 		std::vector<std::shared_ptr<AppStructure>> _childNodes;
 		std::shared_ptr<AppStructure> _hoverPopup;
+		std::mutex _syncPoint;
 	};
 
 }

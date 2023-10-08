@@ -45,16 +45,16 @@ namespace Design
 									{
 										int idx = 0;
 										if (x == -1)
-											idx += 3;
-
-										if (x == 1)
 											idx += 1;
 
+										if (x == 1)
+											idx += 3;
+
 										if (y == -1)
-											idx += 0;
+											idx += 2;
 
 										if (y == 1)
-											idx += 2;
+											idx += 0;
 										curModule->Connect(neighborModule, idx);
 										
 									}
@@ -89,26 +89,46 @@ namespace Design
 			
 		}
 
-		void Compute()
+		void ApplyInputs()
 		{
+			// loop non-bus modules for 1 time
 			for (int j = 0; j < _height; j++)
 			{
 				for (int i = 0; i < _width; i++)
 				{
-					// auto & curModule = _moduleGrid[i + j*_width];
-					// curModule.ComputeOutput();
+					auto curModule = _moduleGrid[i + j * _width];
+					if (curModule.get())
+						curModule->ApplyInput();
 				}
 			}
 
+		}
+
+		void Compute()
+		{
+			// loop non-bus modules for 1 time
 			for (int j = 0; j < _height; j++)
 			{
 				for (int i = 0; i < _width; i++)
 				{
-					// auto & curModule = _moduleGrid[i + j*_width];
-					// auto output = curModule.GetOutput();
-					// auto neighborList = GetNeighbors(i+j*_width);
-					// for(auto & n:neighborList)
-					// { n.AddInput(output); }
+					auto curModule = _moduleGrid[i + j*_width];
+					if(curModule.get())
+						if(curModule->GetModuleType() != Design::ModuleType::BUS)
+							curModule->Compute();
+				}
+			}
+
+			// loop bus modules for n times
+			int n = 1;
+			for(int k=0;k<n;k++)
+			for (int j = 0; j < _height; j++)
+			{
+				for (int i = 0; i < _width; i++)
+				{
+					auto curModule = _moduleGrid[i + j * _width];
+					if (curModule.get())
+						if (curModule->GetModuleType() == Design::ModuleType::BUS)
+							curModule->Compute();
 				}
 			}
 		}
@@ -134,24 +154,22 @@ namespace Design
 				for (int i = 0; i < _width; i++)
 				{
 					if (_moduleGrid[i + j * _width].get())
-					{				
+					{	
+						
 						if (_moduleGrid[i + j * _width]->GetModuleType() == ModuleType::BUS)
 						{
 							
-							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("bus_img_") + std::to_string(i + j * _width), false, Window::Images::BusImage()));
+							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("bus_img_") + std::to_string(i + j * _width), false, Window::Images::BusImage(), _moduleGrid[i + j * _width]->GetBusyness()));
 						}
 						else if (_moduleGrid[i + j * _width]->GetModuleType() == ModuleType::ALU)
 						{
-							if (_moduleGrid[i + j * _width]->GetBusyness())
-								result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("alu_img_") + std::to_string(i + j * _width), false, Window::Images::AluImage()));
-							else							
-								result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("alu_img_") + std::to_string(i + j * _width), false, Window::Images::AluImage()));
-							
+							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("alu_img_") + std::to_string(i + j * _width), false, Window::Images::AluImage(), _moduleGrid[i + j * _width]->GetBusyness()));
+
 						}
 						else if (_moduleGrid[i + j * _width]->GetModuleType() == ModuleType::CONTROL_UNIT)
 						{
 
-							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("control_unit_img_") + std::to_string(i + j * _width), false, Window::Images::ControlUnitImage()));
+							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("control_unit_img_") + std::to_string(i + j * _width), false, Window::Images::ControlUnitImage(), _moduleGrid[i + j * _width]->GetBusyness()));
 						}
 					}
 				}
