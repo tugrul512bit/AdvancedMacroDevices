@@ -36,10 +36,12 @@ namespace Design
 			_frequency = frequency;
 			_type = ModuleType::BUS;
 			_busRegister[0].dataType = Design::DataType::Null;
+			
 		}
-
+		void SetBusy() override { _isBusy = true; }
 		void Compute() override
 		{
+			
 			// rotate 4 data points
 			auto d0 = _busRegister[0];
 			auto d1 = _busRegister[1];
@@ -56,7 +58,7 @@ namespace Design
 				if (_busRegister[i].dataType == Design::DataType::Null)
 					if (_input[i].dataType != Design::DataType::Null)
 					{
-						_isBusy = true;
+						SetBusy();
 						_busRegister[i] = _input[i];
 						_input[i] = Data();
 					}
@@ -104,7 +106,7 @@ namespace Design
 								conn->SetInput(reg, idx);
 								_busRegister[i] = Data();
 								std::cout << "bus->module" << std::endl;
-								_isBusy = true;
+								SetBusy();
 								break;
 							}
 							else if(conn->GetModuleType() == Design::ModuleType::BUS)

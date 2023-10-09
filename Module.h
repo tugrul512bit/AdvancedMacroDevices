@@ -170,8 +170,8 @@ namespace Design
 			_thermalDissipationPower = 0;
 			_frequency = 1; // 1 means equal frequency to outer source. 2 means 2x frequency or 2 iterations per cycle
 		}
-		void SetBusy() { _isBusy = true; }
-		void SetIdle() { _isBusy = false; }
+		virtual void SetBusy() { _isBusy = true; }
+		virtual void SetIdle() { _isBusy = false; }
 
 		int GetId() { return _id; }
 
@@ -190,7 +190,7 @@ namespace Design
 		}
 		virtual Data GetOutput() { return Data(); }
 		virtual ModuleType GetModuleType() { return _type; }
-		virtual bool GetBusyness() { return _isBusy; }
+		virtual bool GetBusyness() {  return _isBusy; }
 		std::vector<Module*> GetConnectedModulesExceptThis(Module* source = nullptr)
 		{
 			std::vector<Module*> result;
@@ -206,7 +206,7 @@ namespace Design
 			return result;
 		}
 
-		virtual void Compute(){	}
+		virtual void Compute(){  }
 
 		template<typename T>
 		T* AsPtr()

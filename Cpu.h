@@ -7,6 +7,8 @@
 #include"Bus.h"
 #include"Alu.h"
 #include"ControlUnit.h"
+#include<mutex>
+#include<memory>
 namespace Design
 {
 	class Cpu
@@ -14,6 +16,8 @@ namespace Design
 	public:
 		Cpu(int width = 4, int height = 4, int frequency = 1)
 		{
+			mut = std::make_shared<std::mutex>();
+			std::unique_lock<std::mutex> lck(*mut);
 			_moduleGrid.resize(((size_t)width)*height);
 			_width = width;
 			_height = height;
@@ -22,6 +26,7 @@ namespace Design
 
 		void ConnectModules()
 		{
+			std::unique_lock<std::mutex> lck(*mut);
 			for (int j = 0; j < _height; j++)
 			{
 				for (int i = 0; i < _width; i++)
@@ -69,7 +74,7 @@ namespace Design
 		// builds connection tree of modules that are connected to buses
 		void PrepareBusPaths()
 		{
-
+			std::unique_lock<std::mutex> lck(*mut);
 			for (int j = 0; j < _height; j++)
 			{
 				for (int i = 0; i < _width; i++)
@@ -91,6 +96,7 @@ namespace Design
 
 		void ApplyInputs()
 		{
+			std::unique_lock<std::mutex> lck(*mut);
 			// loop non-bus modules for 1 time
 			for (int j = 0; j < _height; j++)
 			{
@@ -106,6 +112,7 @@ namespace Design
 
 		void Compute()
 		{
+			std::unique_lock<std::mutex> lck(*mut);
 			// loop non-bus modules for 1 time
 			for (int j = 0; j < _height; j++)
 			{
@@ -137,17 +144,20 @@ namespace Design
 		template<typename TypeModule>
 		void SetCell(int col, int row, int frequency, int lithography)
 		{ 
+			std::unique_lock<std::mutex> lck(*mut);
 			_moduleGrid[col + row * _width] = (std::shared_ptr<Design::Module>) std::make_shared<TypeModule>(frequency,lithography); // copies
 		}
 
 		template<typename TypeModule>
 		TypeModule* GetCell(int col, int row)
 		{
+			std::unique_lock<std::mutex> lck(*mut);
 			return _moduleGrid[col + row * _width].get()->AsPtr<TypeModule>();
 		}
 
 		std::shared_ptr<Window::AppStructure> GetGridView()
 		{
+			std::unique_lock<std::mutex> lck(*mut);
 			auto result = Window::GridItem::Create("cpu grid view", _height, _width, 1, false);
 			for (int j = 0; j < _height; j++)
 			{
@@ -155,6 +165,7 @@ namespace Design
 				{
 					if (_moduleGrid[i + j * _width].get())
 					{	
+						
 						
 						if (_moduleGrid[i + j * _width]->GetModuleType() == ModuleType::BUS)
 						{
@@ -178,9 +189,11 @@ namespace Design
 		}
 
 	private:
+		std::shared_ptr<std::mutex> mut;
 		int _width;
 		int _height;
 		int _frequency;
 		std::vector<std::shared_ptr<Module>> _moduleGrid;
+
 	};
 }

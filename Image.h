@@ -10,13 +10,13 @@
 #include <mutex>
 namespace Window
 {
-	static std::mutex texSync;
+
 	struct TextureStorage
 	{
 		std::map<std::string, GLuint> strToTex;
 		GLuint Generate(std::string name, cv::Mat img)
 		{
-			std::unique_lock<std::mutex> lck(texSync);
+
 			if (strToTex.find(name) == strToTex.end())
 			{
 				GLuint textureID;
@@ -47,7 +47,7 @@ namespace Window
 		}
 		~TextureStorage()
 		{
-			std::unique_lock<std::mutex> lck(texSync);
+
 			for (auto e : strToTex)
 			{
 				std::cout << "releasing texture from video-memory" << std::endl;
@@ -68,6 +68,7 @@ namespace Window
 
 		ImageItem(std::string name = "text", bool sameLine = false, cv::Mat img=cv::Mat(64,64,CV_8UC4), bool isBusy = false)
 		{
+
 			_name = name;
 			_sameLine = sameLine;
 			_width = img.cols;
@@ -118,6 +119,7 @@ namespace Window
 						_img.at<cv::Vec4b>(i).val[3]
 					);
 			}
+			_isBusy = isBusy;
 			_vec1 = ImVec2(_width, _height);
 			_texture = ToTexture();
 		}
@@ -144,6 +146,7 @@ namespace Window
 		ImVec2 _vec1;
 		bool _isBusy;
         GLuint ToTexture() {       
+
             return globalTextures.Generate(_name+(_isBusy?"_busy":"_normal"), _img);
         }
 	};
