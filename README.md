@@ -1,6 +1,6 @@
 # Advanced Macro Devices: Deadlock Tycoon
 
-Have you ever wondered how it feels to be CEO of a processor vendor? Do you have the guts to be a processor architect? Do you compute? If yes, then wait no more. Dive into the action from the times of 8088, develop yourself until cpu market is dominated by your products and reach new goals on every play. See [wiki](https://github.com/tugrul512bit/AdvancedMacroDevices/wiki) for details.
+Have you ever wondered how it feels to be CEO of a processor vendor? Do you have the guts to be a processor architect? Do you compute? If yes, then wait no more. Dive into the action from the times of 8088, develop yourself until cpu market is dominated by your advanced vector processors (even integrated gpus) and reach new goals on every play. See [wiki](https://github.com/tugrul512bit/AdvancedMacroDevices/wiki) for details.
 
 
 - Design your unique modular CPU on a uniform grid of cells
