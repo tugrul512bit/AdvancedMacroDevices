@@ -116,6 +116,7 @@ namespace Design
 								auto jumpList = connBus->GetFarConnectionsOfType(reg.targetModuleType);
 								for (auto& jl : jumpList)
 								{
+									std::cout << jl.jumps << std::endl;
 									if (jl.jumps < shortestPath)
 									{
 										shortestPath = jl.jumps;
