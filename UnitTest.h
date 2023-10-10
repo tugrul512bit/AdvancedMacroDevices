@@ -264,6 +264,58 @@ namespace Window
 
             }, false, []() {return false; }));
 
+
+        column1->AddNode(ButtonItem::Create("Bus Test 5", "Bus Test 5: Concurrent Bidirectional Transmission (will it deadlock?)",
+            [column3]() mutable
+            {
+
+                column3->DeleteAllNodes();
+
+                std::shared_ptr<Design::Cpu> testCpu = std::make_shared<Design::Cpu>(5, 1);
+                testCpu->SetCell<Design::ControlUnit>(0, 0, 1, 1000);
+                testCpu->SetCell<Design::Bus>(1, 0, 1, 1000);
+                testCpu->SetCell<Design::Bus>(2, 0, 1, 1000);
+                testCpu->SetCell<Design::Bus>(3, 0, 1, 1000);
+                testCpu->SetCell<Design::Alu>(4, 0, 1, 1000);
+
+                testCpu->ConnectModules();
+                testCpu->PrepareBusPaths();
+
+                auto gridView = testCpu->GetGridView();
+                column3->AddNode(gridView);
+
+
+                column3->OnPreRender([&, testCpu, column3]() mutable {
+                    static int countCmd = 0;
+                    
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() < 500)
+                    {
+
+                    }
+                    else
+                    {
+                        countCmd++;
+                        if(countCmd%2==0)
+                            testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0);
+
+                        testCpu->ApplyInputs();
+                        testCpu->Compute();
+
+
+
+                        column3->DeleteAllNodes();
+                        column3->AddNode(TextItem::Create("Num completed op.", [testCpu]() { return std::string("Completed operations=") + std::to_string(testCpu->GetCell<Design::ControlUnit>(0, 0)->GetCompletedOperationCount()); }, 2, false));
+                        
+                        auto gridView = testCpu->GetGridView();
+                        column3->AddNode(gridView);
+                        t1 = std::chrono::steady_clock::now();
+                    }
+
+
+                    });
+
+            }, false, []() {return false; }));
+
         unitTest->Hide();
         return unitTest;
     }

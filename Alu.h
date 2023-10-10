@@ -24,14 +24,17 @@ namespace Design
 		void SetBusy() override { _isBusy = true; }
 		void Compute() override
 		{
+			
 			for (int i = 0; i < 4; i++)
 			{
+				bool workDone = false;
 				bool breakLoop = false;
 				auto inp = _input[i];
 				if (inp.dataType != Design::DataType::Null)
 				{
 					if (inp.dataType == Design::DataType::MicroOpAlu)
 					{
+						workDone = true;
 						std::cout << "alu dummy compute" << std::endl;
 						int idSource = inp.sourceModuleId;
 						
@@ -45,7 +48,7 @@ namespace Design
 								{
 									std::cout << "output bus found" << std::endl;
 									auto sources = bus->AsPtr<Design::Bus>()->GetFarConnectionsOfType(inp.sourceModuleType);
-									for (auto s : sources)
+									for (auto & s : sources)
 									{
 										std::cout << "!   "<< s.moduleId <<"      "<< idSource << std::endl;
 										// send result back to source
@@ -61,7 +64,17 @@ namespace Design
 												idx += 0;
 											if (j == 3)
 												idx += 1;
-											bus->AsPtr<Design::Bus>()->SetInput(Data(Design::DataType::Result,Design::CONTROL_UNIT,idSource,-1,Design::ModuleType::ALU,_id), idx);
+
+											// todo: do not set input if input is full (same for all modules)
+											bus->AsPtr<Design::Bus>()->SetInput(
+												Data(
+													Design::DataType::Result,
+													Design::CONTROL_UNIT,
+													idSource,
+													-1,
+													Design::ModuleType::ALU,
+													_id), 
+												idx);
 											breakLoop=true;
 											break;
 										}

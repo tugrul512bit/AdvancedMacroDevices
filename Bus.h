@@ -66,10 +66,13 @@ namespace Design
 			for (int i = 0; i < 4; i++)
 			{
 				auto reg = _busRegister[i];
-
+				if (reg.dataType == Design::DataType::Result)
+					std::cout << "zzzzzzzzzzzzz" << std::endl;
 				// if has data, check if aligned at shortest module output, then send
 				if (reg.dataType != Design::DataType::Null)
 				{
+
+
 
 					// check  current distance
 					int curDist = 10000;
@@ -91,6 +94,7 @@ namespace Design
 						auto conn = _directConnectedModules[j];
 						if (conn.get())
 						{
+
 							if (reg.targetModuleId == conn->GetId() && (i==j))
 							{
 								// aligned directly, send data

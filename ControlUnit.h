@@ -31,7 +31,9 @@ namespace Design
 		{
 			// list of resources found (resource module ID to use) & their bus paths
 			std::map<int,std::map<int,bool>> validOutputResourceBus;
-			
+			bool workStart = false;
+			bool workEnd = false;
+			bool breakLoop = false;
 			for (int i = 0; i < 4; i++)
 			{
 				auto opcode = _input[i];
@@ -39,6 +41,7 @@ namespace Design
 				{
 					if (opcode.dataType == Design::DataType::MicroOpAlu)
 					{
+						workStart = true;
 						// check bus connections for an ALU
 						for (int j = 0; j < 4; j++)
 						{
@@ -50,59 +53,76 @@ namespace Design
 									auto alus = dConn->AsPtr<Design::Bus>()->GetFarConnectionsOfType(Design::ModuleType::ALU);
 									for (auto& a : alus)
 									{
-										validOutputResourceBus[a.moduleId][j] = true;										
+										validOutputResourceBus[a.moduleId][j] = true;
 									}
 								}
 							}
 						}
 					}
 
-					int resCtr = 0;
-					bool breakLoop = false;
-				
-					for (auto& resource : validOutputResourceBus)
+					if (opcode.dataType == Design::DataType::Result)
 					{
-						int busCtr = 0;
-						
-						if (resCtr == _resCtr)
-						{
+						_numCompletedOperations++; std::cout<<"?" << std::endl;
+						workEnd = true;
+					}
 
-							for (auto& bus : resource.second)
+					if (workEnd)
+					{
+						break;
+					}
+
+					int resCtr = 0;
+
+					if (workStart)
+					{
+
+						for (auto& resource : validOutputResourceBus)
+						{
+							int busCtr = 0;
+
+							if (resCtr == _resCtr)
 							{
 
-								if (busCtr == _busCtr[resource.first])
+								for (auto& bus : resource.second)
 								{
 
-									_directConnectedModules[bus.first]->SetInput(Design::Data(opcode.dataType, Design::ModuleType::ALU, resource.first,-1,Design::ModuleType::CONTROL_UNIT,_id), bus.first);
-									
-									_busCtr[resource.first]++;
-									if (_busCtr[resource.first] >= validOutputResourceBus[resource.first].size())
+									if (busCtr == _busCtr[resource.first])
 									{
-										_busCtr[resource.first] = 0;
+
+										_directConnectedModules[bus.first]->SetInput(Design::Data(opcode.dataType, Design::ModuleType::ALU, resource.first, -1, Design::ModuleType::CONTROL_UNIT, _id), bus.first);
+
+										_busCtr[resource.first]++;
+										if (_busCtr[resource.first] >= validOutputResourceBus[resource.first].size())
+										{
+											_busCtr[resource.first] = 0;
+										}
+
+										breakLoop = true;
+
 									}
+									busCtr++;
 
-									breakLoop = true;
-									
+									if (breakLoop)
+										break;
 								}
-								busCtr++;
 
+								_resCtr++;
+								if (_resCtr >= validOutputResourceBus.size())
+								{
+									_resCtr = 0;
+								}
 								if (breakLoop)
 									break;
 							}
 
-							_resCtr++;
-							if (_resCtr >= validOutputResourceBus.size())
-							{
-								_resCtr = 0;
-							}
-							if (breakLoop)
-								break;
+							resCtr++;
 						}
 
-						resCtr++;
 					}
-
 				}
+
+				if (breakLoop)
+					break;
 			}
 			
 		}

@@ -175,7 +175,9 @@ namespace Design
 			_numTransistors = 0;
 			_thermalDissipationPower = 0;
 			_frequency = 1; // 1 means equal frequency to outer source. 2 means 2x frequency or 2 iterations per cycle
+			_numCompletedOperations = 0;
 		}
+		int GetCompletedOperationCount() { return _numCompletedOperations; }
 		virtual void SetBusy() { _isBusy = true; }
 		virtual void SetIdle() { _isBusy = false; }
 
@@ -254,6 +256,8 @@ namespace Design
 		
 
 		std::vector<DataType> _commandFilter; // takes only these kind of commands to work
+
+		int _numCompletedOperations;
 
 	};
 
