@@ -21,9 +21,16 @@ namespace Design
 			_type = ModuleType::ALU;
 		}
 
+		void SetBusy() override { _isBusy = true; }
 		void Compute() override
 		{
-
+			for (int i = 0; i < 4; i++)
+			{
+				if (_input[i].dataType != Design::DataType::Null)
+				{
+					std::cout << "!!" << std::endl;
+				}
+			}
 		}
 	private:
 
