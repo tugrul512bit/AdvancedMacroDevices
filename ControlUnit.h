@@ -73,7 +73,7 @@ namespace Design
 								if (busCtr == _busCtr[resource.first])
 								{
 
-									_directConnectedModules[bus.first]->SetInput(Design::Data(opcode.dataType, Design::ModuleType::ALU, resource.first), bus.first);
+									_directConnectedModules[bus.first]->SetInput(Design::Data(opcode.dataType, Design::ModuleType::ALU, resource.first,-1,Design::ModuleType::CONTROL_UNIT,_id), bus.first);
 									
 									_busCtr[resource.first]++;
 									if (_busCtr[resource.first] >= validOutputResourceBus[resource.first].size())

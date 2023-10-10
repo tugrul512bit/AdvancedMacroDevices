@@ -26,13 +26,60 @@ namespace Design
 		{
 			for (int i = 0; i < 4; i++)
 			{
-				if (_input[i].dataType != Design::DataType::Null)
+				bool breakLoop = false;
+				auto inp = _input[i];
+				if (inp.dataType != Design::DataType::Null)
 				{
-					std::cout << "!!" << std::endl;
+					if (inp.dataType == Design::DataType::MicroOpAlu)
+					{
+						std::cout << "alu dummy compute" << std::endl;
+						int idSource = inp.sourceModuleId;
+						
+						for (int j = 0; j < 4; j++)
+						{
+							
+							auto bus = _directConnectedModules[j];
+							if (bus.get())
+							{
+								if (bus->GetModuleType() == Design::ModuleType::BUS)
+								{
+									std::cout << "output bus found" << std::endl;
+									auto sources = bus->AsPtr<Design::Bus>()->GetFarConnectionsOfType(inp.sourceModuleType);
+									for (auto s : sources)
+									{
+										std::cout << "!   "<< s.moduleId <<"      "<< idSource << std::endl;
+										// send result back to source
+										if (s.moduleId == idSource)
+										{
+											std::cout << "source path found" << std::endl;
+											int idx = 0;
+											if (j == 0)
+												idx += 2;
+											if (j == 1)
+												idx += 3;
+											if (j == 2)
+												idx += 0;
+											if (j == 3)
+												idx += 1;
+											bus->AsPtr<Design::Bus>()->SetInput(Data(Design::DataType::Result,Design::CONTROL_UNIT,idSource,-1,Design::ModuleType::ALU,_id), idx);
+											breakLoop=true;
+											break;
+										}
+									}
+								}
+							}
+
+							if (breakLoop)
+								break;
+						}
+
+					}
 				}
+
+				if (breakLoop)
+					break;
 			}
 		}
 	private:
-
 	};
 }

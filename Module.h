@@ -96,6 +96,10 @@ namespace Design
 	// the data that is passing between modules
 	struct Data
 	{
+		// the module that has sent this data
+		ModuleType sourceModuleType;
+		int sourceModuleId;
+
 		// type of module to take this data
 		// if input queue of module is full, it goes to another module
 		ModuleType targetModuleType;
@@ -128,8 +132,10 @@ namespace Design
 		*/
 		int value; 		
 	
-		Data(DataType dataTypePrm=DataType::Null, ModuleType targetModuleTypePrm=ModuleType::ANY, int targetModuleIdPrm=-1, int valuePrm=-1)
+		Data(DataType dataTypePrm=DataType::Null, ModuleType targetModuleTypePrm=ModuleType::ANY, int targetModuleIdPrm=-1, int valuePrm=-1, ModuleType sourceModuleTypePrm = ModuleType::ANY, int sourceModuleIdValue=-1)
 		{
+			sourceModuleType = sourceModuleTypePrm;
+			sourceModuleId = sourceModuleIdValue;
 			targetModuleType = targetModuleTypePrm;
 			targetModuleId = targetModuleIdPrm;
 			dataType = dataTypePrm;
@@ -176,6 +182,7 @@ namespace Design
 		int GetId() { return _id; }
 
 		virtual void ComputeOutput() {}
+
 		virtual void SetInput(Data input, int index) 
 		{
 			_inputRegister[index] = input;

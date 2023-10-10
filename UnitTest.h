@@ -39,7 +39,7 @@ namespace Window
                 testCpu->ConnectModules();
                 testCpu->PrepareBusPaths();
                 testCpu->GetCell<Design::Bus>(1, 0)->PrintPaths();
-                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu,Design::ModuleType::ALU,-1,-1),0);
+                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu,Design::ModuleType::ALU,-1,-1,Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()),0);
 
                 auto gridView = testCpu->GetGridView();
                 column3->AddNode(gridView);
@@ -113,7 +113,7 @@ namespace Window
                 testCpu->ConnectModules();
                 testCpu->PrepareBusPaths();
                 testCpu->GetCell<Design::Bus>(1, 0)->PrintPaths();
-                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1), 0);
+                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0);
 
                 auto gridView = testCpu->GetGridView();
                 column3->AddNode(gridView);
@@ -189,7 +189,7 @@ namespace Window
                 testCpu->ConnectModules();
                 testCpu->PrepareBusPaths();
                 testCpu->GetCell<Design::Bus>(1, 0)->PrintPaths();
-                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1), 0);
+                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0);
 
                 auto gridView = testCpu->GetGridView();
                 column3->AddNode(gridView);
@@ -197,7 +197,7 @@ namespace Window
 
                 column3->OnPreRender([&, testCpu, column3]() mutable {
 
-                    testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1), 0);
+                    testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0);
                     if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() < 500)
                     {
 
@@ -235,7 +235,7 @@ namespace Window
                 testCpu->ConnectModules();
                 testCpu->PrepareBusPaths();
 
-                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1), 0);
+                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0);
 
                 auto gridView = testCpu->GetGridView();
                 column3->AddNode(gridView);
