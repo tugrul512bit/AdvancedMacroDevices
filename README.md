@@ -183,16 +183,8 @@ Real-time phase events (disasters, new customers, etc) have dice-rolls. Player c
 
 All customers and workers also have their own class and any two can be combined as  multiclass.
 
-- investor: +income
-- influencer: +customers
-- researcher(sub-categories): +performance
-- leader: +workers
-- soldier: +health/strength
-- time traveler: +skill
-- hacker: +security/intelligence
-
-Researcher categories:
-
-Various braches that help on logical parts of CPU, physical capabilities of CPU and efficiency of r&d.
-
+- Processor Architect
+- Electronics Engineer
+- Physics Engineer
+- Banker
 
