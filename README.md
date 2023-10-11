@@ -33,10 +33,10 @@ Have you ever wondered how it feels to be CEO of a processor vendor? Do you have
 - tune production costs to optimize profit
 - manage R&D to win the tech race
 - optionally fine-tune pipelines of cores for optimum price/performance
-- hire tech forums/channels to do advertisement
+- hire tech forums/channels to do advertisement, even cheat on benchmark charts
 - upgrade with integrated gpu & custom gpu designs
 - sell designs to other corporations
-- hire test engineers, developers and architects to optimize your cpus in a better way
+- hire test engineers, developers and architects to optimize your cpus in a better way when you dont want to fiddle with modules
 - hold 99% of market for 20 years to win
 - select your ceo with a unique skill tree
 - research new technologies like out of order execution, speculative execution, SIMD, multiple threads per core (from 2-way to 32-way per core), multiple cores, multiple cpus on same motherboard, different types of caches & complex instruction sets, all used either in an automated way or your own way.
