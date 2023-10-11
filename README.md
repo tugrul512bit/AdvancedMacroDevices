@@ -22,7 +22,7 @@ Have you ever wondered how it feels to be CEO of a processor vendor? Do you have
 - vcpkg: for installing other dependencies
 - opencv: image processing
 - imgui: corporation management interface, character specs, cpu design
-- opencl: gpgpu for simulated-annealing to train custom neural networks (millions of NPC) that will make them act like gamers, daracenter owners & cpu architects
+- opencl: gpgpu for simulated-annealing to train custom neural networks (millions of NPC) that will make them act like gamers, datacenter owners & cpu architects
 - opengl: imgui's opengl bindings are used
 - various libraries from my profile (LruClockCache, DirectMappedCache, Ultra Fast Simulated Annealing, etc)
 
