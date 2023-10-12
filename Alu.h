@@ -21,7 +21,7 @@ namespace Design
 			_type = ModuleType::ALU;
 		}
 
-		void SetBusy() override { _isBusy = true; }
+
 		void Compute() override
 		{
 			

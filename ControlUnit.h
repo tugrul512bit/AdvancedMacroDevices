@@ -103,7 +103,10 @@ namespace Design
 									busCtr++;
 
 									if (breakLoop)
+									{
+										_input[i] = Data();
 										break;
+									}
 								}
 
 								_resCtr++;
@@ -112,7 +115,10 @@ namespace Design
 									_resCtr = 0;
 								}
 								if (breakLoop)
+								{
+									_input[i] = Data();
 									break;
+								}
 							}
 
 							resCtr++;
@@ -122,9 +128,12 @@ namespace Design
 				}
 
 				if (breakLoop)
+				{
+					_input[i] = Data();
 					break;
+				}
 			}
-			
+									
 		}
 	private:
 		// to select resource & bus fairly

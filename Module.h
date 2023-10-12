@@ -193,8 +193,11 @@ namespace Design
 		{
 			for (int i = 0; i < 4; i++)
 			{
-				_input[i] = _inputRegister[i];
-				_inputRegister[i] = Design::Data();
+				if (_input[i].dataType == Design::DataType::Null)
+				{
+					_input[i] = _inputRegister[i];
+					_inputRegister[i] = Design::Data();
+				}
 			}
 		}
 		virtual Data GetOutput() { return Data(); }

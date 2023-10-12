@@ -38,10 +38,10 @@ namespace Design
 			_busRegister[0].dataType = Design::DataType::Null;
 			
 		}
-		void SetBusy() override { _isBusy = true; }
+
 		void Compute() override
 		{
-			
+			SetIdle();
 			// rotate 4 data points
 			auto d0 = _busRegister[0];
 			auto d1 = _busRegister[1];
@@ -52,13 +52,13 @@ namespace Design
 			_busRegister[1] = d0;
 			_busRegister[2] = d1;
 			_busRegister[3] = d2;
-			_isBusy = false;
+
 			for (int i = 0; i < 4; i++)
 			{
 				if (_busRegister[i].dataType == Design::DataType::Null)
 					if (_input[i].dataType != Design::DataType::Null)
 					{
-						SetBusy();
+						
 						_busRegister[i] = _input[i];
 						_input[i] = Data();
 					}
@@ -66,13 +66,10 @@ namespace Design
 			for (int i = 0; i < 4; i++)
 			{
 				auto reg = _busRegister[i];
-				if (reg.dataType == Design::DataType::Result)
-					std::cout << "zzzzzzzzzzzzz" << std::endl;
+
 				// if has data, check if aligned at shortest module output, then send
 				if (reg.dataType != Design::DataType::Null)
 				{
-
-
 
 					// check  current distance
 					int curDist = 10000;
@@ -109,7 +106,7 @@ namespace Design
 									idx = 1;
 								conn->SetInput(reg, idx);
 								_busRegister[i] = Data();
-								std::cout << "bus->module" << std::endl;
+								std::cout << "bus->module "<<GetId() << std::endl;
 								SetBusy();
 								break;
 							}
@@ -150,8 +147,8 @@ namespace Design
 								idx = 1;
 							_directConnectedModules[shortestIdx]->SetInput(reg, idx);
 							_busRegister[i] = Data();
-							_isBusy = true;
-							std::cout << "bus->bus" << std::endl;
+							SetBusy();
+							std::cout << "bus->bus "<< GetId() << std::endl;
 						}
 					}
 				}
