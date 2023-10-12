@@ -164,7 +164,7 @@ namespace Design
 			_id = GetUniqueId();
 			_input.resize(4);
 			_inputRegister.resize(4);
-			_output.resize(4);
+			_output=Data();
 			_directConnectedModules.resize(4);
 			for (int i = 0; i < 4; i++)
 				_directConnectedModules[i] = nullptr;
@@ -185,6 +185,10 @@ namespace Design
 
 		virtual void ComputeOutput() {}
 
+		virtual Data GetInput(int index)
+		{
+			return _inputRegister[index];
+		}
 		virtual void SetInput(Data input, int index) 
 		{
 			_inputRegister[index] = input;
@@ -193,7 +197,9 @@ namespace Design
 		{
 			for (int i = 0; i < 4; i++)
 			{
-				if (_input[i].dataType == Design::DataType::Null)
+				// if output & input register is empty, then its ok to compute later				
+				// because if output is clogged, there is no reason to compute something that won't go anywhere
+				if (_output.dataType == Design::DataType::Null && _input[i].dataType == Design::DataType::Null)
 				{
 					_input[i] = _inputRegister[i];
 					_inputRegister[i] = Design::Data();
@@ -248,7 +254,9 @@ namespace Design
 		// 3 index: left
 		std::vector<Design::Data> _input;
 		std::vector<Design::Data> _inputRegister;
-		std::vector<Design::Data> _output;
+
+		// 1 internat output that can take any of 4 input paths
+		Design::Data _output;
 
 		std::vector<SkillRequirement> _skillRequirements;
 		std::vector<StatRequirement> _statRequirements;

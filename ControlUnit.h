@@ -27,121 +27,129 @@ namespace Design
 			_roundRobinIncoming = 0; 
 		}
 
+		// Cpu object calls this only when output is free	
+		// also it does only single work (unless upgraded with a skill level)
 		void Compute() override
 		{
 			// list of resources found (resource module ID to use) & their bus paths
 			std::map<int,std::map<int,bool>> validOutputResourceBus;
 			bool workStart = false;
 			bool workEnd = false;
-			bool breakLoop = false;
+
+			bool computed = false;
+			auto opcode = Data();
 			for (int i = 0; i < 4; i++)
 			{
-				auto opcode = _input[i];
-				if (opcode.dataType != Design::DataType::Null)
+				if (!computed)
 				{
-					if (opcode.dataType == Design::DataType::MicroOpAlu)
+					opcode = _input[i];					
+					if (opcode.dataType != Design::DataType::Null)
 					{
-						workStart = true;
-						// check bus connections for an ALU
-						for (int j = 0; j < 4; j++)
+						if (opcode.dataType == Design::DataType::MicroOpAlu)
 						{
-							auto dConn = _directConnectedModules[j];
-							if (dConn.get())
+							workStart = true;
+							// check bus connections for an ALU
+							for (int j = 0; j < 4; j++)
 							{
-								if (dConn->GetModuleType() == Design::ModuleType::BUS)
+								auto dConn = _directConnectedModules[j];
+								if (dConn.get())
 								{
-									auto alus = dConn->AsPtr<Design::Bus>()->GetFarConnectionsOfType(Design::ModuleType::ALU);
-									for (auto& a : alus)
+									if (dConn->GetModuleType() == Design::ModuleType::BUS)
 									{
-										validOutputResourceBus[a.moduleId][j] = true;
+										auto alus = dConn->AsPtr<Design::Bus>()->GetFarConnectionsOfType(Design::ModuleType::ALU);
+										for (auto& a : alus)
+										{
+											validOutputResourceBus[a.moduleId][j] = true;
+										}
 									}
 								}
 							}
 						}
-					}
 
-					if (opcode.dataType == Design::DataType::Result)
-					{
-						_numCompletedOperations++; std::cout<<"?" << std::endl;
-						workEnd = true;
-					}
-
-					if (workEnd)
-					{
-						break;
-					}
-
-					int resCtr = 0;
-
-					if (workStart)
-					{
-
-						for (auto& resource : validOutputResourceBus)
+						if (opcode.dataType == Design::DataType::Result)
 						{
-							int busCtr = 0;
+							_numCompletedOperations++; 
+							workEnd = true;
+						}
 
-							if (resCtr == _resCtr)
+						if (workEnd)
+						{
+							// do something to retire an instruction/opcode
+							computed = true;
+						}
+
+						int resCtr = 0;
+
+						if (workStart)
+						{
+
+							for (auto& resource : validOutputResourceBus)
 							{
-
-								for (auto& bus : resource.second)
+								if (!computed)
 								{
+									int busCtr = 0;
 
-									if (busCtr == _busCtr[resource.first])
+									if (resCtr == _resCtr)
 									{
 
-										_directConnectedModules[bus.first]->SetInput(Design::Data(opcode.dataType, Design::ModuleType::ALU, resource.first, -1, Design::ModuleType::CONTROL_UNIT, _id), bus.first);
-
-										_busCtr[resource.first]++;
-										if (_busCtr[resource.first] >= validOutputResourceBus[resource.first].size())
+										for (auto& bus : resource.second)
 										{
-											_busCtr[resource.first] = 0;
+
+											if (!computed && busCtr++ == _busCtr[resource.first])
+											{
+
+												if (_directConnectedModules[bus.first]->GetInput(bus.first).dataType == Design::DataType::Null)
+												{
+													computed = true;
+													_directConnectedModules[bus.first]->SetInput(Design::Data(opcode.dataType, Design::ModuleType::ALU, resource.first, -1, Design::ModuleType::CONTROL_UNIT, _id), bus.first);
+													_busCtr[resource.first]++;
+													if (_busCtr[resource.first] >= validOutputResourceBus[resource.first].size())
+													{
+														_busCtr[resource.first] = 0;
+													}
+												}
+
+											}
 										}
 
-										breakLoop = true;
+										_resCtr++;
+										if (_resCtr >= validOutputResourceBus.size())
+										{
+											_resCtr = 0;
+										}
 
 									}
-									busCtr++;
 
-									if (breakLoop)
-									{
-										_input[i] = Data();
-										break;
-									}
-								}
-
-								_resCtr++;
-								if (_resCtr >= validOutputResourceBus.size())
-								{
-									_resCtr = 0;
-								}
-								if (breakLoop)
-								{
-									_input[i] = Data();
-									break;
+									resCtr++;
 								}
 							}
 
-							resCtr++;
 						}
-
 					}
+
+				
 				}
 
-				if (breakLoop)
+				if (!computed)
 				{
+					// if not computed, put the data back
+					_input[i] = opcode;
+				}
+				else
+				{
+					// if computed, input is cleared for new data
 					_input[i] = Data();
-					break;
 				}
 			}
 									
 		}
 	private:
-		// to select resource & bus fairly
+		// to select resource & bus fairly against deadlock
 		int _resCtr;
 		std::map<int,int> _busCtr;
 
 
-		// to select an input fairly
+		// to select an input fairly against starvation
 		int _roundRobinIncoming;
 		std::queue<Design::Data> _opcode;
 	};

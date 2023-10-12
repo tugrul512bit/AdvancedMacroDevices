@@ -94,10 +94,14 @@ namespace Design
 			
 		}
 
-		void ApplyInputs()
+
+
+		void Compute()
 		{
 			std::unique_lock<std::mutex> lck(*mut);
-			// loop non-bus modules for 1 time
+
+			// apply inputs (if its not clogged already)
+			// get data from outer input register into internal input
 			for (int j = 0; j < _height; j++)
 			{
 				for (int i = 0; i < _width; i++)
@@ -108,24 +112,27 @@ namespace Design
 				}
 			}
 
-		}
 
-		void Compute()
-		{
-			std::unique_lock<std::mutex> lck(*mut);
 			// loop non-bus modules for 1 time
 			for (int j = 0; j < _height; j++)
 			{
 				for (int i = 0; i < _width; i++)
 				{
 					auto curModule = _moduleGrid[i + j*_width];
-					if(curModule.get())
-						if(curModule->GetModuleType() != Design::ModuleType::BUS)
-							curModule->Compute();
+					if (curModule.get())
+					{
+						if (curModule->GetModuleType() != Design::ModuleType::BUS)
+						{
+							// compute only if output is empty (has space to take a result)
+							if (curModule->GetOutput().dataType == Design::DataType::Null)
+								curModule->Compute();
+						}
+					}
 				}
 			}
 
 			// loop bus modules for n times
+			// n changes with a skill level
 			int n = 1;
 			for(int k=0;k<n;k++)
 			for (int j = 0; j < _height; j++)
@@ -134,8 +141,10 @@ namespace Design
 				{
 					auto curModule = _moduleGrid[i + j * _width];
 					if (curModule.get())
+					{
 						if (curModule->GetModuleType() == Design::ModuleType::BUS)
 							curModule->Compute();
+					}
 				}
 			}
 		}

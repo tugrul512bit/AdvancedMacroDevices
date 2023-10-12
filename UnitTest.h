@@ -54,7 +54,6 @@ namespace Window
                     }
                     else
                     {
-                        testCpu->ApplyInputs();
                         testCpu->Compute();
 
                         column3->DeleteAllNodes();
@@ -128,7 +127,6 @@ namespace Window
                     }
                     else
                     {
-                        testCpu->ApplyInputs();
                         testCpu->Compute();
 
                         column3->DeleteAllNodes();
@@ -204,7 +202,7 @@ namespace Window
                     }
                     else
                     {
-                        testCpu->ApplyInputs();
+ 
                         testCpu->Compute();
 
                         column3->DeleteAllNodes();
@@ -250,7 +248,7 @@ namespace Window
                     }
                     else
                     {
-                        testCpu->ApplyInputs();
+
                         testCpu->Compute();
 
                         column3->DeleteAllNodes();
@@ -298,10 +296,7 @@ namespace Window
                         if(countCmd%2==0)
                             testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0);
 
-                        testCpu->ApplyInputs();
                         testCpu->Compute();
-
-
 
                         column3->DeleteAllNodes();
                         column3->AddNode(TextItem::Create("Num completed op.", [testCpu]() { return std::string("Completed operations=") + std::to_string(testCpu->GetCell<Design::ControlUnit>(0, 0)->GetCompletedOperationCount()); }, 2, false));
