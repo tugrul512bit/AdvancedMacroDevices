@@ -53,17 +53,17 @@ namespace Window
         {
            
             // Cleanup
-            std::cout << "debug 1" << std::endl;
+            
             ImGui_ImplOpenGL3_Shutdown();
-            std::cout << "debug 2" << std::endl;
+            
             ImGui_ImplGlfw_Shutdown();
-            std::cout << "debug 3" << std::endl;
+            
             ImGui::DestroyContext();
-            std::cout << "debug 4" << std::endl;
+            
             glfwDestroyWindow(window);
-            std::cout << "debug 5" << std::endl;
+            
             glfwTerminate();
-            std::cout << "window cleanup complete" << std::endl;
+            
         }
 
         GLFWwindow* window;

@@ -31,13 +31,16 @@ namespace Design
 		// also it does only single work (unless upgraded with a skill level)
 		void Compute() override
 		{
+			if (GetOutput().dataType != Design::DataType::Null)
+				return;
+
 			// list of resources found (resource module ID to use) & their bus paths
 			std::map<int,std::map<int,bool>> validOutputResourceBus;
-			bool workStart = false;
-			bool workEnd = false;
+
 
 			bool computed = false;
 			auto opcode = Data();
+			// todo: use modulus round robin instead of i=0
 			for (int i = 0; i < 4; i++)
 			{
 				if (!computed)
@@ -47,87 +50,17 @@ namespace Design
 					{
 						if (opcode.dataType == Design::DataType::MicroOpAlu)
 						{
-							workStart = true;
-							// check bus connections for an ALU
-							for (int j = 0; j < 4; j++)
-							{
-								auto dConn = _directConnectedModules[j];
-								if (dConn.get())
-								{
-									if (dConn->GetModuleType() == Design::ModuleType::BUS)
-									{
-										auto alus = dConn->AsPtr<Design::Bus>()->GetFarConnectionsOfType(Design::ModuleType::ALU);
-										for (auto& a : alus)
-										{
-											validOutputResourceBus[a.moduleId][j] = true;
-										}
-									}
-								}
-							}
+							SetOutput(Design::Data(opcode.dataType, Design::ModuleType::ALU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id));
+							computed = true;
 						}
 
 						if (opcode.dataType == Design::DataType::Result)
 						{
 							_numCompletedOperations++; 
-							workEnd = true;
-						}
-
-						if (workEnd)
-						{
-							// do something to retire an instruction/opcode
 							computed = true;
 						}
-
-						int resCtr = 0;
-
-						if (workStart)
-						{
-
-							for (auto& resource : validOutputResourceBus)
-							{
-								if (!computed)
-								{
-									int busCtr = 0;
-
-									if (resCtr == _resCtr)
-									{
-
-										for (auto& bus : resource.second)
-										{
-
-											if (!computed && busCtr++ == _busCtr[resource.first])
-											{
-
-												if (_directConnectedModules[bus.first]->GetInput(bus.first).dataType == Design::DataType::Null)
-												{
-													computed = true;
-													_directConnectedModules[bus.first]->SetInput(Design::Data(opcode.dataType, Design::ModuleType::ALU, resource.first, -1, Design::ModuleType::CONTROL_UNIT, _id), bus.first);
-													_busCtr[resource.first]++;
-													if (_busCtr[resource.first] >= validOutputResourceBus[resource.first].size())
-													{
-														_busCtr[resource.first] = 0;
-													}
-												}
-
-											}
-										}
-
-										_resCtr++;
-										if (_resCtr >= validOutputResourceBus.size())
-										{
-											_resCtr = 0;
-										}
-
-									}
-
-									resCtr++;
-								}
-							}
-
-						}
 					}
-
-				
+		
 				}
 
 				if (!computed)
@@ -139,9 +72,82 @@ namespace Design
 				{
 					// if computed, input is cleared for new data
 					_input[i] = Data();
+					break;
 				}
 			}
 									
+		}
+
+		void SendOutput() override
+		{
+			if (GetOutput().dataType != Design::DataType::Null)
+			{
+				std::map<int, std::map<int, bool>> validOutputResourceBus;
+				// check bus connections for an ALU
+				for (int j = 0; j < 4; j++)
+				{
+					auto dConn = _directConnectedModules[j];
+					if (dConn.get())
+					{
+						if (dConn->GetModuleType() == Design::ModuleType::BUS)
+						{
+							auto alus = dConn->AsPtr<Design::Bus>()->GetFarConnectionsOfType(GetOutput().targetModuleType);
+							for (auto& a : alus)
+							{
+								validOutputResourceBus[a.moduleId][j] = true;
+							}
+						}
+					}
+				}
+
+				bool sent = false;
+				int resCtr = 0;
+				for (auto& resource : validOutputResourceBus)
+				{
+					if (!sent)
+					{
+						int busCtr = 0;
+
+						if (resCtr == _resCtr)
+						{
+
+							for (auto& bus : resource.second)
+							{
+
+								if (!sent && busCtr++ == _busCtr[resource.first])
+								{
+
+									if (_directConnectedModules[bus.first]->GetInput(bus.first).dataType == Design::DataType::Null)
+									{
+										sent = true;
+
+										auto dataToSend = GetOutput();
+										dataToSend.targetModuleId = resource.first;
+										
+										_directConnectedModules[bus.first]->SetInput(dataToSend, bus.first);
+										SetOutput(Data());
+										_busCtr[resource.first]++;
+										if (_busCtr[resource.first] >= validOutputResourceBus[resource.first].size())
+										{
+											_busCtr[resource.first] = 0;
+										}
+									}
+
+								}
+							}
+
+							_resCtr++;
+							if (_resCtr >= validOutputResourceBus.size())
+							{
+								_resCtr = 0;
+							}
+
+						}
+
+						resCtr++;
+					}
+				}
+			}
 		}
 	private:
 		// to select resource & bus fairly against deadlock

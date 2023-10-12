@@ -147,6 +147,18 @@ namespace Design
 					}
 				}
 			}
+
+			for (int j = 0; j < _height; j++)
+			{
+				for (int i = 0; i < _width; i++)
+				{
+					auto curModule = _moduleGrid[i + j * _width];
+					if (curModule.get())
+					{
+						curModule->SendOutput();
+					}
+				}
+			}
 		}
 
 

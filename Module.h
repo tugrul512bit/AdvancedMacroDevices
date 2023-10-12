@@ -199,14 +199,16 @@ namespace Design
 			{
 				// if output & input register is empty, then its ok to compute later				
 				// because if output is clogged, there is no reason to compute something that won't go anywhere
-				if (_output.dataType == Design::DataType::Null && _input[i].dataType == Design::DataType::Null)
+				if (GetOutput().dataType == Design::DataType::Null && _input[i].dataType == Design::DataType::Null)
 				{
 					_input[i] = _inputRegister[i];
 					_inputRegister[i] = Design::Data();
 				}
 			}
 		}
-		virtual Data GetOutput() { return Data(); }
+		virtual void SendOutput() {}
+		virtual void SetOutput(Data data) { _output = data; }
+		virtual Data GetOutput() { return _output; }
 		virtual ModuleType GetModuleType() { return _type; }
 		virtual bool GetBusyness() {  return _isBusy; }
 		std::vector<Module*> GetConnectedModulesExceptThis(Module* source = nullptr)

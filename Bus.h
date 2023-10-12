@@ -63,10 +63,30 @@ namespace Design
 						_input[i] = Data();
 					}
 			}
+
+
+		}
+
+		void SendOutput() override
+		{
 			for (int i = 0; i < 4; i++)
 			{
 				auto reg = _busRegister[i];
-
+				auto conn = _directConnectedModules[i];
+				if (conn.get())
+				{
+					int idx = 0;
+					if (i == 0)
+						idx = 2;
+					else if (i == 1)
+						idx = 3;
+					else if (i == 2)
+						idx = 0;
+					else if (i == 3)
+						idx = 1;
+					if (conn->GetInput(idx).dataType != Design::DataType::Null)
+						continue;
+				}
 				// if has data, check if aligned at shortest module output, then send
 				if (reg.dataType != Design::DataType::Null)
 				{
@@ -81,7 +101,7 @@ namespace Design
 							curDist = fc.jumps;
 						}
 					}
-					std::cout << "curDist=" << curDist << std::endl;
+					
 
 					// check shortest module
 					int shortestPath = 10000;
@@ -91,10 +111,11 @@ namespace Design
 						auto conn = _directConnectedModules[j];
 						if (conn.get())
 						{
-
-							if (reg.targetModuleId == conn->GetId() && (i==j))
+					
+							if (reg.targetModuleId == conn->GetId() && (i == j))
 							{
 								// aligned directly, send data
+					
 								int idx = 0;
 								if (j == 0)
 									idx = 2;
@@ -106,31 +127,33 @@ namespace Design
 									idx = 1;
 								conn->SetInput(reg, idx);
 								_busRegister[i] = Data();
-								std::cout << "bus->module "<<GetId() << std::endl;
+								std::cout << "bus->module " << GetId() << std::endl;
 								SetBusy();
 								break;
 							}
-							else if(conn->GetModuleType() == Design::ModuleType::BUS)
+							else if (conn->GetModuleType() == Design::ModuleType::BUS)
 							{
+								
 								// check distance
 								auto connBus = conn->AsPtr<Design::Bus>();
 								auto jumpList = connBus->GetFarConnectionsOfType(reg.targetModuleType);
 								for (auto& jl : jumpList)
 								{
-									std::cout << jl.jumps << std::endl;
+									
 									if (jl.jumps < shortestPath)
 									{
 										shortestPath = jl.jumps;
 										shortestIdx = j;
 									}
 								}
-								
+
 							}
 						}
 					}
 
 
 					// compare shortest indirect distance with current distance
+					
 					if (curDist > shortestPath)
 					{
 						// if aligned with shortest
@@ -148,12 +171,12 @@ namespace Design
 							_directConnectedModules[shortestIdx]->SetInput(reg, idx);
 							_busRegister[i] = Data();
 							SetBusy();
-							std::cout << "bus->bus "<< GetId() << std::endl;
+							std::cout << "bus->bus " << GetId() << std::endl;
 						}
 					}
 				}
 			}
-			
+
 		}
 
 		void ComputePaths(Bus * root = nullptr, int jumps = 1, std::map<Module *,bool> * filter=nullptr)
