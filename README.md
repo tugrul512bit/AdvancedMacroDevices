@@ -14,6 +14,7 @@ Have you ever wondered how it feels to be CEO of a processor vendor? Do you have
 - watch millions of NPCs use your processors, profit
 - Iterate your next CPU design
 
+![[https://github.com/tugrul512bit/AdvancedMacroDevices/blob/master/wiki/decoder-alu-controller.png](https://github.com/tugrul512bit/AdvancedMacroDevices/blob/master/wiki/decoder-alu-controller.png)]
 
 
 # Dependencies
