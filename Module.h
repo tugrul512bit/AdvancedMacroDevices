@@ -65,6 +65,7 @@ namespace Design
 		MicroOpParameter5,
 		MicroOpBranchPrediction,
 		MicroOpSync,
+		MicroOpDecode,
 
 		// result (which has a target module type or id to go)
 		Result
@@ -88,7 +89,7 @@ namespace Design
 		FPU,
 		CACHE_BANK,
 		BRANCH_PREDICTOR,
-
+		DECODER,
 		// for searching modules through bus connections
 		ANY
 	};

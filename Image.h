@@ -47,10 +47,8 @@ namespace Window
 		}
 		~TextureStorage()
 		{
-
 			for (auto e : strToTex)
 			{
-				std::cout << "releasing texture from video-memory" << std::endl;
 				glDeleteTextures(1, &e.second);
 			}
 		}
@@ -174,7 +172,7 @@ namespace Window
 			cv::line(img, cv::Point2f(42, 25+ yOffset), cv::Point2f(59, 5+ yOffset), cv::Scalar(255, 255, 255, 255), 2);			
 			img = Global::ImageProcessing::FloodFill(32, 37, img, 255, 255, 255, 255);
 			cv::putText(img, cv::String("+-/*"), cv::Point2f(15, 21 + yOffset), 1, 0.6, cv::Scalar(0, 0, 0, 255));
-			
+			cv::putText(img, cv::String("ALU"), cv::Point2f(19, 22), 1, 0.9, cv::Scalar(255, 255, 255, 255));			
 			return img;
 		}
 
@@ -278,6 +276,7 @@ namespace Window
 
 			cv::line(img, cv::Point2f(45, 22), cv::Point2f(32, 30), cv::Scalar(255, 255, 255, 255), 1);
 
+			cv::putText(img, cv::String("Control"), cv::Point2f(4, 50), 1, 0.9, cv::Scalar(255, 255, 255, 255));
 			return img;
 		}
 
@@ -290,6 +289,32 @@ namespace Window
 			cv::line(img, cv::Point2f(63, 0), cv::Point2f(63, 63), cv::Scalar(255, 255, 255, 255), 1);
 			cv::line(img, cv::Point2f(63, 63), cv::Point2f(0, 63), cv::Scalar(255, 255, 255, 255), 1);
 			cv::line(img, cv::Point2f(0, 63), cv::Point2f(0, 0), cv::Scalar(255, 255, 255, 255), 1);
+
+			return img;
+		}
+
+		cv::Mat DecoderImage()
+		{
+			cv::Mat img(64, 64, CV_8UC4);
+			img = 0;
+			// border
+			cv::line(img, cv::Point2f(0, 0), cv::Point2f(63, 0), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(63, 0), cv::Point2f(63, 63), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(63, 63), cv::Point2f(0, 63), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(0, 63), cv::Point2f(0, 0), cv::Scalar(255, 255, 255, 255), 1);
+
+			cv::putText(img, cv::String("Decode"), cv::Point2f(4, 20), 1, 0.9, cv::Scalar(255, 255, 255, 255));
+
+			cv::line(img, cv::Point2f(32, 23), cv::Point2f(32, 37), cv::Scalar(255, 255, 255, 255), 2);
+			cv::line(img, cv::Point2f(9, 37), cv::Point2f(54, 37), cv::Scalar(255, 255, 255, 255), 2);
+			cv::line(img, cv::Point2f(9, 37), cv::Point2f(9, 49), cv::Scalar(255, 255, 255, 255), 2);
+			cv::line(img, cv::Point2f(54, 37), cv::Point2f(54, 49), cv::Scalar(255, 255, 255, 255), 2);
+			cv::line(img, cv::Point2f(9, 49), cv::Point2f(54, 49), cv::Scalar(255, 255, 255, 255), 2);
+
+			cv::line(img, cv::Point2f(17, 49), cv::Point2f(17, 57), cv::Scalar(255, 255, 255, 255), 2);
+			cv::line(img, cv::Point2f(27, 49), cv::Point2f(27, 57), cv::Scalar(255, 255, 255, 255), 2);
+			cv::line(img, cv::Point2f(37, 49), cv::Point2f(37, 57), cv::Scalar(255, 255, 255, 255), 2);
+			cv::line(img, cv::Point2f(47, 49), cv::Point2f(47, 57), cv::Scalar(255, 255, 255, 255), 2);
 
 			return img;
 		}

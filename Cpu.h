@@ -203,6 +203,11 @@ namespace Design
 
 							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("control_unit_img_") + std::to_string(i + j * _width), false, Window::Images::ControlUnitImage(), _moduleGrid[i + j * _width]->GetBusyness()));
 						}
+						else if (_moduleGrid[i + j * _width]->GetModuleType() == ModuleType::DECODER)
+						{
+
+							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("decoder_img_") + std::to_string(i + j * _width), false, Window::Images::DecoderImage(), _moduleGrid[i + j * _width]->GetBusyness()));
+						}
 					}
 				}
 			}

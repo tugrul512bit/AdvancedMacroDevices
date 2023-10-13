@@ -6,27 +6,27 @@
 #include<vector>
 #include<queue>
 #include<cmath>
+#include<iostream>
 
 namespace Design
 {
 	// cache bank stores cached data
 	// input: memory request
 	// output: data	
-	class Alu :public Module
+	class Decoder :public Module
 	{
 	public:
-		Alu(int frequency, int lithography)
+		Decoder(int frequency, int lithography)
 		{
 			_frequency = frequency;
 			_lithography = lithography;
-			_type = ModuleType::ALU;
+			_type = ModuleType::DECODER;
 		}
 
 
 		void Compute() override
 		{
 			SetIdle();
-
 			if (GetOutput().dataType != Design::DataType::Null)
 				return;
 
@@ -41,17 +41,17 @@ namespace Design
 					if (inp.dataType != Design::DataType::Null)
 					{
 
-						if (inp.dataType == Design::DataType::MicroOpAlu)
+						if (inp.dataType == Design::DataType::MicroOpDecode)
 						{
 							computed = true;
-							std::cout << "alu dummy compute" << std::endl;
+							std::cout << "decode dummy compute" << std::endl;
 							SetBusy();
 							SetOutput(Data(
 								Design::DataType::Result,
 								Design::CONTROL_UNIT,
 								inp.sourceModuleId,
-								-1,
 								Design::ModuleType::ALU,
+								Design::ModuleType::DECODER,
 								_id));
 
 						}
@@ -69,7 +69,7 @@ namespace Design
 					// if computed, input is cleared for new data
 					_input[i] = Data();
 				}
-				
+
 			}
 
 		}

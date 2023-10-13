@@ -37,7 +37,7 @@ namespace Design
 			// list of resources found (resource module ID to use) & their bus paths
 			std::map<int,std::map<int,bool>> validOutputResourceBus;
 
-
+			SetIdle();
 			bool computed = false;
 			auto opcode = Data();
 			// todo: use modulus round robin instead of i=0
@@ -50,13 +50,25 @@ namespace Design
 					{
 						if (opcode.dataType == Design::DataType::MicroOpAlu)
 						{
+							SetBusy();
 							SetOutput(Design::Data(opcode.dataType, Design::ModuleType::ALU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id));
+							computed = true;
+						}
+
+						if (opcode.dataType == Design::DataType::MicroOpDecode)
+						{							
+							SetBusy();
+							SetOutput(Design::Data(opcode.dataType, Design::ModuleType::DECODER, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id));
 							computed = true;
 						}
 
 						if (opcode.dataType == Design::DataType::Result)
 						{
+							if(opcode.value == Design::ModuleType::ALU)
+								SetOutput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id));
+							SetBusy();
 							_numCompletedOperations++; 
+							// todo: merge current operation to architectural state
 							computed = true;
 						}
 					}
@@ -83,7 +95,7 @@ namespace Design
 			if (GetOutput().dataType != Design::DataType::Null)
 			{
 				std::map<int, std::map<int, bool>> validOutputResourceBus;
-				// check bus connections for an ALU
+				// check bus connections for target module
 				for (int j = 0; j < 4; j++)
 				{
 					auto dConn = _directConnectedModules[j];

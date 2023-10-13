@@ -149,6 +149,7 @@
     <ClInclude Include="Cpu.h" />
     <ClInclude Include="CpuDesign.h" />
     <ClInclude Include="CreateCharacter.h" />
+    <ClInclude Include="Decoder.h" />
     <ClInclude Include="Dice.h" />
     <ClInclude Include="Equivalence.h" />
     <ClInclude Include="Grid.h" />

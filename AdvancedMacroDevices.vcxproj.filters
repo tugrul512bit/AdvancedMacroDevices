@@ -125,5 +125,8 @@
     <ClInclude Include="Alu.h">
       <Filter>Design\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="Decoder.h">
+      <Filter>Design\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
