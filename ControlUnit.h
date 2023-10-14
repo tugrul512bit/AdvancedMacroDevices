@@ -25,6 +25,7 @@ namespace Design
 			_type = ModuleType::CONTROL_UNIT;
 			_resCtr = 0;			
 			_roundRobinIncoming = 0; 
+			_busynessLevelMax = 1;
 		}
 
 		// Cpu object calls this only when output is free	

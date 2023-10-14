@@ -58,13 +58,13 @@ namespace Window
 	class ImageItem : public AppStructure
 	{
 	public:
-		static std::shared_ptr<AppStructure> Create(std::string name, bool sameLine, cv::Mat img, bool isBusy)
+		static std::shared_ptr<AppStructure> Create(std::string name, bool sameLine, cv::Mat img, int busynessLevel)
 		{
-			std::shared_ptr<AppStructure> node = std::shared_ptr<ImageItem>(new ImageItem(name, sameLine, img, isBusy), [](ImageItem* i) { delete i; });
+			std::shared_ptr<AppStructure> node = std::shared_ptr<ImageItem>(new ImageItem(name, sameLine, img, busynessLevel), [](ImageItem* i) { delete i; });
 			return node;
 		}
 
-		ImageItem(std::string name = "text", bool sameLine = false, cv::Mat img=cv::Mat(64,64,CV_8UC4), bool isBusy = false)
+		ImageItem(std::string name = "text", bool sameLine = false, cv::Mat img=cv::Mat(64,64,CV_8UC4), int busynessLevel = 0)
 		{
 
 			_name = name;
@@ -105,19 +105,36 @@ namespace Window
 					_img.at<unsigned char>(i * 4 + 2) = img.at<unsigned char>(i * 4 + 2);
 					_img.at<unsigned char>(i * 4+3) = img.at<unsigned char>(i * 4 + 3);
 				}
-			if (isBusy)
+			if (busynessLevel>0)
 			{
 				
 				for (int i = 0; i < _img.rows * _img.cols; i++)
 					_img.at<cv::Vec4b>(i) = cv::Vec4b
 					(
 						0,
-						_img.at<cv::Vec4b>(i).val[1],
+						_img.at<cv::Vec4b>(i).val[1] * busynessLevel / 100.0,
 						0,
 						_img.at<cv::Vec4b>(i).val[3]
 					);
+
+				if (busynessLevel >= 95)
+				{
+					cv::rectangle(_img, cv::Rect2f(52, 55, 5, 5), cv::Scalar(0, 255 * busynessLevel / 100.0, 0, 255), -1);
+				}
+				if (busynessLevel >= 70)
+				{
+					cv::rectangle(_img, cv::Rect2f(37, 55, 5, 5), cv::Scalar(0, 255 * busynessLevel / 100.0, 0, 255), -1);
+				}
+				if (busynessLevel >= 45)
+				{
+					cv::rectangle(_img, cv::Rect2f(22, 55, 5, 5), cv::Scalar(0, 255 * busynessLevel / 100.0, 0, 255), -1);
+				}
+				if (busynessLevel >= 20)
+				{
+					cv::rectangle(_img, cv::Rect2f(7, 55, 5, 5), cv::Scalar(0, 255 * busynessLevel / 100.0, 0, 255), -1);
+				}
 			}
-			_isBusy = isBusy;
+			_busynessLevel = busynessLevel;
 			_vec1 = ImVec2(_width, _height);
 			_texture = ToTexture();
 		}
@@ -142,10 +159,9 @@ namespace Window
 		GLuint  _texture;
 		cv::Mat _img;
 		ImVec2 _vec1;
-		bool _isBusy;
+		int _busynessLevel;
         GLuint ToTexture() {       
-
-            return globalTextures.Generate(_name+(_isBusy?"_busy":"_normal"), _img);
+            return globalTextures.Generate(_name+std::string("_")+std::to_string(_busynessLevel), _img);
         }
 	};
 

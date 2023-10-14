@@ -36,7 +36,7 @@ namespace Design
 			_frequency = frequency;
 			_type = ModuleType::BUS;
 			_busRegister[0].dataType = Design::DataType::Null;
-			
+			_busynessLevelMax = 4;
 		}
 
 		void Compute() override

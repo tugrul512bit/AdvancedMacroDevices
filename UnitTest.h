@@ -37,8 +37,7 @@ namespace Window
                 testCpu->SetCell<Design::Alu>(2, 3, 1, 1000);
                        
                        
-                testCpu->ConnectModules();
-                testCpu->PrepareBusPaths();
+                testCpu->Init();
                 testCpu->GetCell<Design::Bus>(1, 0)->PrintPaths();
                 testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu,Design::ModuleType::ALU,-1,-1,Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()),0);
 
@@ -110,8 +109,7 @@ namespace Window
                 testCpu->SetCell<Design::Alu>(6, 6, 1, 1000);
 
 
-                testCpu->ConnectModules();
-                testCpu->PrepareBusPaths();
+                testCpu->Init();
                 testCpu->GetCell<Design::Bus>(1, 0)->PrintPaths();
                 testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0);
 
@@ -185,8 +183,8 @@ namespace Window
                 testCpu->SetCell<Design::Alu>(6, 6, 1, 1000);
 
 
-                testCpu->ConnectModules();
-                testCpu->PrepareBusPaths();
+                testCpu->Init();
+
                 testCpu->GetCell<Design::Bus>(1, 0)->PrintPaths();
                 testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0);
 
@@ -231,8 +229,7 @@ namespace Window
                 testCpu->SetCell<Design::Bus>(3, 0, 1, 1000);                
                 testCpu->SetCell<Design::Alu>(4, 0, 1, 1000);
 
-                testCpu->ConnectModules();
-                testCpu->PrepareBusPaths();
+                testCpu->Init();
 
                 testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0);
 
@@ -277,8 +274,7 @@ namespace Window
                 testCpu->SetCell<Design::Bus>(3, 0, 1, 1000);
                 testCpu->SetCell<Design::Alu>(4, 0, 1, 1000);
 
-                testCpu->ConnectModules();
-                testCpu->PrepareBusPaths();
+                testCpu->Init();
 
                 auto gridView = testCpu->GetGridView();
                 column3->AddNode(gridView);
@@ -333,8 +329,7 @@ namespace Window
                 testCpu->SetCell<Design::Decoder>(2, 2, 1, 1000);
 
                 testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0);
-                testCpu->ConnectModules();
-                testCpu->PrepareBusPaths();
+                testCpu->Init();
 
                 auto gridView = testCpu->GetGridView();
                 column3->AddNode(gridView);

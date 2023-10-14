@@ -20,6 +20,7 @@ namespace Design
 			_frequency = frequency;
 			_lithography = lithography;
 			_type = ModuleType::ALU;
+			_busynessLevelMax = 1;
 		}
 
 

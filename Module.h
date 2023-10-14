@@ -169,7 +169,8 @@ namespace Design
 			_directConnectedModules.resize(4);
 			for (int i = 0; i < 4; i++)
 				_directConnectedModules[i] = nullptr;
-			_isBusy = false;
+			_busynessLevel = 0;
+			_busynessLevelMax = 1;
 			_failProbability = 0.0f;
 			_lithography = 1000;
 			_type = ModuleType::ANY; // just a default
@@ -179,8 +180,10 @@ namespace Design
 			_numCompletedOperations = 0;
 		}
 		int GetCompletedOperationCount() { return _numCompletedOperations; }
-		virtual void SetBusy() { _isBusy = true; }
-		virtual void SetIdle() { _isBusy = false; }
+		virtual void SetBusy() { _busynessLevel++; }
+		virtual void SetIdle() { _busynessLevel = 0; }
+		// percentage level: 100 = full, 0 = idle
+		virtual int GetBusyness() { return 100 * (_busynessLevel / (float)_busynessLevelMax); }
 
 		int GetId() { return _id; }
 
@@ -211,7 +214,7 @@ namespace Design
 		virtual void SetOutput(Data data) { _output = data; }
 		virtual Data GetOutput() { return _output; }
 		virtual ModuleType GetModuleType() { return _type; }
-		virtual bool GetBusyness() {  return _isBusy; }
+
 		std::vector<Module*> GetConnectedModulesExceptThis(Module* source = nullptr)
 		{
 			std::vector<Module*> result;
@@ -242,7 +245,8 @@ namespace Design
 	protected:		
 		int _id;
 		ModuleType _type;
-		bool _isBusy; 
+		int _busynessLevel; 
+		int _busynessLevelMax;
 		float _failProbability; // all transistors have a failure probability, hence the module failure, per clock. the more transistors the more failure chance.
 		int _lithography;
 

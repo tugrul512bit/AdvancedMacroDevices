@@ -214,6 +214,11 @@ namespace Design
 			return result;
 		}
 
+		void Init()
+		{
+			ConnectModules();
+			PrepareBusPaths();
+		}
 	private:
 		std::shared_ptr<std::mutex> mut;
 		int _width;
