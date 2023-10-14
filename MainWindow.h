@@ -170,7 +170,9 @@ namespace Window
         menu->AddNode(ButtonItem::Create("Create Character", "Create Character", [createCharacter, app]() mutable { app.CreateNewCharacter();  createCharacter->Show(); }, false, []() {return false; }));
         menu->AddNode(ButtonItem::Create("Load Game", "Load Game",                  []() {},false, []() {return false; }));
         menu->AddNode(ButtonItem::Create("Design CPU", "Design CPU", [cpuDesign]() { cpuDesign->Show(); }, false, []() {return false; }));
-        menu->AddNode(ButtonItem::Create("Unit Test Main", "Unit Test", [unitTest]() { unitTest->Show(); }, false, []() {return false; }));
+        auto unitTests = ButtonItem::Create("Unit Test Main", "Unit Test", [unitTest]() { unitTest->Show(); }, false, []() {return false; });
+        unitTests->AsPtr<ButtonItem>()->SetDefaultColor(ImVec4(0, 0.3, 0, 1));
+        menu->AddNode(unitTests);
         menu->AddNode(ButtonItem::Create("Exit", "Exit", [app]() mutable { app.Stop(); }, false, []() {return false; }));
         app.AddComponent(menu);
 

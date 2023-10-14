@@ -18,7 +18,14 @@ namespace Window
 			_content = content; 
 			_onClick = onClick;
 			_sameLine = sameLine;
-			_isDisabled = isDisabled;				
+			_isDisabled = isDisabled;		
+			_defaultType = ImGuiCol_Button;			
+		}
+
+		void SetDefaultColor(ImVec4 defaultColor)
+		{
+			_changeDefaultColor = true;
+			_defaultColor = defaultColor;
 		}
 
 		void Compute() override

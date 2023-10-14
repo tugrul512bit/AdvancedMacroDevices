@@ -51,6 +51,8 @@ namespace Window
 
 		void Render()
 		{			
+			if(_changeDefaultColor)
+				ImGui::PushStyleColor(_defaultType, _defaultColor);
 			if (_onPreRender)
 			{
 				_onPreRender();
@@ -88,6 +90,8 @@ namespace Window
 					ImGui::EndDisabled();
 
 			}
+			if (_changeDefaultColor)
+				ImGui::PopStyleColor(1);
 		}
 
 		template<typename T>
@@ -151,6 +155,9 @@ namespace Window
 		std::vector<std::shared_ptr<AppStructure>> _childNodes;
 		std::shared_ptr<AppStructure> _hoverPopup;
 		std::function<void(void)> _onPreRender;
+		bool _changeDefaultColor;
+		ImVec4 _defaultColor;
+		ImGuiCol_ _defaultType;
 	};
 
 }
