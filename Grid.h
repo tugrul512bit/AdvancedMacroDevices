@@ -28,7 +28,7 @@ namespace Window
 			{
 				for (int i = 0; i < _cols; i++)
 				{
-					_cells.push_back(ImageItem::Create(std::string("grid_cell_") + std::to_string(i + j * _cols), false, Images::EmptyGridCellImage(),false));
+					_cells.push_back(ImageItem::Create(std::string("grid_cell_") + std::to_string(i + j * _cols), false, Images::EmptyGridCellImage(),0,false));
 				}
 			}
 		}

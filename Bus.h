@@ -44,7 +44,9 @@ namespace Design
 
 			// because bus
 			_busynessLevelMax *= 4;
-
+			_cloggedCycleCounter = 0;
+			_uniqueLocalIdGenerator = 0;
+			_deadlock = false;
 		}
 
 		static std::shared_ptr<Module> Create(int frequency, int lithography, int parallelism)
@@ -62,12 +64,20 @@ namespace Design
 				auto d1 = _busRegister[1][i];
 				auto d2 = _busRegister[2][i];
 				auto d3 = _busRegister[3][i];
-
+				if (d0.localId == -1)
+					d0.localId = _uniqueLocalIdGenerator++;
+				if (d1.localId == -1)
+					d1.localId = _uniqueLocalIdGenerator++;
+				if (d2.localId == -1)
+					d2.localId = _uniqueLocalIdGenerator++;
+				if (d3.localId == -1)
+					d3.localId = _uniqueLocalIdGenerator++;
 				_busRegister[0][i] = d3;
 				_busRegister[1][i] = d0;
 				_busRegister[2][i] = d1;
 				_busRegister[3][i] = d2;
 			}
+			_deadlock = ComputeDeadlock();
 			for (int i = 0; i < _parallelism; i++)
 			{
 				for (int j = 0; j < 4; j++)
@@ -81,6 +91,42 @@ namespace Design
 				}
 			}
 
+		}
+
+		bool CheckDeadlock() override
+		{
+			return _deadlock;
+		}
+		bool ComputeDeadlock()
+		{
+			std::map<int, bool> table;
+			for (int i = 0; i < _parallelism; i++)
+			{
+				for (int j = 0; j < 4; j++)
+				{
+					if (_busRegister[j][i].dataType != Design::DataType::Null)
+					{
+						table[_busRegister[j][i].localId] = true;
+					}
+				}
+			}
+
+			bool same = (table.size()>0);
+			for (auto& t : table)
+			{
+				same = same || (_dataIdTable.find(t.first) != _dataIdTable.end());
+			}
+			if (same)
+				_cloggedCycleCounter++;
+			else
+				_cloggedCycleCounter = 0;
+			_dataIdTable = table;
+
+			
+			if (_cloggedCycleCounter > _parallelism * 4)
+				return true;
+			else
+				return false;
 		}
 
 		void SendOutput() override
@@ -143,6 +189,7 @@ namespace Design
 										idx = 0;
 									else if (k == 3)
 										idx = 1;
+									
 									conn->SetInput(reg, idx,i);
 									_busRegister[j][i] = Data();
 									std::cout << "bus->module " << GetId() << std::endl;
@@ -268,5 +315,10 @@ namespace Design
 		// At the end of the day, I'm connected to these type of modules, it will take that amount of jumps to reach there
 		std::map<ModuleType, std::vector<BusConnection>> _farConnectionTypeList;
 		std::map<int, BusConnection> _farConnectionIdList;
+
+		std::map<int, bool> _dataIdTable;
+		int _cloggedCycleCounter;
+		int _uniqueLocalIdGenerator;
+		bool _deadlock;
 	};
 }

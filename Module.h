@@ -131,8 +131,11 @@ namespace Design
 				12=fma
 
 		*/
-		int value; 		
-	
+		int value; 	
+
+		// every module assigns a local id to its currently stored data objects for detection/tracking of deadlock
+		int localId;
+
 		Data(DataType dataTypePrm=DataType::Null, ModuleType targetModuleTypePrm=ModuleType::ANY, int targetModuleIdPrm=-1, int valuePrm=-1, ModuleType sourceModuleTypePrm = ModuleType::ANY, int sourceModuleIdValue=-1)
 		{
 			sourceModuleType = sourceModuleTypePrm;
@@ -144,6 +147,7 @@ namespace Design
 
 			context = -1;
 			contextType = -1;
+			localId = -1;
 		}
 	};
 
@@ -213,6 +217,8 @@ namespace Design
 		}
 		virtual void SetInput(Data input, int index, int channel) 
 		{
+			// when data leaves a module, localId is reset
+			input.localId = -1;
 			_inputRegister[index][channel] = input;
 		}
 		virtual void ApplyInput()
@@ -235,7 +241,7 @@ namespace Design
 		virtual void SetOutput(Data data, int channel) { _output[channel] = data; }
 		virtual Data GetOutput(int channel) { return _output[channel]; }
 		virtual ModuleType GetModuleType() { return _type; }
-
+		virtual bool CheckDeadlock() { return false; }
 		std::vector<Module*> GetConnectedModulesExceptThis(Module* source = nullptr)
 		{
 			std::vector<Module*> result;

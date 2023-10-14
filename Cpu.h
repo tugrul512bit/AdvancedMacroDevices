@@ -186,22 +186,22 @@ namespace Design
 						if (_moduleGrid[i + j * _width]->GetModuleType() == ModuleType::BUS)
 						{
 							
-							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("bus_img_") + std::to_string(i + j * _width), false, Window::Images::BusImage(), _moduleGrid[i + j * _width]->GetBusyness()));
+							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("bus_img_") + std::to_string(i + j * _width), false, Window::Images::BusImage(), _moduleGrid[i + j * _width]->GetBusyness(), _moduleGrid[i + j * _width]->CheckDeadlock()));
 						}
 						else if (_moduleGrid[i + j * _width]->GetModuleType() == ModuleType::ALU)
 						{
-							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("alu_img_") + std::to_string(i + j * _width), false, Window::Images::AluImage(), _moduleGrid[i + j * _width]->GetBusyness()));
+							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("alu_img_") + std::to_string(i + j * _width), false, Window::Images::AluImage(), _moduleGrid[i + j * _width]->GetBusyness(), _moduleGrid[i + j * _width]->CheckDeadlock()));
 
 						}
 						else if (_moduleGrid[i + j * _width]->GetModuleType() == ModuleType::CONTROL_UNIT)
 						{
 
-							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("control_unit_img_") + std::to_string(i + j * _width), false, Window::Images::ControlUnitImage(), _moduleGrid[i + j * _width]->GetBusyness()));
+							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("control_unit_img_") + std::to_string(i + j * _width), false, Window::Images::ControlUnitImage(), _moduleGrid[i + j * _width]->GetBusyness(), _moduleGrid[i + j * _width]->CheckDeadlock()));
 						}
 						else if (_moduleGrid[i + j * _width]->GetModuleType() == ModuleType::DECODER)
 						{
 
-							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("decoder_img_") + std::to_string(i + j * _width), false, Window::Images::DecoderImage(), _moduleGrid[i + j * _width]->GetBusyness()));
+							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("decoder_img_") + std::to_string(i + j * _width), false, Window::Images::DecoderImage(), _moduleGrid[i + j * _width]->GetBusyness(), _moduleGrid[i + j * _width]->CheckDeadlock()));
 						}
 					}
 				}

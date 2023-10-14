@@ -58,13 +58,13 @@ namespace Window
 	class ImageItem : public AppStructure
 	{
 	public:
-		static std::shared_ptr<AppStructure> Create(std::string name, bool sameLine, cv::Mat img, int busynessLevel)
+		static std::shared_ptr<AppStructure> Create(std::string name, bool sameLine, cv::Mat img, int busynessLevel, bool deadlock)
 		{
-			std::shared_ptr<AppStructure> node = std::shared_ptr<ImageItem>(new ImageItem(name, sameLine, img, busynessLevel), [](ImageItem* i) { delete i; });
+			std::shared_ptr<AppStructure> node = std::shared_ptr<ImageItem>(new ImageItem(name, sameLine, img, busynessLevel, deadlock), [](ImageItem* i) { delete i; });
 			return node;
 		}
 
-		ImageItem(std::string name = "text", bool sameLine = false, cv::Mat img=cv::Mat(64,64,CV_8UC4), int busynessLevel = 0)
+		ImageItem(std::string name = "text", bool sameLine = false, cv::Mat img=cv::Mat(64,64,CV_8UC4), int busynessLevel = 0,bool deadlock=false)
 		{
 
 			_name = name;
@@ -134,6 +134,18 @@ namespace Window
 					cv::rectangle(_img, cv::Rect2f(7, 55, 5, 5), cv::Scalar(0, 255 * busynessLevel / 100.0, 0, 255), -1);
 				}
 			}
+			if (deadlock)
+			{
+				for (int i = 0; i < _img.rows * _img.cols; i++)
+					_img.at<cv::Vec4b>(i) = cv::Vec4b
+					(
+						_img.at<cv::Vec4b>(i).val[1],
+						0,
+						0,
+						_img.at<cv::Vec4b>(i).val[3]
+					);
+			}
+			_deadlock = deadlock;
 			_busynessLevel = busynessLevel;
 			_vec1 = ImVec2(_width, _height);
 			_texture = ToTexture();
@@ -160,8 +172,9 @@ namespace Window
 		cv::Mat _img;
 		ImVec2 _vec1;
 		int _busynessLevel;
+		bool _deadlock;
         GLuint ToTexture() {       
-            return globalTextures.Generate(_name+std::string("_")+std::to_string(_busynessLevel), _img);
+            return globalTextures.Generate(_name+std::string("_")+std::to_string(_busynessLevel)+std::string("_")+std::to_string(_deadlock), _img);
         }
 	};
 
