@@ -30,92 +30,154 @@ namespace Design
 	class Bus :public Module
 	{
 	public:
-		Bus(int frequency, int lithography)
-		{
-			_lithography = lithography;		
-			_frequency = frequency;
+		Bus(int frequency, int lithography, int numChannels) :
+			Module(numChannels, numChannels, lithography,/*numTransistors*/ 1, ModuleType::BUS,
+				/* thermalDissipationPower */ 1, frequency, /* failProbability*/ 0.0f)
+		{	
 			_type = ModuleType::BUS;
-			_busRegister[0].dataType = Design::DataType::Null;
-			_busynessLevelMax = 4;
+			for (int j = 0; j < 4; j++)
+			{
+				_busRegister[j].resize(_parallelism);
+				for (int i = 0; i < _parallelism; i++)
+					_busRegister[j][i].dataType = Design::DataType::Null;
+			}
+
+			// because bus
+			_busynessLevelMax *= 4;
+
+		}
+
+		static std::shared_ptr<Module> Create(int frequency, int lithography, int parallelism)
+		{
+			return std::make_shared<Bus>(frequency, lithography, parallelism);
 		}
 
 		void Compute() override
 		{
 			SetIdle();
 			// rotate 4 data points
-			auto d0 = _busRegister[0];
-			auto d1 = _busRegister[1];
-			auto d2 = _busRegister[2];
-			auto d3 = _busRegister[3];			
-
-			_busRegister[0] = d3;
-			_busRegister[1] = d0;
-			_busRegister[2] = d1;
-			_busRegister[3] = d2;
-
-			for (int i = 0; i < 4; i++)
+			for (int i = 0; i < _parallelism; i++)
 			{
-				if (_busRegister[i].dataType == Design::DataType::Null)
-					if (_input[i].dataType != Design::DataType::Null)
-					{
-						
-						_busRegister[i] = _input[i];
-						_input[i] = Data();
-					}
-			}
+				auto d0 = _busRegister[0][i];
+				auto d1 = _busRegister[1][i];
+				auto d2 = _busRegister[2][i];
+				auto d3 = _busRegister[3][i];
 
+				_busRegister[0][i] = d3;
+				_busRegister[1][i] = d0;
+				_busRegister[2][i] = d1;
+				_busRegister[3][i] = d2;
+			}
+			for (int i = 0; i < _parallelism; i++)
+			{
+				for (int j = 0; j < 4; j++)
+				{
+					if (_busRegister[j][i].dataType == Design::DataType::Null)
+						if (_input[j][i].dataType != Design::DataType::Null)
+						{
+							_busRegister[j][i] = _input[j][i];
+							_input[j][i] = Data();
+						}
+				}
+			}
 
 		}
 
 		void SendOutput() override
 		{
-			for (int i = 0; i < 4; i++)
+			for (int i = 0; i < _parallelism; i++)
 			{
-				auto reg = _busRegister[i];
-				auto conn = _directConnectedModules[i];
-				if (conn.get())
+				for (int j = 0; j < 4; j++)
 				{
-					int idx = 0;
-					if (i == 0)
-						idx = 2;
-					else if (i == 1)
-						idx = 3;
-					else if (i == 2)
-						idx = 0;
-					else if (i == 3)
-						idx = 1;
-					if (conn->GetInput(idx).dataType != Design::DataType::Null)
-						continue;
-				}
-				// if has data, check if aligned at shortest module output, then send
-				if (reg.dataType != Design::DataType::Null)
-				{
-
-					// check  current distance
-					int curDist = 10000;
-					auto farConn = GetFarConnectionsOfType(reg.targetModuleType);
-					for (auto& fc : farConn)
+					auto reg = _busRegister[j][i];
+					auto conn = _directConnectedModules[j];
+					if (conn.get())
 					{
-						if (curDist > fc.jumps)
-						{
-							curDist = fc.jumps;
-						}
+						int idx = 0;
+						if (i == 0)
+							idx = 2;
+						else if (i == 1)
+							idx = 3;
+						else if (i == 2)
+							idx = 0;
+						else if (i == 3)
+							idx = 1;
+						if (conn->GetInput(idx,i).dataType != Design::DataType::Null)
+							continue;
 					}
-					
-
-					// check shortest module
-					int shortestPath = 10000;
-					int shortestIdx = -1;
-					for (int j = 0; j < 4; j++)
+					// if has data, check if aligned at shortest module output, then send
+					if (reg.dataType != Design::DataType::Null)
 					{
-						auto conn = _directConnectedModules[j];
-						if (conn.get())
+
+						// check  current distance
+						int curDist = 10000;
+						auto farConn = GetFarConnectionsOfType(reg.targetModuleType);
+						for (auto& fc : farConn)
 						{
-					
-							if (reg.targetModuleId == conn->GetId() && (i == j))
+							if (curDist > fc.jumps)
 							{
-								// aligned directly, send data
-					
+								curDist = fc.jumps;
+							}
+						}
+
+
+						// check shortest module
+						int shortestPath = 10000;
+						int shortestIdx = -1;
+						for (int k = 0; k < 4; k++)
+						{
+							auto conn = _directConnectedModules[k]; 
+							if (conn.get())
+							{
+							
+								if (reg.targetModuleId == conn->GetId() && (j == k))
+								{
+									// aligned directly, send data
+									
+									int idx = 0;
+									if (k == 0)
+										idx = 2;
+									else if (k == 1)
+										idx = 3;
+									else if (k == 2)
+										idx = 0;
+									else if (k == 3)
+										idx = 1;
+									conn->SetInput(reg, idx,i);
+									_busRegister[j][i] = Data();
+									std::cout << "bus->module " << GetId() << std::endl;
+									SetBusy();
+									break;
+								}
+								else if (conn->GetModuleType() == Design::ModuleType::BUS)
+								{
+									
+									// check distance
+									auto connBus = conn->AsPtr<Design::Bus>(); 
+									auto jumpList = connBus->GetFarConnectionsOfType(reg.targetModuleType);
+									for (auto& jl : jumpList)
+									{
+										
+										if (jl.jumps < shortestPath)
+										{
+											shortestPath = jl.jumps; 
+											shortestIdx = k;											
+										}
+									}
+
+								}
+							}
+						}
+
+
+						// compare shortest indirect distance with current distance
+
+						if (curDist > shortestPath)
+						{
+						
+							// if aligned with shortest
+							if (shortestIdx == j)
+							{
 								int idx = 0;
 								if (j == 0)
 									idx = 2;
@@ -125,58 +187,15 @@ namespace Design
 									idx = 0;
 								else if (j == 3)
 									idx = 1;
-								conn->SetInput(reg, idx);
-								_busRegister[i] = Data();
-								std::cout << "bus->module " << GetId() << std::endl;
+								_directConnectedModules[shortestIdx]->SetInput(reg, idx,i);
+								_busRegister[j][i] = Data();
 								SetBusy();
-								break;
+								std::cout << "bus->bus " << GetId()<<"  "<< (_directConnectedModules[shortestIdx]->GetId())<<" "<< shortestIdx<<" "<< idx << std::endl;
 							}
-							else if (conn->GetModuleType() == Design::ModuleType::BUS)
-							{
-								
-								// check distance
-								auto connBus = conn->AsPtr<Design::Bus>();
-								auto jumpList = connBus->GetFarConnectionsOfType(reg.targetModuleType);
-								for (auto& jl : jumpList)
-								{
-									
-									if (jl.jumps < shortestPath)
-									{
-										shortestPath = jl.jumps;
-										shortestIdx = j;
-									}
-								}
-
-							}
-						}
-					}
-
-
-					// compare shortest indirect distance with current distance
-					
-					if (curDist > shortestPath)
-					{
-						// if aligned with shortest
-						if (shortestIdx == i)
-						{
-							int idx = 0;
-							if (i == 0)
-								idx = 2;
-							else if (i == 1)
-								idx = 3;
-							else if (i == 2)
-								idx = 0;
-							else if (i == 3)
-								idx = 1;
-							_directConnectedModules[shortestIdx]->SetInput(reg, idx);
-							_busRegister[i] = Data();
-							SetBusy();
-							std::cout << "bus->bus " << GetId() << std::endl;
 						}
 					}
 				}
 			}
-
 		}
 
 		void ComputePaths(Bus * root = nullptr, int jumps = 1, std::map<Module *,bool> * filter=nullptr)
@@ -192,9 +211,9 @@ namespace Design
 				filter->operator[](this) = true;
 			}
 
-			for (int i = 0; i < 4; i++)
+			for (int j = 0; j < 4; j++)
 			{
-				auto conn = _directConnectedModules[i];
+				auto conn = _directConnectedModules[j];
 				
 				if (conn.get())
 				{
@@ -240,12 +259,11 @@ namespace Design
 			return result;
 		}
 	private:
-
-		// 0: top, 1: right, 2: bottom, 3: left
-		Data _busRegister[4];
+		// array index: 0=top, 1=right, 2=bottom, 3=left
+		// vector index: channels
+		// a bus is able to i/o from all channels of all directions per inner cycle (which can have frequency equal to K times the outer cyle frequency)
+		std::vector<Data> _busRegister[4];
 		
-
-
 
 		// At the end of the day, I'm connected to these type of modules, it will take that amount of jumps to reach there
 		std::map<ModuleType, std::vector<BusConnection>> _farConnectionTypeList;

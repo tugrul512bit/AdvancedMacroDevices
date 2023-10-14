@@ -7,125 +7,137 @@
 #include<queue>
 #include<cmath>
 #include<iostream>
-
+#include<memory>
 namespace Design
 {
-	// cache bank stores cached data
-	// input: memory request
-	// output: data	
+	// Converts instructions to microops
+	// input: address of next instruction to decode
+	// input: data from memory/cache/register
+	// output: memory/cache/register request
+	// output: result (opcode)
 	class Decoder :public Module
 	{
 	public:
-		Decoder(int frequency, int lithography)
-		{
-			_frequency = frequency;
-			_lithography = lithography;
-			_type = ModuleType::DECODER;
+		Decoder(int frequency, int lithography, int parallelism) :
+			Module(parallelism, parallelism, lithography,/*numTransistors*/ 1, ModuleType::DECODER,
+				/* thermalDissipationPower */ 1, frequency, /* failProbability*/ 0.0f)
+		{					
+			
 		}
 
+		static std::shared_ptr<Module> Create(int frequency, int lithography, int parallelism)
+		{
+			return std::make_shared<Decoder>(frequency, lithography, parallelism);
+		}
 
 		void Compute() override
 		{
 			SetIdle();
-			if (GetOutput().dataType != Design::DataType::Null)
-				return;
-
-			bool computed = false;
-			auto inp = Data();
-			for (int i = 0; i < 4; i++)
+			for (int i = 0; i < _parallelism; i++)
 			{
-				if (!computed)
-				{
+				
+				if (GetOutput(i).dataType != Design::DataType::Null)
+					continue;
 
-					inp = _input[i];
-					if (inp.dataType != Design::DataType::Null)
+				bool computed = false;
+				auto inp = Data();
+				for (int j = 0; j < 4; j++)
+				{
+					if (!computed)
 					{
 
-						if (inp.dataType == Design::DataType::MicroOpDecode)
+						inp = _input[j][i];
+						if (inp.dataType != Design::DataType::Null)
 						{
-							computed = true;
-							std::cout << "decode dummy compute" << std::endl;
-							SetBusy();
-							SetOutput(Data(
-								Design::DataType::Result,
-								Design::CONTROL_UNIT,
-								inp.sourceModuleId,
-								Design::ModuleType::ALU,
-								Design::ModuleType::DECODER,
-								_id));
 
+							if (inp.dataType == Design::DataType::MicroOpDecode)
+							{
+								computed = true;
+								std::cout << "decode dummy compute" << std::endl;
+								SetBusy();
+								SetOutput(Data(
+									Design::DataType::Result,
+									Design::CONTROL_UNIT,
+									inp.sourceModuleId,
+									Design::ModuleType::ALU,
+									Design::ModuleType::DECODER,
+									_id),i);
+
+							}
 						}
+
+					}
+
+					if (!computed)
+					{
+						// if not computed, put the data back
+						_input[j][i] = inp;
+					}
+					else
+					{
+						// if computed, input is cleared for new data
+						_input[j][i] = Data();
 					}
 
 				}
-
-				if (!computed)
-				{
-					// if not computed, put the data back
-					_input[i] = inp;
-				}
-				else
-				{
-					// if computed, input is cleared for new data
-					_input[i] = Data();
-				}
-
 			}
-
 		}
 
 		void SendOutput() override
 		{
-			if (GetOutput().dataType != Design::DataType::Null)
+			for (int i = 0; i < _parallelism; i++)
 			{
-
-				int idSource = GetOutput().targetModuleId;
-				bool sent = false;
-				for (int j = 0; j < 4; j++)
+				if (GetOutput(i).dataType != Design::DataType::Null)
 				{
-					if (!sent)
+
+					int idSource = GetOutput(i).targetModuleId;
+					bool sent = false;
+					for (int j = 0; j < 4; j++)
 					{
-						auto bus = _directConnectedModules[j];
-						if (bus.get())
+						if (!sent)
 						{
-							if (bus->GetModuleType() == Design::ModuleType::BUS)
+							auto bus = _directConnectedModules[j];
+							if (bus.get())
 							{
-								std::cout << "output bus found" << std::endl;
-								auto sources = bus->AsPtr<Design::Bus>()->GetFarConnectionsOfType(GetOutput().targetModuleType);
-								for (auto& s : sources)
+								if (bus->GetModuleType() == Design::ModuleType::BUS)
 								{
-									if (!sent)
+									std::cout << "output bus found" << std::endl;
+									auto sources = bus->AsPtr<Design::Bus>()->GetFarConnectionsOfType(GetOutput(i).targetModuleType);
+									for (auto& s : sources)
 									{
-
-										// send result back to source
-										if (s.moduleId == idSource)
+										if (!sent)
 										{
-											std::cout << "source path found" << std::endl;
-											int idx = 0;
-											if (j == 0)
-												idx += 2;
-											if (j == 1)
-												idx += 3;
-											if (j == 2)
-												idx += 0;
-											if (j == 3)
-												idx += 1;
 
-											if (bus->AsPtr<Design::Bus>()->GetInput(idx).dataType == Design::DataType::Null)
+											// send result back to source
+											if (s.moduleId == idSource)
 											{
-												bus->AsPtr<Design::Bus>()->SetInput(
-													GetOutput(),
-													idx);
-												SetOutput(Data());
-												sent = true;
+												std::cout << "source path found" << std::endl;
+												int idx = 0;
+												if (j == 0)
+													idx += 2;
+												if (j == 1)
+													idx += 3;
+												if (j == 2)
+													idx += 0;
+												if (j == 3)
+													idx += 1;
+
+												if (bus->AsPtr<Design::Bus>()->GetInput(idx,i).dataType == Design::DataType::Null)
+												{
+													bus->AsPtr<Design::Bus>()->SetInput(
+														GetOutput(i),
+														idx,i);
+													SetOutput(Data(),i);
+													sent = true;
+												}
 											}
 										}
 									}
 								}
 							}
 						}
-					}
 
+					}
 				}
 			}
 		}

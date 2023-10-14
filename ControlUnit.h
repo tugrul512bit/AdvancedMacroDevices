@@ -6,6 +6,7 @@
 #include<queue>
 #include<cmath>
 #include<map>
+#include<memory>
 namespace Design
 {
 
@@ -18,151 +19,210 @@ namespace Design
 	class ControlUnit :public Module
 	{
 	public:
-		ControlUnit(int frequency, int lithography)
+		ControlUnit(int frequency, int lithography, int parallelism) :
+			Module(parallelism, parallelism, lithography,/*numTransistors*/ 1, ModuleType::CONTROL_UNIT,
+				/* thermalDissipationPower */ 1, frequency, /* failProbability*/ 0.0f)
 		{
-			_frequency = frequency;
-			_lithography = lithography;
-			_type = ModuleType::CONTROL_UNIT;
 			_resCtr = 0;			
 			_roundRobinIncoming = 0; 
-			_busynessLevelMax = 1;
+
+			// round-robin (1 = always shortest)
+			_resourceSchedulingType = 0;
+		}
+
+		static std::shared_ptr<Module> Create(int frequency, int lithography, int parallelism)
+		{
+			return std::make_shared<ControlUnit>(frequency, lithography, parallelism);
 		}
 
 		// Cpu object calls this only when output is free	
 		// also it does only single work (unless upgraded with a skill level)
 		void Compute() override
 		{
-			if (GetOutput().dataType != Design::DataType::Null)
-				return;
-
-			// list of resources found (resource module ID to use) & their bus paths
-			std::map<int,std::map<int,bool>> validOutputResourceBus;
-
 			SetIdle();
-			bool computed = false;
-			auto opcode = Data();
-			// todo: use modulus round robin instead of i=0
-			for (int i = 0; i < 4; i++)
+			for (int i = 0; i < _parallelism; i++)
 			{
-				if (!computed)
+				if (GetOutput(i).dataType != Design::DataType::Null)
+					continue;
+
+				// list of resources found (resource module ID to use) & their bus paths
+				std::map<int, std::map<int, bool>> validOutputResourceBus;
+
+				
+				bool computed = false;
+				auto opcode = Data();
+				// todo: use modulus round robin instead of i=0
+				for (int j = 0; j < 4; j++)
 				{
-					opcode = _input[i];					
-					if (opcode.dataType != Design::DataType::Null)
+					if (!computed)
 					{
-						if (opcode.dataType == Design::DataType::MicroOpAlu)
+						opcode = _input[j][i];
+						if (opcode.dataType != Design::DataType::Null)
 						{
-							SetBusy();
-							SetOutput(Design::Data(opcode.dataType, Design::ModuleType::ALU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id));
-							computed = true;
+							if (opcode.dataType == Design::DataType::MicroOpAlu)
+							{
+								SetBusy();
+								SetOutput(Design::Data(opcode.dataType, Design::ModuleType::ALU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id),i);
+								computed = true;
+							}
+
+							if (opcode.dataType == Design::DataType::MicroOpDecode)
+							{
+								SetBusy();
+								SetOutput(Design::Data(opcode.dataType, Design::ModuleType::DECODER, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id),i);
+								computed = true;
+							}
+
+							if (opcode.dataType == Design::DataType::Result)
+							{
+								if (opcode.value == Design::ModuleType::ALU)
+									SetOutput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id),i);
+								SetBusy();
+								_numCompletedOperations++;
+								// todo: merge current operation to architectural state
+								computed = true;
+							}
 						}
 
-						if (opcode.dataType == Design::DataType::MicroOpDecode)
-						{							
-							SetBusy();
-							SetOutput(Design::Data(opcode.dataType, Design::ModuleType::DECODER, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id));
-							computed = true;
-						}
-
-						if (opcode.dataType == Design::DataType::Result)
-						{
-							if(opcode.value == Design::ModuleType::ALU)
-								SetOutput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id));
-							SetBusy();
-							_numCompletedOperations++; 
-							// todo: merge current operation to architectural state
-							computed = true;
-						}
 					}
-		
-				}
 
-				if (!computed)
-				{
-					// if not computed, put the data back
-					_input[i] = opcode;
-				}
-				else
-				{
-					// if computed, input is cleared for new data
-					_input[i] = Data();
-					break;
+					if (!computed)
+					{
+						// if not computed, put the data back
+						_input[j][i] = opcode;
+					}
+					else
+					{
+						// if computed, input is cleared for new data
+						_input[j][i] = Data();
+						break;
+					}
 				}
 			}
-									
 		}
 
 		void SendOutput() override
 		{
-			if (GetOutput().dataType != Design::DataType::Null)
+			for (int i = 0; i < _parallelism; i++)
 			{
-				std::map<int, std::map<int, bool>> validOutputResourceBus;
-				// check bus connections for target module
-				for (int j = 0; j < 4; j++)
+				if (GetOutput(i).dataType != Design::DataType::Null)
 				{
-					auto dConn = _directConnectedModules[j];
-					if (dConn.get())
+					// resource -> bus , jumps
+					std::map<int, std::map<int, int>> validOutputResourceBus;
+					// check bus connections for target module
+					
+					for (int j = 0; j < 4; j++)
 					{
-						if (dConn->GetModuleType() == Design::ModuleType::BUS)
+						auto dConn = _directConnectedModules[j];
+						if (dConn.get())
 						{
-							auto alus = dConn->AsPtr<Design::Bus>()->GetFarConnectionsOfType(GetOutput().targetModuleType);
-							for (auto& a : alus)
+							if (dConn->GetModuleType() == Design::ModuleType::BUS)
 							{
-								validOutputResourceBus[a.moduleId][j] = true;
+								auto alus = dConn->AsPtr<Design::Bus>()->GetFarConnectionsOfType(GetOutput(i).targetModuleType);
+								for (auto& a : alus)
+								{									
+									validOutputResourceBus[a.moduleId][j] = a.jumps;									
+								}
 							}
 						}
 					}
-				}
 
-				bool sent = false;
-				int resCtr = 0;
-				for (auto& resource : validOutputResourceBus)
-				{
-					if (!sent)
+
+					// Round-Robin
+					if (_resourceSchedulingType == 0)
 					{
-						int busCtr = 0;
-
-						if (resCtr == _resCtr)
+						bool sent = false;
+						int resCtr = 0;
+						for (auto& resource : validOutputResourceBus)
 						{
-
-							for (auto& bus : resource.second)
+							if (!sent)
 							{
+								int busCtr = 0;
 
-								if (!sent && busCtr++ == _busCtr[resource.first])
+								if (resCtr == _resCtr)
 								{
 
-									if (_directConnectedModules[bus.first]->GetInput(bus.first).dataType == Design::DataType::Null)
+									for (auto& bus : resource.second)
 									{
-										sent = true;
 
-										auto dataToSend = GetOutput();
-										dataToSend.targetModuleId = resource.first;
-										
-										_directConnectedModules[bus.first]->SetInput(dataToSend, bus.first);
-										SetOutput(Data());
-										_busCtr[resource.first]++;
-										if (_busCtr[resource.first] >= validOutputResourceBus[resource.first].size())
+										if (!sent && busCtr++ == _busCtr[resource.first])
 										{
-											_busCtr[resource.first] = 0;
+
+											if (_directConnectedModules[bus.first]->GetInput(bus.first, i).dataType == Design::DataType::Null)
+											{
+												sent = true;
+
+												auto dataToSend = GetOutput(i);
+												dataToSend.targetModuleId = resource.first;
+
+												_directConnectedModules[bus.first]->SetInput(dataToSend, bus.first, i);
+												SetOutput(Data(), i);
+												_busCtr[resource.first]++;
+
+												if (_busCtr[resource.first] >= validOutputResourceBus[resource.first].size())
+												{
+													_busCtr[resource.first] = 0;
+												}
+											}
+
 										}
 									}
 
+									_resCtr++;
+									if (_resCtr >= validOutputResourceBus.size())
+									{
+										_resCtr = 0;
+									}
+
 								}
-							}
 
-							_resCtr++;
-							if (_resCtr >= validOutputResourceBus.size())
+								resCtr++;
+							}
+						}
+					}
+					else if (_resourceSchedulingType == 1) // shortest path (both resource & bus)
+					{
+						int distance = 1000000;
+						int selectedBus = -1;
+						int selectedResource = -1;
+						for (auto& resource : validOutputResourceBus)
+						{
+							for (auto& bus : resource.second)
 							{
-								_resCtr = 0;
-							}
-
+								if (distance > bus.second)
+								{
+									distance = bus.second;
+									selectedBus = bus.first;
+									selectedResource = resource.first;
+								}
+							}													
 						}
 
-						resCtr++;
+
+						if (_directConnectedModules[selectedBus]->GetInput(selectedBus, i).dataType == Design::DataType::Null)
+						{
+							auto dataToSend = GetOutput(i);
+							dataToSend.targetModuleId = selectedResource;
+							_directConnectedModules[selectedBus]->SetInput(dataToSend, selectedBus, i);
+							SetOutput(Data(), i);
+						}
 					}
 				}
 			}
 		}
+
+		void SetNearestResourceScheduling()
+		{
+			_resourceSchedulingType = 1;
+		}
+
+		void SetRoundRobinScheduling()
+		{
+			_resourceSchedulingType = 0;
+		}
 	private:
+		// 0: Round-Robing scheduling for resources & bus connections
+		int _resourceSchedulingType;
 		// to select resource & bus fairly against deadlock
 		int _resCtr;
 		std::map<int,int> _busCtr;

@@ -38,7 +38,7 @@ namespace Design
 						for (int y = -1; y <= 1; y ++)
 						for (int x = -1; x <= 1; x ++)
 						{							
-							if((y == 0 && x!=0) || y!=0 && x==0)
+							if((y == 0 && x!=0) || (y!=0 && x==0))
 							if (x + i >= 0 && x + i < _width && y + j >= 0 && y + j < _height)
 							{
 								int index = x + i + (y + j) * _width;
@@ -50,18 +50,17 @@ namespace Design
 									{
 										int idx = 0;
 										if (x == -1)
-											idx += 1;
-
-										if (x == 1)
 											idx += 3;
 
+										if (x == 1)
+											idx += 1;
+
 										if (y == -1)
-											idx += 2;
+											idx += 0;
 
 										if (y == 1)
-											idx += 0;
-										curModule->Connect(neighborModule, idx);
-										
+											idx += 2;
+										curModule->Connect(neighborModule, idx);										
 									}
 								}
 							}
@@ -123,9 +122,7 @@ namespace Design
 					{
 						if (curModule->GetModuleType() != Design::ModuleType::BUS)
 						{
-							// compute only if output is empty (has space to take a result)
-							if (curModule->GetOutput().dataType == Design::DataType::Null)
-								curModule->Compute();
+							curModule->Compute();
 						}
 					}
 				}
@@ -161,12 +158,10 @@ namespace Design
 			}
 		}
 
-
-		template<typename TypeModule>
-		void SetCell(int col, int row, int frequency, int lithography)
+		void SetCell(int col, int row, std::shared_ptr<Design::Module> module)
 		{ 
 			std::unique_lock<std::mutex> lck(*mut);
-			_moduleGrid[col + row * _width] = (std::shared_ptr<Design::Module>) std::make_shared<TypeModule>(frequency,lithography); // copies
+			_moduleGrid[col + row * _width] = module; // copies
 		}
 
 		template<typename TypeModule>

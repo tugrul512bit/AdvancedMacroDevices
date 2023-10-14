@@ -160,23 +160,41 @@ namespace Design
 	class Module
 	{
 	public:
-		Module()
-		{			
-			_id = GetUniqueId();
-			_input.resize(4);
-			_inputRegister.resize(4);
-			_output=Data();
+		Module(int parallelism,int busynessLevelMax, int lithography, 
+			int numTransistors, ModuleType moduleType,int thermalDissipationPower,
+			int frequency,float failProbability)
+		{		
+			// derived classes such as ALU have to change this value accordingly in constructor
+			_parallelism = parallelism;
+
+			_id = GetUniqueId();			
+			for (int j = 0; j < 4; j++)
+			{
+				_input[j].resize(_parallelism);
+				for (int i = 0; i < _parallelism; i++)
+					_input[j][i] = Data();
+			}
+			for (int j = 0; j < 4; j++)
+			{
+				_inputRegister[j].resize(_parallelism);
+				for (int i = 0; i < _parallelism; i++)
+					_inputRegister[j][i] = Data();
+			}
+			_output.resize(_parallelism);
+			for(int i=0;i< _parallelism;i++)
+				_output[i] = Data();
+
 			_directConnectedModules.resize(4);
 			for (int i = 0; i < 4; i++)
 				_directConnectedModules[i] = nullptr;
 			_busynessLevel = 0;
-			_busynessLevelMax = 1;
-			_failProbability = 0.0f;
-			_lithography = 1000;
-			_type = ModuleType::ANY; // just a default
-			_numTransistors = 0;
-			_thermalDissipationPower = 0;
-			_frequency = 1; // 1 means equal frequency to outer source. 2 means 2x frequency or 2 iterations per cycle
+			_busynessLevelMax = busynessLevelMax;
+			_failProbability = failProbability;
+			_lithography = lithography;
+			_type = moduleType; // just a default
+			_numTransistors = numTransistors;
+			_thermalDissipationPower = thermalDissipationPower;
+			_frequency = frequency; // 1 means equal frequency to outer source. 2 means 2x frequency or 2 iterations per cycle
 			_numCompletedOperations = 0;
 		}
 		int GetCompletedOperationCount() { return _numCompletedOperations; }
@@ -189,30 +207,33 @@ namespace Design
 
 		virtual void ComputeOutput() {}
 
-		virtual Data GetInput(int index)
+		virtual Data GetInput(int index, int channel)
 		{
-			return _inputRegister[index];
+			return _inputRegister[index][channel];
 		}
-		virtual void SetInput(Data input, int index) 
+		virtual void SetInput(Data input, int index, int channel) 
 		{
-			_inputRegister[index] = input;
+			_inputRegister[index][channel] = input;
 		}
 		virtual void ApplyInput()
 		{
-			for (int i = 0; i < 4; i++)
+			for (int j = 0; j < 4; j++)
 			{
-				// if output & input register is empty, then its ok to compute later				
-				// because if output is clogged, there is no reason to compute something that won't go anywhere
-				if (GetOutput().dataType == Design::DataType::Null && _input[i].dataType == Design::DataType::Null)
+				for (int i = 0; i < _parallelism; i++)
 				{
-					_input[i] = _inputRegister[i];
-					_inputRegister[i] = Design::Data();
+					// if output & input register is empty, then its ok to compute later				
+					// because if output is clogged, there is no reason to compute something that won't go anywhere
+					if (GetOutput(i).dataType == Design::DataType::Null && _input[j][i].dataType == Design::DataType::Null)
+					{
+						_input[j][i] = _inputRegister[j][i];
+						_inputRegister[j][i] = Design::Data();
+					}
 				}
 			}
 		}
 		virtual void SendOutput() {}
-		virtual void SetOutput(Data data) { _output = data; }
-		virtual Data GetOutput() { return _output; }
+		virtual void SetOutput(Data data, int channel) { _output[channel] = data; }
+		virtual Data GetOutput(int channel) { return _output[channel]; }
 		virtual ModuleType GetModuleType() { return _type; }
 
 		std::vector<Module*> GetConnectedModulesExceptThis(Module* source = nullptr)
@@ -255,15 +276,20 @@ namespace Design
 		int _numTransistors;
 		int _thermalDissipationPower;
 
+		// N inputs per direction, N operations per cycle
+		int _parallelism;
+
+		// array index
 		// 0 index: top
 		// 1 index: right
 		// 2 index: bottom
 		// 3 index: left
-		std::vector<Design::Data> _input;
-		std::vector<Design::Data> _inputRegister;
+		// vector index: channels
+		std::vector<Design::Data> _input[4];
+		std::vector<Design::Data> _inputRegister[4];
 
-		// 1 internat output that can take any of 4 input paths
-		Design::Data _output;
+		// N internal outputs that can take any of 4 input paths
+		std::vector<Design::Data> _output;
 
 		std::vector<SkillRequirement> _skillRequirements;
 		std::vector<StatRequirement> _statRequirements;

@@ -5,7 +5,7 @@
 #include<vector>
 #include<queue>
 #include<cmath>
-
+#include<memory>
 namespace Design
 {
 	// cache controller receives memory read/write requests, then serves data from cache banks or RAM
@@ -15,7 +15,9 @@ namespace Design
 	class CacheController :public Module
 	{
 	public:
-		CacheController(int frequency, int lithography, int capacity, int evictionPolicy /* 0=direct, 1=associative LRU */)
+		CacheController(int frequency, int lithography, int capacity, int evictionPolicy /* 0=direct, 1=associative LRU */, int parallelism) :
+			Module(parallelism, parallelism, lithography,/*numTransistors*/ 1, ModuleType::CACHE_CONTROL,
+				/* thermalDissipationPower */ 1, frequency, /* failProbability*/ 0.0f)
 		{
 			for (int i = 0; i < 4; i++)
 				_directConnectedModules[i] = nullptr;
@@ -29,16 +31,17 @@ namespace Design
 			// requires 10 intelligence to unlock
 			_statRequirements.push_back(StatRequirement("Intelligence", 10 + std::sqrt(frequency)));
 
-			// this is a control unit, can manage other modules (such as memory banks of cache through a bus / multiple buses)
-			_type = ModuleType::CACHE_CONTROL;
 
 			
-			_numTransistors = std::pow(capacity,1.5f)+300 + std::pow(frequency,1.1f)*100;
-			_thermalDissipationPower = (evictionPolicy > 0 ? 2.0f : 1.0f) * _numTransistors * frequency * 3.5f / lithography;
 			_capacity = capacity;
-			_lithography = lithography;
+
 			_evictionPolicy = evictionPolicy;
 
+		}
+
+		static std::shared_ptr<Module> Create(int frequency, int lithography, int parallelism, int capacity, int evictionPolicy)
+		{
+			return std::make_shared<CacheController>(frequency, lithography, capacity, evictionPolicy, parallelism);
 		}
 
 		void Compute() override

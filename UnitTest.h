@@ -29,30 +29,24 @@ namespace Window
                 column3->DeleteAllNodes();
                 
                 std::shared_ptr<Design::Cpu> testCpu=std::make_shared<Design::Cpu>(4, 4);
-                testCpu->SetCell<Design::ControlUnit>(0, 0, 1,1000);
-                testCpu->SetCell<Design::Bus>(1, 0, 1, 1000);
-                testCpu->SetCell<Design::Bus>(2, 0, 1, 1000);
-                testCpu->SetCell<Design::Bus>(2, 1, 1, 1000);
-                testCpu->SetCell<Design::Bus>(2, 2, 1, 1000);
-                testCpu->SetCell<Design::Alu>(2, 3, 1, 1000);
+                testCpu->SetCell(0, 0,Design::ControlUnit::Create(1,1,1));
+                testCpu->SetCell(1, 0,Design::Bus::Create(1,1,1));
+                testCpu->SetCell(2, 0,Design::Bus::Create(1,1,1));
+                testCpu->SetCell(2, 1,Design::Bus::Create(1,1,1));
+                testCpu->SetCell(2, 2,Design::Bus::Create(1,1,1));
+                testCpu->SetCell(2, 3, Design::Alu::Create(1,1,1));
                        
                        
                 testCpu->Init();
                 testCpu->GetCell<Design::Bus>(1, 0)->PrintPaths();
-                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu,Design::ModuleType::ALU,-1,-1,Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()),0);
+                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu,Design::ModuleType::ALU,-1,-1,Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()),0,0);
 
                 auto gridView = testCpu->GetGridView();
                 column3->AddNode(gridView);
                 
   
-                column3->OnPreRender([&,testCpu,column3]() mutable{
-                        
-                        
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() < 500)
-                    {
-                        
-                    }
-                    else
+                column3->OnPreRender([&,testCpu,column3]() mutable{   
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
                     {
                         testCpu->Compute();
 
@@ -61,8 +55,6 @@ namespace Window
                         column3->AddNode(gridView);
                         t1 = std::chrono::steady_clock::now();
                     }
-                        
-                    
                 });
 
             }, false, []() {return false; }));      
@@ -75,66 +67,52 @@ namespace Window
                 column3->DeleteAllNodes();
 
                 std::shared_ptr<Design::Cpu> testCpu = std::make_shared<Design::Cpu>(7, 7);
-                testCpu->SetCell<Design::ControlUnit>(0, 0, 1, 1000);
-                testCpu->SetCell<Design::Bus>(1, 0, 1, 1000);
-                testCpu->SetCell<Design::Bus>(2, 0, 1, 1000);
-                testCpu->SetCell<Design::Bus>(2, 1, 1, 1000);
-                testCpu->SetCell<Design::Bus>(2, 2, 1, 1000);
-                
+                testCpu->SetCell(0, 0, Design::ControlUnit::Create(1,1,1));
+                testCpu->SetCell(1, 0, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(2, 0, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(2, 1, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(2, 2, Design::Bus::Create(1,1,1));                
+                testCpu->SetCell(0, 1, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(0, 2, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(0, 3, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(0, 4, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(1, 4, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(2, 4, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(2, 5, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(3, 5, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(4, 5, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(4, 6, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(5, 6, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(3, 2, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(4, 2, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(4, 1, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(5, 1, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(6, 1, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(6, 2, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(6, 3, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(6, 4, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(6, 5, Design::Bus::Create(1,1,1));
 
-                testCpu->SetCell<Design::Bus>(0, 1, 1, 1000);
-                testCpu->SetCell<Design::Bus>(0, 2, 1, 1000);
-                testCpu->SetCell<Design::Bus>(0, 3, 1, 1000);
-                testCpu->SetCell<Design::Bus>(0, 4, 1, 1000);
-                testCpu->SetCell<Design::Bus>(1, 4, 1, 1000);
-                testCpu->SetCell<Design::Bus>(2, 4, 1, 1000);
-                testCpu->SetCell<Design::Bus>(2, 5, 1, 1000);
-                testCpu->SetCell<Design::Bus>(3, 5, 1, 1000);
-                testCpu->SetCell<Design::Bus>(4, 5, 1, 1000);
-                testCpu->SetCell<Design::Bus>(4, 6, 1, 1000);
-                testCpu->SetCell<Design::Bus>(5, 6, 1, 1000);
-
-                
-
-                testCpu->SetCell<Design::Bus>(3, 2, 1, 1000);
-                testCpu->SetCell<Design::Bus>(4, 2, 1, 1000);
-                testCpu->SetCell<Design::Bus>(4, 1, 1, 1000);
-                testCpu->SetCell<Design::Bus>(5, 1, 1, 1000);
-                testCpu->SetCell<Design::Bus>(6, 1, 1, 1000);
-                testCpu->SetCell<Design::Bus>(6, 2, 1, 1000);
-                testCpu->SetCell<Design::Bus>(6, 3, 1, 1000);
-                testCpu->SetCell<Design::Bus>(6, 4, 1, 1000);
-                testCpu->SetCell<Design::Bus>(6, 5, 1, 1000);
-
-                testCpu->SetCell<Design::Alu>(6, 6, 1, 1000);
+                testCpu->SetCell(6, 6, Design::Alu::Create(1,1,1));
 
 
                 testCpu->Init();
                 testCpu->GetCell<Design::Bus>(1, 0)->PrintPaths();
-                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0);
-
+                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0,0);
+                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetNearestResourceScheduling();
                 auto gridView = testCpu->GetGridView();
                 column3->AddNode(gridView);
 
 
                 column3->OnPreRender([&, testCpu, column3]() mutable {
-
-                    
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() < 500)
-                    {
-
-                    }
-                    else
-                    {
-                        testCpu->Compute();
-
-                        column3->DeleteAllNodes();
-                        auto gridView = testCpu->GetGridView();
-                        column3->AddNode(gridView);
-                        t1 = std::chrono::steady_clock::now();
-                    }
-
-
+                        if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
+                        {
+                            testCpu->Compute();
+                            column3->DeleteAllNodes();
+                            auto gridView = testCpu->GetGridView();
+                            column3->AddNode(gridView);
+                            t1 = std::chrono::steady_clock::now();
+                        }
                     });
 
             }, false, []() {return false; }));
@@ -149,68 +127,52 @@ namespace Window
                 column3->DeleteAllNodes();
 
                 std::shared_ptr<Design::Cpu> testCpu = std::make_shared<Design::Cpu>(7, 7);
-                testCpu->SetCell<Design::ControlUnit>(0, 0, 1, 1000);
-                testCpu->SetCell<Design::Bus>(1, 0, 1, 1000);
-                testCpu->SetCell<Design::Bus>(2, 0, 1, 1000);
-                testCpu->SetCell<Design::Bus>(2, 1, 1, 1000);
-                testCpu->SetCell<Design::Bus>(2, 2, 1, 1000);
-
-
-                testCpu->SetCell<Design::Bus>(0, 1, 1, 1000);
-                testCpu->SetCell<Design::Bus>(0, 2, 1, 1000);
-                testCpu->SetCell<Design::Bus>(0, 3, 1, 1000);
-                testCpu->SetCell<Design::Bus>(0, 4, 1, 1000);
-                testCpu->SetCell<Design::Bus>(1, 4, 1, 1000);
-                testCpu->SetCell<Design::Bus>(2, 4, 1, 1000);
-                testCpu->SetCell<Design::Bus>(2, 5, 1, 1000);
-                testCpu->SetCell<Design::Bus>(3, 5, 1, 1000);
-                testCpu->SetCell<Design::Bus>(4, 5, 1, 1000);
-                testCpu->SetCell<Design::Bus>(4, 6, 1, 1000);
-                testCpu->SetCell<Design::Bus>(5, 6, 1, 1000);
-
-
-
-                testCpu->SetCell<Design::Bus>(3, 2, 1, 1000);
-                testCpu->SetCell<Design::Bus>(4, 2, 1, 1000);
-                testCpu->SetCell<Design::Bus>(4, 1, 1, 1000);
-                testCpu->SetCell<Design::Bus>(5, 1, 1, 1000);
-                testCpu->SetCell<Design::Bus>(6, 1, 1, 1000);
-                testCpu->SetCell<Design::Bus>(6, 2, 1, 1000);
-                testCpu->SetCell<Design::Bus>(6, 3, 1, 1000);
-                testCpu->SetCell<Design::Bus>(6, 4, 1, 1000);
-                testCpu->SetCell<Design::Bus>(6, 5, 1, 1000);
-
-                testCpu->SetCell<Design::Alu>(6, 6, 1, 1000);
-
-
+                testCpu->SetCell(0, 0, Design::ControlUnit::Create(1,1,1));
+                testCpu->SetCell(1, 0, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(2, 0, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(2, 1, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(2, 2, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(0, 1, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(0, 2, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(0, 3, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(0, 4, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(1, 4, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(2, 4, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(2, 5, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(3, 5, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(4, 5, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(4, 6, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(5, 6, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(3, 2, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(4, 2, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(4, 1, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(5, 1, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(6, 1, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(6, 2, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(6, 3, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(6, 4, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(6, 5, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(6, 6, Design::Alu::Create(1,1,1));
                 testCpu->Init();
 
                 testCpu->GetCell<Design::Bus>(1, 0)->PrintPaths();
-                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0);
+                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0,0);
 
                 auto gridView = testCpu->GetGridView();
                 column3->AddNode(gridView);
 
 
                 column3->OnPreRender([&, testCpu, column3]() mutable {
+                        testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0,0);
+                        if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
+                        {
+                            testCpu->Compute();
 
-                    testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0);
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() < 500)
-                    {
-
-                    }
-                    else
-                    {
- 
-                        testCpu->Compute();
-
-                        column3->DeleteAllNodes();
-                        auto gridView = testCpu->GetGridView();
-                        column3->AddNode(gridView);
-                        t1 = std::chrono::steady_clock::now();
-                    }
-
-
+                            column3->DeleteAllNodes();
+                            auto gridView = testCpu->GetGridView();
+                            column3->AddNode(gridView);
+                            t1 = std::chrono::steady_clock::now();
+                        }
                     });
 
             }, false, []() {return false; }));
@@ -223,39 +185,29 @@ namespace Window
                 column3->DeleteAllNodes();
 
                 std::shared_ptr<Design::Cpu> testCpu = std::make_shared<Design::Cpu>(5, 1);
-                testCpu->SetCell<Design::ControlUnit>(0, 0, 1, 1000);
-                testCpu->SetCell<Design::Bus>(1, 0, 1, 1000);
-                testCpu->SetCell<Design::Bus>(2, 0, 1, 1000);
-                testCpu->SetCell<Design::Bus>(3, 0, 1, 1000);                
-                testCpu->SetCell<Design::Alu>(4, 0, 1, 1000);
+                testCpu->SetCell(0, 0, Design::ControlUnit::Create(1,1,1));
+                testCpu->SetCell(1, 0, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(2, 0, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(3, 0, Design::Bus::Create(1,1,1));                
+                testCpu->SetCell(4, 0, Design::Alu::Create(1,1,1));
 
                 testCpu->Init();
 
-                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0);
+                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0,0);
 
                 auto gridView = testCpu->GetGridView();
                 column3->AddNode(gridView);
 
 
-                column3->OnPreRender([&, testCpu, column3]() mutable {
-
-                    
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() < 500)
-                    {
-
-                    }
-                    else
-                    {
-
-                        testCpu->Compute();
-
-                        column3->DeleteAllNodes();
-                        auto gridView = testCpu->GetGridView();
-                        column3->AddNode(gridView);
-                        t1 = std::chrono::steady_clock::now();
-                    }
-
-
+                column3->OnPreRender([&, testCpu, column3]() mutable {                    
+                        if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
+                        {
+                            testCpu->Compute();
+                            column3->DeleteAllNodes();
+                            auto gridView = testCpu->GetGridView();
+                            column3->AddNode(gridView);
+                            t1 = std::chrono::steady_clock::now();
+                        }                    
                     });
 
             }, false, []() {return false; }));
@@ -268,11 +220,11 @@ namespace Window
                 column3->DeleteAllNodes();
 
                 std::shared_ptr<Design::Cpu> testCpu = std::make_shared<Design::Cpu>(5, 1);
-                testCpu->SetCell<Design::ControlUnit>(0, 0, 1, 1000);
-                testCpu->SetCell<Design::Bus>(1, 0, 1, 1000);
-                testCpu->SetCell<Design::Bus>(2, 0, 1, 1000);
-                testCpu->SetCell<Design::Bus>(3, 0, 1, 1000);
-                testCpu->SetCell<Design::Alu>(4, 0, 1, 1000);
+                testCpu->SetCell(0, 0, Design::ControlUnit::Create(1,1,1));
+                testCpu->SetCell(1, 0, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(2, 0, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(3, 0, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(4, 0, Design::Alu::Create(1,1,1));
 
                 testCpu->Init();
 
@@ -281,23 +233,15 @@ namespace Window
 
 
                 column3->OnPreRender([&, testCpu, column3]() mutable {
-                    static int countCmd = 0;
-                    
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() < 500)
-                    {
-
-                    }
-                    else
+                    static int countCmd = 0;                
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
                     {
                         countCmd++;
-                        if(countCmd%2==0)
-                            testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0);
-
+                        if (countCmd % 2 == 0)
+                            testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0,0);
                         testCpu->Compute();
-
                         column3->DeleteAllNodes();
                         column3->AddNode(TextItem::Create("Num completed op.", [testCpu]() { return std::string("Completed operations=") + std::to_string(testCpu->GetCell<Design::ControlUnit>(0, 0)->GetCompletedOperationCount()); }, 2, false));
-                        
                         auto gridView = testCpu->GetGridView();
                         column3->AddNode(gridView);
                         t1 = std::chrono::steady_clock::now();
@@ -315,50 +259,33 @@ namespace Window
         column1->AddNode(ButtonItem::Create("Bus Test 6", "Bus Test 6: Three-way Communication",
             [column3]() mutable
             {
-
                 column3->DeleteAllNodes();
-
                 std::shared_ptr<Design::Cpu> testCpu = std::make_shared<Design::Cpu>(6, 3);
-                testCpu->SetCell<Design::ControlUnit>(0, 0, 1, 1000);
-                testCpu->SetCell<Design::Bus>(1, 0, 1, 1000);
-                testCpu->SetCell<Design::Bus>(2, 0, 1, 1000);
-                testCpu->SetCell<Design::Bus>(3, 0, 1, 1000);
-                testCpu->SetCell<Design::Bus>(4, 0, 1, 1000);
-                testCpu->SetCell<Design::Alu>(5, 0, 1, 1000);
-                testCpu->SetCell<Design::Bus>(2, 1, 1, 1000);
-                testCpu->SetCell<Design::Decoder>(2, 2, 1, 1000);
-
-                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0);
+                testCpu->SetCell(0, 0, Design::ControlUnit::Create(1,1,1));
+                testCpu->SetCell(1, 0, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(2, 0, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(3, 0, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(4, 0, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(5, 0, Design::Alu::Create(1,1,1));
+                testCpu->SetCell(2, 1, Design::Bus::Create(1,1,1));
+                testCpu->SetCell(2, 2, Design::Decoder::Create(1,1,1));
+                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0,0);
                 testCpu->Init();
 
                 auto gridView = testCpu->GetGridView();
                 column3->AddNode(gridView);
 
-
                 column3->OnPreRender([&, testCpu, column3]() mutable {
-                    static int countCmd = 0;
-
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() < 500)
-                    {
-
-                    }
-                    else
-                    {
-                        
-                        
-                        
-
-                        testCpu->Compute();
-
-                        column3->DeleteAllNodes();
-                        column3->AddNode(TextItem::Create("Num completed op.", [testCpu]() { return std::string("Completed operations=") + std::to_string(testCpu->GetCell<Design::ControlUnit>(0, 0)->GetCompletedOperationCount()); }, 2, false));
-
-                        auto gridView = testCpu->GetGridView();
-                        column3->AddNode(gridView);
-                        t1 = std::chrono::steady_clock::now();
-                    }
-
-
+                        static int countCmd = 0;
+                        if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
+                        {
+                            testCpu->Compute();
+                            column3->DeleteAllNodes();
+                            column3->AddNode(TextItem::Create("Num completed op.", [testCpu]() { return std::string("Completed operations=") + std::to_string(testCpu->GetCell<Design::ControlUnit>(0, 0)->GetCompletedOperationCount()); }, 2, false));
+                            auto gridView = testCpu->GetGridView();
+                            column3->AddNode(gridView);
+                            t1 = std::chrono::steady_clock::now();
+                        }
                     });
 
             }, false, []() {return false; }));

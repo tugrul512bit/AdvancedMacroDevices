@@ -6,81 +6,90 @@
 #include<vector>
 #include<queue>
 #include<cmath>
+#include<memory>
 
 namespace Design
 {
-	// cache bank stores cached data
-	// input: memory request
-	// output: data	
+	// arithmetic logic unit
+	// input: computational opcode
+	// input: data from memory/cache/register
+	// output: memory/cache/register request
+	// output: result
 	class Alu :public Module
 	{
 	public:
-		Alu(int frequency, int lithography)
+		Alu(int frequency, int lithography,int parallelism):
+			Module(parallelism, parallelism,lithography,/*numTransistors*/ 1, ModuleType::ALU, 
+				/* thermalDissipationPower */ 1, frequency, /* failProbability*/ 0.0f)
 		{
-			_frequency = frequency;
-			_lithography = lithography;
-			_type = ModuleType::ALU;
-			_busynessLevelMax = 1;
+
 		}
 
+		static std::shared_ptr<Module> Create(int frequency, int lithography, int parallelism)
+		{
+			return std::make_shared<Alu>(frequency, lithography, parallelism);
+		}
 
 		void Compute() override
 		{
 			SetIdle();
-
-			if (GetOutput().dataType != Design::DataType::Null)
-				return;
-
-			bool computed = false;
-			auto inp = Data();
-			for (int i = 0; i < 4; i++)
+			
+			for (int i = 0; i < _parallelism; i++)
 			{
-				if (!computed)
-				{
+				if (GetOutput(i).dataType != Design::DataType::Null)
+					continue;
 
-					inp = _input[i];
-					if (inp.dataType != Design::DataType::Null)
+				bool computed = false;
+				auto inp = Data();
+				for (int j = 0; j < 4; j++)
+				{
+					if (!computed)
 					{
 
-						if (inp.dataType == Design::DataType::MicroOpAlu)
+						inp = _input[j][i];
+						if (inp.dataType != Design::DataType::Null)
 						{
-							computed = true;
-							std::cout << "alu dummy compute" << std::endl;
-							SetBusy();
-							SetOutput(Data(
-								Design::DataType::Result,
-								Design::CONTROL_UNIT,
-								inp.sourceModuleId,
-								-1,
-								Design::ModuleType::ALU,
-								_id));
 
+							if (inp.dataType == Design::DataType::MicroOpAlu)
+							{
+								computed = true;
+								std::cout << "alu dummy compute" << std::endl;
+								SetBusy();
+								SetOutput(Data(
+									Design::DataType::Result,
+									Design::CONTROL_UNIT,
+									inp.sourceModuleId,
+									-1,
+									Design::ModuleType::ALU,
+									_id),i);
+
+							}
 						}
+
+					}
+
+					if (!computed)
+					{
+						// if not computed, put the data back
+						_input[j][i] = inp;
+					}
+					else
+					{
+						// if computed, input is cleared for new data
+						_input[j][i] = Data();
 					}
 
 				}
-
-				if (!computed)
-				{
-					// if not computed, put the data back
-					_input[i] = inp;
-				}
-				else
-				{
-					// if computed, input is cleared for new data
-					_input[i] = Data();
-				}
-				
 			}
-
 		}
 
 		void SendOutput() override
 		{
-			if (GetOutput().dataType != Design::DataType::Null)
+			for (int i = 0; i < _parallelism; i++)
+			if (GetOutput(i).dataType != Design::DataType::Null)
 			{
 
-				int idSource = GetOutput().targetModuleId;
+				int idSource = GetOutput(i).targetModuleId;
 				bool sent = false;
 				for (int j = 0; j < 4; j++)
 				{
@@ -92,7 +101,7 @@ namespace Design
 							if (bus->GetModuleType() == Design::ModuleType::BUS)
 							{
 								std::cout << "output bus found" << std::endl;
-								auto sources = bus->AsPtr<Design::Bus>()->GetFarConnectionsOfType(GetOutput().targetModuleType);
+								auto sources = bus->AsPtr<Design::Bus>()->GetFarConnectionsOfType(GetOutput(i).targetModuleType);
 								for (auto& s : sources)
 								{
 									if (!sent)
@@ -112,12 +121,12 @@ namespace Design
 											if (j == 3)
 												idx += 1;
 
-											if (bus->AsPtr<Design::Bus>()->GetInput(idx).dataType == Design::DataType::Null)
+											if (bus->AsPtr<Design::Bus>()->GetInput(idx,i).dataType == Design::DataType::Null)
 											{
 												bus->AsPtr<Design::Bus>()->SetInput(
-													GetOutput(),
-													idx);
-												SetOutput(Data());
+													GetOutput(i),
+													idx,i);
+												SetOutput(Data(),i);
 												sent = true;
 											}
 										}
