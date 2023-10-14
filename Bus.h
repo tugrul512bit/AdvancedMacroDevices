@@ -114,7 +114,7 @@ namespace Design
 			bool same = (table.size()>0);
 			for (auto& t : table)
 			{
-				same = same || (_dataIdTable.find(t.first) != _dataIdTable.end());
+				same = same && (_dataIdTable.find(t.first) != _dataIdTable.end());
 			}
 			if (same)
 				_cloggedCycleCounter++;
