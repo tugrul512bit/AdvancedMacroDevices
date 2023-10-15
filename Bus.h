@@ -47,6 +47,7 @@ namespace Design
 			_cloggedCycleCounter = 0;
 			_uniqueLocalIdGenerator = 0;
 			_deadlock = false;
+			_deadlockRecoveryStep = false;
 		}
 
 		static std::shared_ptr<Module> Create(int frequency, int lithography, int parallelism)
@@ -58,36 +59,49 @@ namespace Design
 		{
 			SetIdle();
 			// rotate 4 data points
-			for (int i = 0; i < _parallelism; i++)
+			// if there is deadlock, rotate n more times because neighboring BUSes can be having a circular-resonance condition with current one to have deadlock
+			for (int j = 0; j < (_deadlockRecoveryStep ? ((_id%3) + 1) : 1); j++)
 			{
-				auto d0 = _busRegister[0][i];
-				auto d1 = _busRegister[1][i];
-				auto d2 = _busRegister[2][i];
-				auto d3 = _busRegister[3][i];
-				if (d0.localId == -1)
-					d0.localId = _uniqueLocalIdGenerator++;
-				if (d1.localId == -1)
-					d1.localId = _uniqueLocalIdGenerator++;
-				if (d2.localId == -1)
-					d2.localId = _uniqueLocalIdGenerator++;
-				if (d3.localId == -1)
-					d3.localId = _uniqueLocalIdGenerator++;
-				_busRegister[0][i] = d3;
-				_busRegister[1][i] = d0;
-				_busRegister[2][i] = d1;
-				_busRegister[3][i] = d2;
+				for (int i = 0; i < _parallelism; i++)
+				{
+					auto d0 = _busRegister[0][i];
+					auto d1 = _busRegister[1][i];
+					auto d2 = _busRegister[2][i];
+					auto d3 = _busRegister[3][i];
+					if (d0.localId == -1)
+						d0.localId = _uniqueLocalIdGenerator++;
+					if (d1.localId == -1)
+						d1.localId = _uniqueLocalIdGenerator++;
+					if (d2.localId == -1)
+						d2.localId = _uniqueLocalIdGenerator++;
+					if (d3.localId == -1)
+						d3.localId = _uniqueLocalIdGenerator++;
+					_busRegister[0][i] = d3;
+					_busRegister[1][i] = d0;
+					_busRegister[2][i] = d1;
+					_busRegister[3][i] = d2;
+				}
 			}
 			_deadlock = ComputeDeadlock();
+			if (_deadlock)
+				_deadlockRecoveryStep = !_deadlockRecoveryStep;
 			for (int i = 0; i < _parallelism; i++)
 			{
 				for (int j = 0; j < 4; j++)
 				{
-					if (_busRegister[j][i].dataType == Design::DataType::Null)
-						if (_input[j][i].dataType != Design::DataType::Null)
+					for (int channel = 0; channel < _parallelism; channel++)
+					{
+						if (_busRegister[j][/*i*/ channel].dataType == Design::DataType::Null)
 						{
-							_busRegister[j][i] = _input[j][i];
-							_input[j][i] = Data();
+							if (_input[j][i].dataType != Design::DataType::Null)
+							{
+								SetBusy();
+								_busRegister[j][/*i*/ channel] = _input[j][i];
+								_input[j][i] = Data();
+								break;
+							}
 						}
+					}
 				}
 			}
 
@@ -136,21 +150,8 @@ namespace Design
 				for (int j = 0; j < 4; j++)
 				{
 					auto reg = _busRegister[j][i];
-					auto conn = _directConnectedModules[j];
-					if (conn.get())
-					{
-						int idx = 0;
-						if (i == 0)
-							idx = 2;
-						else if (i == 1)
-							idx = 3;
-						else if (i == 2)
-							idx = 0;
-						else if (i == 3)
-							idx = 1;
-						if (conn->GetInput(idx,i).dataType != Design::DataType::Null)
-							continue;
-					}
+					
+					
 					// if has data, check if aligned at shortest module output, then send
 					if (reg.dataType != Design::DataType::Null)
 					{
@@ -175,11 +176,10 @@ namespace Design
 							auto conn = _directConnectedModules[k]; 
 							if (conn.get())
 							{
-							
+								// todo: Round-Robin for inputs ---> always picking first command = can't respond others = starvation !!!!!
 								if (reg.targetModuleId == conn->GetId() && (j == k))
 								{
-									// aligned directly, send data
-									
+									// aligned directly, send data									
 									int idx = 0;
 									if (k == 0)
 										idx = 2;
@@ -189,12 +189,21 @@ namespace Design
 										idx = 0;
 									else if (k == 3)
 										idx = 1;
-									
-									conn->SetInput(reg, idx,i);
-									_busRegister[j][i] = Data();
-									std::cout << "bus->module " << GetId() << std::endl;
-									SetBusy();
-									break;
+									bool mustBreak = false;
+									for (int channel = 0; channel < conn->GetParallelism(); channel++)
+									{
+										if (conn->GetInput(idx, /*i*/ channel).dataType == Design::DataType::Null)
+										{
+											conn->SetInput(reg, idx, /*i*/ channel);
+											_busRegister[j][i] = Data();
+
+											SetBusy();
+											mustBreak = true;
+											break;
+										}
+									}
+									if (mustBreak)
+										break;
 								}
 								else if (conn->GetModuleType() == Design::ModuleType::BUS)
 								{
@@ -234,10 +243,16 @@ namespace Design
 									idx = 0;
 								else if (j == 3)
 									idx = 1;
-								_directConnectedModules[shortestIdx]->SetInput(reg, idx,i);
-								_busRegister[j][i] = Data();
-								SetBusy();
-								std::cout << "bus->bus " << GetId()<<"  "<< (_directConnectedModules[shortestIdx]->GetId())<<" "<< shortestIdx<<" "<< idx << std::endl;
+								for (int channel = 0; channel < _directConnectedModules[shortestIdx]->GetParallelism(); channel++)
+								{
+									if (_directConnectedModules[shortestIdx]->GetInput(idx, /*i*/ channel).dataType == Design::DataType::Null)
+									{
+										_directConnectedModules[shortestIdx]->SetInput(reg, idx, /*i*/ channel);
+										_busRegister[j][i] = Data();
+										SetBusy();
+										break;
+									}
+								}
 							}
 						}
 					}
@@ -320,5 +335,6 @@ namespace Design
 		int _cloggedCycleCounter;
 		int _uniqueLocalIdGenerator;
 		bool _deadlock;
+		bool _deadlockRecoveryStep;
 	};
 }

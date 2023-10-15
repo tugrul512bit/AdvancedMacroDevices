@@ -100,7 +100,7 @@ namespace Design
 						{
 							if (bus->GetModuleType() == Design::ModuleType::BUS)
 							{
-								std::cout << "output bus found" << std::endl;
+								
 								auto sources = bus->AsPtr<Design::Bus>()->GetFarConnectionsOfType(GetOutput(i).targetModuleType);
 								for (auto& s : sources)
 								{
@@ -110,7 +110,7 @@ namespace Design
 										// send result back to source
 										if (s.moduleId == idSource)
 										{
-											std::cout << "source path found" << std::endl;
+								
 											int idx = 0;
 											if (j == 0)
 												idx += 2;

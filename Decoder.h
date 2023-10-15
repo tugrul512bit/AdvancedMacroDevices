@@ -101,7 +101,7 @@ namespace Design
 							{
 								if (bus->GetModuleType() == Design::ModuleType::BUS)
 								{
-									std::cout << "output bus found" << std::endl;
+									
 									auto sources = bus->AsPtr<Design::Bus>()->GetFarConnectionsOfType(GetOutput(i).targetModuleType);
 									for (auto& s : sources)
 									{
@@ -111,7 +111,7 @@ namespace Design
 											// send result back to source
 											if (s.moduleId == idSource)
 											{
-												std::cout << "source path found" << std::endl;
+									
 												int idx = 0;
 												if (j == 0)
 													idx += 2;
@@ -122,13 +122,18 @@ namespace Design
 												if (j == 3)
 													idx += 1;
 
-												if (bus->AsPtr<Design::Bus>()->GetInput(idx,i).dataType == Design::DataType::Null)
+												for (int channel = 0; channel < bus->AsPtr<Design::Bus>()->GetParallelism(); channel++)
 												{
-													bus->AsPtr<Design::Bus>()->SetInput(
-														GetOutput(i),
-														idx,i);
-													SetOutput(Data(),i);
-													sent = true;
+													if (bus->AsPtr<Design::Bus>()->GetInput(idx, /*i*/ channel).dataType == Design::DataType::Null)
+													{
+
+														bus->AsPtr<Design::Bus>()->SetInput(
+															GetOutput(i),
+															idx, /*i*/ channel);
+														SetOutput(Data(), i);
+														sent = true;
+														break;
+													}
 												}
 											}
 										}

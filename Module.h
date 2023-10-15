@@ -242,6 +242,7 @@ namespace Design
 		virtual Data GetOutput(int channel) { return _output[channel]; }
 		virtual ModuleType GetModuleType() { return _type; }
 		virtual bool CheckDeadlock() { return false; }
+		virtual int GetParallelism() { return _parallelism; }
 		std::vector<Module*> GetConnectedModulesExceptThis(Module* source = nullptr)
 		{
 			std::vector<Module*> result;

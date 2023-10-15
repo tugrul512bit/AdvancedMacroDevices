@@ -51,7 +51,7 @@ namespace Design
 				
 				bool computed = false;
 				auto opcode = Data();
-				// todo: use modulus round robin instead of i=0
+				_roundRobinIncoming++;
 				for (int j = 0; j < 4; j++)
 				{
 					if (!computed)
@@ -59,6 +59,7 @@ namespace Design
 						opcode = _input[j][i];
 						if (opcode.dataType != Design::DataType::Null)
 						{
+							if(_roundRobinIncoming % 3 == 0)
 							if (opcode.dataType == Design::DataType::MicroOpAlu)
 							{
 								SetBusy();
@@ -66,6 +67,7 @@ namespace Design
 								computed = true;
 							}
 
+							if (_roundRobinIncoming % 3 == 1)
 							if (opcode.dataType == Design::DataType::MicroOpDecode)
 							{
 								SetBusy();
@@ -73,10 +75,15 @@ namespace Design
 								computed = true;
 							}
 
+							if (_roundRobinIncoming % 3 == 2)
 							if (opcode.dataType == Design::DataType::Result)
 							{
+								
 								if (opcode.value == Design::ModuleType::ALU)
-									SetOutput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id),i);
+								{
+					
+									SetOutput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id), i);
+								}
 								SetBusy();
 								_numCompletedOperations++;
 								// todo: merge current operation to architectural state
@@ -147,24 +154,26 @@ namespace Design
 
 										if (!sent && busCtr++ == _busCtr[resource.first])
 										{
-
-											if (_directConnectedModules[bus.first]->GetInput(bus.first, i).dataType == Design::DataType::Null)
+											for (int channel = 0; channel < _directConnectedModules[bus.first]->GetParallelism(); channel++)
 											{
-												sent = true;
-
-												auto dataToSend = GetOutput(i);
-												dataToSend.targetModuleId = resource.first;
-
-												_directConnectedModules[bus.first]->SetInput(dataToSend, bus.first, i);
-												SetOutput(Data(), i);
-												_busCtr[resource.first]++;
-
-												if (_busCtr[resource.first] >= validOutputResourceBus[resource.first].size())
+												if (_directConnectedModules[bus.first]->GetInput(bus.first, /*i*/ channel).dataType == Design::DataType::Null)
 												{
-													_busCtr[resource.first] = 0;
+													sent = true;
+
+													auto dataToSend = GetOutput(i);
+													dataToSend.targetModuleId = resource.first;
+
+													_directConnectedModules[bus.first]->SetInput(dataToSend, bus.first, /*i*/ channel);
+													SetOutput(Data(), i);
+													_busCtr[resource.first]++;
+
+													if (_busCtr[resource.first] >= validOutputResourceBus[resource.first].size())
+													{
+														_busCtr[resource.first] = 0;
+													}
+													break;
 												}
 											}
-
 										}
 									}
 
@@ -198,13 +207,16 @@ namespace Design
 							}													
 						}
 
-
-						if (_directConnectedModules[selectedBus]->GetInput(selectedBus, i).dataType == Design::DataType::Null)
+						for (int channel = 0; channel < _directConnectedModules[selectedBus]->GetParallelism(); channel++)
 						{
-							auto dataToSend = GetOutput(i);
-							dataToSend.targetModuleId = selectedResource;
-							_directConnectedModules[selectedBus]->SetInput(dataToSend, selectedBus, i);
-							SetOutput(Data(), i);
+							if (_directConnectedModules[selectedBus]->GetInput(selectedBus, /*i*/ channel).dataType == Design::DataType::Null)
+							{
+								auto dataToSend = GetOutput(i);
+								dataToSend.targetModuleId = selectedResource;
+								_directConnectedModules[selectedBus]->SetInput(dataToSend, selectedBus, /*i*/ channel);
+								SetOutput(Data(), i);
+								break;
+							}
 						}
 					}
 				}
