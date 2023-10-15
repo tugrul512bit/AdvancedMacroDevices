@@ -49,62 +49,58 @@ namespace Design
 				std::map<int, std::map<int, bool>> validOutputResourceBus;
 
 				
-				bool computed = false;
-				auto opcode = Data();
 				_roundRobinIncoming++;
+	
+				std::vector<int> works;
 				for (int j = 0; j < 4; j++)
 				{
-					if (!computed)
+					if (_input[j][i].dataType != Design::DataType::Null)
 					{
-						opcode = _input[j][i];
-						if (opcode.dataType != Design::DataType::Null)
-						{
-							if(_roundRobinIncoming % 3 == 0)
-							if (opcode.dataType == Design::DataType::MicroOpAlu)
-							{
-								SetBusy();
-								SetOutput(Design::Data(opcode.dataType, Design::ModuleType::ALU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id),i);
-								computed = true;
-							}
-
-							if (_roundRobinIncoming % 3 == 1)
-							if (opcode.dataType == Design::DataType::MicroOpDecode)
-							{
-								SetBusy();
-								SetOutput(Design::Data(opcode.dataType, Design::ModuleType::DECODER, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id),i);
-								computed = true;
-							}
-
-							if (_roundRobinIncoming % 3 == 2)
-							if (opcode.dataType == Design::DataType::Result)
-							{
-								
-								if (opcode.value == Design::ModuleType::ALU)
-								{
-					
-									SetOutput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id), i);
-								}
-								SetBusy();
-								_numCompletedOperations++;
-								// todo: merge current operation to architectural state
-								computed = true;
-							}
-						}
-
-					}
-
-					if (!computed)
-					{
-						// if not computed, put the data back
-						_input[j][i] = opcode;
-					}
-					else
-					{
-						// if computed, input is cleared for new data
-						_input[j][i] = Data();
-						break;
+						works.push_back(j);
+	
 					}
 				}
+				if (works.size() == 0)
+					continue;
+
+				int selectedWork = _roundRobinIncoming % works.size();
+
+				auto opcode = _input[works[selectedWork]][i];
+				
+				bool computed = false;
+				if (opcode.dataType == Design::DataType::MicroOpAlu)
+				{
+					SetBusy();
+					SetOutput(Design::Data(opcode.dataType, Design::ModuleType::ALU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id),i);
+					computed = true;
+				}
+
+						
+				if (opcode.dataType == Design::DataType::MicroOpDecode)
+				{
+					SetBusy();
+					SetOutput(Design::Data(opcode.dataType, Design::ModuleType::DECODER, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id),i);
+					computed = true;
+				}
+
+					
+				if (opcode.dataType == Design::DataType::Result)
+				{
+								
+					if (opcode.value == Design::ModuleType::ALU)
+					{
+					
+						SetOutput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id), i);
+					}
+					SetBusy();
+					_numCompletedOperations++;
+					// todo: merge current operation to architectural state
+					computed = true;
+				}
+					
+				if (computed)
+					_input[works[selectedWork]][i] = Data();
+				
 			}
 		}
 

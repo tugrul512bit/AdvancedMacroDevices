@@ -511,6 +511,116 @@ namespace Window
 
             }, false, []() {return false; }));
 
+
+        column1->AddNode(ButtonItem::Create("Bus Test 13", "Bus Test 13: Three-way Triple-Channel-Bus, Medium Bandwidth Scenario",
+            [column3]() mutable
+            {
+                column3->DeleteAllNodes();
+                std::shared_ptr<Design::Cpu> testCpu = std::make_shared<Design::Cpu>(6, 3);
+                testCpu->SetCell(0, 0, Design::ControlUnit::Create(1, 1, 1));
+                testCpu->SetCell(1, 0, Design::Bus::Create(1, 1, 3));
+                testCpu->SetCell(2, 0, Design::Bus::Create(1, 1, 3));
+                testCpu->SetCell(3, 0, Design::Bus::Create(1, 1, 3));
+                testCpu->SetCell(4, 0, Design::Bus::Create(1, 1, 3));
+                testCpu->SetCell(5, 0, Design::Alu::Create(1, 1, 1));
+                testCpu->SetCell(2, 1, Design::Bus::Create(1, 1, 3));
+                testCpu->SetCell(2, 2, Design::Decoder::Create(1, 1, 1));
+
+                testCpu->Init();
+
+                auto gridView = testCpu->GetGridView();
+                column3->AddNode(gridView);
+
+                column3->OnPreRender([&, testCpu, column3]() mutable {
+                    static int countCmd = 0;
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
+                    {
+                        if(countCmd++%2 == 0)
+                            testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0, 0);
+                        testCpu->Compute();
+                        column3->DeleteAllNodes();
+                        column3->AddNode(TextItem::Create("Num completed op.", [testCpu]() { return std::string("Completed operations=") + std::to_string(testCpu->GetCell<Design::ControlUnit>(0, 0)->GetCompletedOperationCount()); }, 2, false));
+                        auto gridView = testCpu->GetGridView();
+                        column3->AddNode(gridView);
+                        t1 = std::chrono::steady_clock::now();
+                    }
+                    });
+
+            }, false, []() {return false; }));
+
+
+        column1->AddNode(ButtonItem::Create("Bus Test 14", "Bus Test 14: Three-way Quad-Channel-Bus, Medium Bandwidth Scenario",
+            [column3]() mutable
+            {
+                column3->DeleteAllNodes();
+                std::shared_ptr<Design::Cpu> testCpu = std::make_shared<Design::Cpu>(6, 3);
+                testCpu->SetCell(0, 0, Design::ControlUnit::Create(1, 1, 1));
+                testCpu->SetCell(1, 0, Design::Bus::Create(1, 1, 4));
+                testCpu->SetCell(2, 0, Design::Bus::Create(1, 1, 4));
+                testCpu->SetCell(3, 0, Design::Bus::Create(1, 1, 4));
+                testCpu->SetCell(4, 0, Design::Bus::Create(1, 1, 4));
+                testCpu->SetCell(5, 0, Design::Alu::Create(1, 1, 1));
+                testCpu->SetCell(2, 1, Design::Bus::Create(1, 1, 4));
+                testCpu->SetCell(2, 2, Design::Decoder::Create(1, 1, 1));
+
+                testCpu->Init();
+
+                auto gridView = testCpu->GetGridView();
+                column3->AddNode(gridView);
+
+                column3->OnPreRender([&, testCpu, column3]() mutable {
+                    static int countCmd = 0;
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
+                    {
+                        if (countCmd++ % 2 == 0)
+                            testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0, 0);
+                        testCpu->Compute();
+                        column3->DeleteAllNodes();
+                        column3->AddNode(TextItem::Create("Num completed op.", [testCpu]() { return std::string("Completed operations=") + std::to_string(testCpu->GetCell<Design::ControlUnit>(0, 0)->GetCompletedOperationCount()); }, 2, false));
+                        auto gridView = testCpu->GetGridView();
+                        column3->AddNode(gridView);
+                        t1 = std::chrono::steady_clock::now();
+                    }
+                    });
+
+            }, false, []() {return false; }));
+
+
+        column1->AddNode(ButtonItem::Create("Bus Test 15", "Bus Test 15: Three-way Penta-Channel-Bus, Medium Bandwidth Scenario",
+            [column3]() mutable
+            {
+                column3->DeleteAllNodes();
+                std::shared_ptr<Design::Cpu> testCpu = std::make_shared<Design::Cpu>(6, 3);
+                testCpu->SetCell(0, 0, Design::ControlUnit::Create(1, 1, 1));
+                testCpu->SetCell(1, 0, Design::Bus::Create(1, 1, 5));
+                testCpu->SetCell(2, 0, Design::Bus::Create(1, 1, 5));
+                testCpu->SetCell(3, 0, Design::Bus::Create(1, 1, 5));
+                testCpu->SetCell(4, 0, Design::Bus::Create(1, 1, 5));
+                testCpu->SetCell(5, 0, Design::Alu::Create(1, 1, 1));
+                testCpu->SetCell(2, 1, Design::Bus::Create(1, 1, 5));
+                testCpu->SetCell(2, 2, Design::Decoder::Create(1, 1, 1));
+
+                testCpu->Init();
+
+                auto gridView = testCpu->GetGridView();
+                column3->AddNode(gridView);
+
+                column3->OnPreRender([&, testCpu, column3]() mutable {
+                    static int countCmd = 0;
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
+                    {
+                        if (countCmd++ % 2 == 0)
+                            testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0, 0);
+                        testCpu->Compute();
+                        column3->DeleteAllNodes();
+                        column3->AddNode(TextItem::Create("Num completed op.", [testCpu]() { return std::string("Completed operations=") + std::to_string(testCpu->GetCell<Design::ControlUnit>(0, 0)->GetCompletedOperationCount()); }, 2, false));
+                        auto gridView = testCpu->GetGridView();
+                        column3->AddNode(gridView);
+                        t1 = std::chrono::steady_clock::now();
+                    }
+                    });
+
+            }, false, []() {return false; }));
         unitTest->Hide();
         return unitTest;
     }

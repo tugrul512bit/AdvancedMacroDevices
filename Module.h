@@ -6,6 +6,13 @@
 
 namespace Design
 {
+	/* todo: make data transmission priority - based, for evading deadlocks.oldest context / id must go first
+	*  for all modules i/o
+	*  example:
+	*	for(all awaiting outputs to send)
+	*		pick oldest first
+	*/
+
 	// work flow of "build"
 	// prepare module-module connections (top,right,bottom,left)
 	// prepare module relations (cache controller -  cache banks, control unit - alus, etc)
@@ -97,6 +104,9 @@ namespace Design
 	// the data that is passing between modules
 	struct Data
 	{
+		// how many cycles passed since creation of this data
+		int age;
+
 		// the module that has sent this data
 		ModuleType sourceModuleType;
 		int sourceModuleId;
@@ -138,6 +148,7 @@ namespace Design
 
 		Data(DataType dataTypePrm=DataType::Null, ModuleType targetModuleTypePrm=ModuleType::ANY, int targetModuleIdPrm=-1, int valuePrm=-1, ModuleType sourceModuleTypePrm = ModuleType::ANY, int sourceModuleIdValue=-1)
 		{
+			age = 0;
 			sourceModuleType = sourceModuleTypePrm;
 			sourceModuleId = sourceModuleIdValue;
 			targetModuleType = targetModuleTypePrm;
@@ -148,6 +159,16 @@ namespace Design
 			context = -1;
 			contextType = -1;
 			localId = -1;
+		}
+
+		void IncrementAge()
+		{
+			age++;
+		}
+
+		int GetAge()
+		{
+			return age;
 		}
 	};
 
