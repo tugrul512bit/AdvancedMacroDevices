@@ -264,6 +264,7 @@ namespace Design
 			_thermalDissipationPower = thermalDissipationPower;
 			_frequency = frequency; // 1 means equal frequency to outer source. 2 means 2x frequency or 2 iterations per cycle
 			_numCompletedOperations = 0;
+			_numStartedOperations = 0;
 		}
 		int GetCompletedOperationCount() { return _numCompletedOperations; }
 		virtual void SetBusy() { _busynessLevel++; }
@@ -374,7 +375,7 @@ namespace Design
 		std::vector<DataType> _commandFilter; // takes only these kind of commands to work
 
 		int _numCompletedOperations;
-
+		int _numStartedOperations;
 	};
 
 

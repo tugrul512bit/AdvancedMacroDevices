@@ -70,17 +70,23 @@ namespace Design
 				bool computed = false;
 				if (opcode.GetDataType() == Design::DataType::MicroOpAlu)
 				{
+
 					SetBusy();
-					SetOutput(Design::Data(opcode.GetDataType(), Design::ModuleType::ALU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id,clockCycleId), i);
+					SetOutput(Design::Data(opcode.GetDataType(), Design::ModuleType::ALU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id, clockCycleId), i);
 					computed = true;
+					
 				}
 
 						
 				if (opcode.GetDataType() == Design::DataType::MicroOpDecode)
 				{
-					SetBusy();
-					SetOutput(Design::Data(opcode.GetDataType(), Design::ModuleType::DECODER, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id,clockCycleId), i);
-					computed = true;
+					if (_numStartedOperations < _numCompletedOperations + 10)
+					{
+						SetBusy();
+						SetOutput(Design::Data(opcode.GetDataType(), Design::ModuleType::DECODER, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id, clockCycleId), i);
+						computed = true;
+						_numStartedOperations++;
+					}
 				}
 
 					
@@ -90,12 +96,23 @@ namespace Design
 					if (opcode.GetValue() == Design::ModuleType::ALU)
 					{
 					
-						SetOutput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id,clockCycleId), i);
+						SetOutput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id, clockCycleId), i);
+						SetBusy();
+
+						// todo: merge current operation to architectural state
+						computed = true;
+						
 					}
-					SetBusy();
-					_numCompletedOperations++;
-					// todo: merge current operation to architectural state
-					computed = true;
+
+					if (opcode.GetValue() == -1)
+					{					
+						
+						SetBusy();
+						_numCompletedOperations++;
+						// todo: merge current operation to architectural state
+						computed = true;
+					}
+
 				}
 					
 				if (computed)
