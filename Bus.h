@@ -60,9 +60,11 @@ namespace Design
 			SetIdle();
 
 
+
+
 			// rotate 4 data points
 			// if there is deadlock, rotate n more times because neighboring BUSes can be having a circular-resonance condition with current one to have deadlock
-			for (int j = 0; j < (_deadlockRecoveryStep ? ((_id%3) + 1) : 1); j++)
+			for (int j = 0; j < (_deadlockRecoveryStep ? ((_id % 3) + 1) : 1); j++)
 			{
 				for (int i = 0; i < _parallelism; i++)
 				{
@@ -120,7 +122,7 @@ namespace Design
 							if (_input[j][i].GetDataType() != Design::DataType::Null)
 							{
 								SetBusy();
-								
+
 								_busRegister[j][/*i*/ channel] = _input[j][i];
 								_input[j][i] = Data();
 								break;

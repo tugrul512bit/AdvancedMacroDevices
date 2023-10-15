@@ -99,55 +99,30 @@ namespace Design
 		{
 			std::unique_lock<std::mutex> lck(*mut);
 
-			// apply inputs (if its not clogged already)
-			// get data from outer input register into internal input
 			for (int j = 0; j < _height; j++)
 			{
 				for (int i = 0; i < _width; i++)
 				{
 					auto curModule = _moduleGrid[i + j * _width];
 					if (curModule.get())
-						curModule->ApplyInput();
+					{
+							curModule->ApplyInput();
+					}
 				}
 			}
 
-
-			// loop non-bus modules for 1 time
 			for (int j = 0; j < _height; j++)
 			{
 				for (int i = 0; i < _width; i++)
 				{
-					auto curModule = _moduleGrid[i + j*_width];
+					auto curModule = _moduleGrid[i + j * _width];
 					if (curModule.get())
 					{
-						if (curModule->GetModuleType() != Design::ModuleType::BUS)
-						{
 							curModule->Compute(clockCycleId);
-						}
 					}
 				}
 			}
 
-			// loop bus modules for n times
-			// n changes with a skill level
-			int n = 1;
-			for (int k = 0; k < n; k++)
-			{
-				for (int j = 0; j < _height; j++)
-				{
-					for (int i = 0; i < _width; i++)
-					{
-						auto curModule = _moduleGrid[i + j * _width];
-						if (curModule.get())
-						{
-							if (curModule->GetModuleType() == Design::ModuleType::BUS)
-								curModule->Compute(clockCycleId);
-						}
-					}
-				}
-
-
-			}
 			for (int j = 0; j < _height; j++)
 			{
 				for (int i = 0; i < _width; i++)
@@ -155,10 +130,13 @@ namespace Design
 					auto curModule = _moduleGrid[i + j * _width];
 					if (curModule.get())
 					{
-						curModule->SendOutput();
+							curModule->SendOutput();
 					}
 				}
 			}
+
+	
+
 		}
 
 		void SetCell(int col, int row, std::shared_ptr<Design::Module> module)
