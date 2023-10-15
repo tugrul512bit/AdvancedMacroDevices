@@ -102,26 +102,94 @@ namespace Design
 	};
 
 	// the data that is passing between modules
-	struct Data
+	class Data
 	{
+	public:
+		Data(DataType dataTypePrm = DataType::Null, ModuleType targetModuleTypePrm = ModuleType::ANY,
+			int targetModuleIdPrm = -1, int valuePrm = -1, ModuleType sourceModuleTypePrm = ModuleType::ANY,
+			int sourceModuleIdValue = -1, int clockCycleId=-1)
+		{
+			_sourceModuleType = sourceModuleTypePrm;
+			_sourceModuleId = sourceModuleIdValue;
+			_targetModuleType = targetModuleTypePrm;
+			_targetModuleId = targetModuleIdPrm;
+			_dataType = dataTypePrm;
+			_value = valuePrm;
+
+			_context = -1;
+			_contextType = -1;
+			_localId = -1;
+			_clockCycleId = clockCycleId;
+		}
+
+		int GetLocalId()
+		{
+			return _localId;
+		}
+
+		void SetLocalId(int newLocalId)
+		{
+			_localId = newLocalId;
+		}
+
+		int GetClockCycleId()
+		{
+			return _clockCycleId;
+		}
+
+		DataType GetDataType()
+		{
+			return _dataType;
+		}
+
+		void SetTargetModuleId(int newTargetModuleId)
+		{
+			_targetModuleId = newTargetModuleId;
+		}
+
+		int GetValue()
+		{
+			return _value;
+		}
+
+		void SetDataType(DataType dType)
+		{
+			_dataType = dType;
+		}
+
+		ModuleType GetTargetModuleType()
+		{
+			return _targetModuleType;
+		}
+
+		int GetTargetModuleId()
+		{
+			return _targetModuleId;
+		}
+
+		int GetSourceModuleId()
+		{
+			return _sourceModuleId;
+		}
+	private:
 		// how many cycles passed since creation of this data
-		int age;
+		int _clockCycleId;
 
 		// the module that has sent this data
-		ModuleType sourceModuleType;
-		int sourceModuleId;
+		ModuleType _sourceModuleType;
+		int _sourceModuleId;
 
 		// type of module to take this data
 		// if input queue of module is full, it goes to another module
-		ModuleType targetModuleType;
-		int targetModuleId;
-		DataType dataType;
+		ModuleType _targetModuleType;
+		int _targetModuleId;
+		DataType _dataType;
 
 		// whose context is this: id of instruction or branch prediction or thread
-		int context;
+		int _context;
 
 		// 0: instruction, 1: branch, 2: thread
-		int contextType;
+		int _contextType;
 
 		// can be instruction or parameter
 		/*
@@ -141,35 +209,10 @@ namespace Design
 				12=fma
 
 		*/
-		int value; 	
+		int _value; 	
 
 		// every module assigns a local id to its currently stored data objects for detection/tracking of deadlock
-		int localId;
-
-		Data(DataType dataTypePrm=DataType::Null, ModuleType targetModuleTypePrm=ModuleType::ANY, int targetModuleIdPrm=-1, int valuePrm=-1, ModuleType sourceModuleTypePrm = ModuleType::ANY, int sourceModuleIdValue=-1)
-		{
-			age = 0;
-			sourceModuleType = sourceModuleTypePrm;
-			sourceModuleId = sourceModuleIdValue;
-			targetModuleType = targetModuleTypePrm;
-			targetModuleId = targetModuleIdPrm;
-			dataType = dataTypePrm;
-			value = valuePrm;
-
-			context = -1;
-			contextType = -1;
-			localId = -1;
-		}
-
-		void IncrementAge()
-		{
-			age++;
-		}
-
-		int GetAge()
-		{
-			return age;
-		}
+		int _localId;
 	};
 
 	static int GetUniqueId()
@@ -239,7 +282,7 @@ namespace Design
 		virtual void SetInput(Data input, int index, int channel) 
 		{
 			// when data leaves a module, localId is reset
-			input.localId = -1;
+			input.SetLocalId(-1);
 			_inputRegister[index][channel] = input;
 		}
 		virtual void ApplyInput()
@@ -250,7 +293,7 @@ namespace Design
 				{
 					// if output & input register is empty, then its ok to compute later				
 					// because if output is clogged, there is no reason to compute something that won't go anywhere
-					if (GetOutput(i).dataType == Design::DataType::Null && _input[j][i].dataType == Design::DataType::Null)
+					if (GetOutput(i).GetDataType() == Design::DataType::Null && _input[j][i].GetDataType() == Design::DataType::Null)
 					{
 						_input[j][i] = _inputRegister[j][i];
 						_inputRegister[j][i] = Design::Data();
@@ -279,7 +322,8 @@ namespace Design
 			return result;
 		}
 
-		virtual void Compute(){  }
+		// clock cycle id is used for giving instructions and opcodes a relative age value for priority checks
+		virtual void Compute(int clockCycleId){  }
 
 		template<typename T>
 		T* AsPtr()

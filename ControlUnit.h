@@ -37,12 +37,12 @@ namespace Design
 
 		// Cpu object calls this only when output is free	
 		// also it does only single work (unless upgraded with a skill level)
-		void Compute() override
+		void Compute(int clockCycleId) override
 		{
 			SetIdle();
 			for (int i = 0; i < _parallelism; i++)
 			{
-				if (GetOutput(i).dataType != Design::DataType::Null)
+				if (GetOutput(i).GetDataType() != Design::DataType::Null)
 					continue;
 
 				// list of resources found (resource module ID to use) & their bus paths
@@ -54,7 +54,7 @@ namespace Design
 				std::vector<int> works;
 				for (int j = 0; j < 4; j++)
 				{
-					if (_input[j][i].dataType != Design::DataType::Null)
+					if (_input[j][i].GetDataType() != Design::DataType::Null)
 					{
 						works.push_back(j);
 	
@@ -68,29 +68,29 @@ namespace Design
 				auto opcode = _input[works[selectedWork]][i];
 				
 				bool computed = false;
-				if (opcode.dataType == Design::DataType::MicroOpAlu)
+				if (opcode.GetDataType() == Design::DataType::MicroOpAlu)
 				{
 					SetBusy();
-					SetOutput(Design::Data(opcode.dataType, Design::ModuleType::ALU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id),i);
+					SetOutput(Design::Data(opcode.GetDataType(), Design::ModuleType::ALU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id,clockCycleId), i);
 					computed = true;
 				}
 
 						
-				if (opcode.dataType == Design::DataType::MicroOpDecode)
+				if (opcode.GetDataType() == Design::DataType::MicroOpDecode)
 				{
 					SetBusy();
-					SetOutput(Design::Data(opcode.dataType, Design::ModuleType::DECODER, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id),i);
+					SetOutput(Design::Data(opcode.GetDataType(), Design::ModuleType::DECODER, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id,clockCycleId), i);
 					computed = true;
 				}
 
 					
-				if (opcode.dataType == Design::DataType::Result)
+				if (opcode.GetDataType() == Design::DataType::Result)
 				{
 								
-					if (opcode.value == Design::ModuleType::ALU)
+					if (opcode.GetValue() == Design::ModuleType::ALU)
 					{
 					
-						SetOutput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id), i);
+						SetOutput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id,clockCycleId), i);
 					}
 					SetBusy();
 					_numCompletedOperations++;
@@ -108,7 +108,7 @@ namespace Design
 		{
 			for (int i = 0; i < _parallelism; i++)
 			{
-				if (GetOutput(i).dataType != Design::DataType::Null)
+				if (GetOutput(i).GetDataType() != Design::DataType::Null)
 				{
 					// resource -> bus , jumps
 					std::map<int, std::map<int, int>> validOutputResourceBus;
@@ -121,7 +121,7 @@ namespace Design
 						{
 							if (dConn->GetModuleType() == Design::ModuleType::BUS)
 							{
-								auto alus = dConn->AsPtr<Design::Bus>()->GetFarConnectionsOfType(GetOutput(i).targetModuleType);
+								auto alus = dConn->AsPtr<Design::Bus>()->GetFarConnectionsOfType(GetOutput(i).GetTargetModuleType());
 								for (auto& a : alus)
 								{									
 									validOutputResourceBus[a.moduleId][j] = a.jumps;									
@@ -152,12 +152,12 @@ namespace Design
 										{
 											for (int channel = 0; channel < _directConnectedModules[bus.first]->GetParallelism(); channel++)
 											{
-												if (_directConnectedModules[bus.first]->GetInput(bus.first, /*i*/ channel).dataType == Design::DataType::Null)
+												if (_directConnectedModules[bus.first]->GetInput(bus.first, /*i*/ channel).GetDataType() == Design::DataType::Null)
 												{
 													sent = true;
 
 													auto dataToSend = GetOutput(i);
-													dataToSend.targetModuleId = resource.first;
+													dataToSend.SetTargetModuleId(resource.first);
 
 													_directConnectedModules[bus.first]->SetInput(dataToSend, bus.first, /*i*/ channel);
 													SetOutput(Data(), i);
@@ -205,10 +205,10 @@ namespace Design
 
 						for (int channel = 0; channel < _directConnectedModules[selectedBus]->GetParallelism(); channel++)
 						{
-							if (_directConnectedModules[selectedBus]->GetInput(selectedBus, /*i*/ channel).dataType == Design::DataType::Null)
+							if (_directConnectedModules[selectedBus]->GetInput(selectedBus, /*i*/ channel).GetDataType() == Design::DataType::Null)
 							{
 								auto dataToSend = GetOutput(i);
-								dataToSend.targetModuleId = selectedResource;
+								dataToSend.SetTargetModuleId(selectedResource);
 								_directConnectedModules[selectedBus]->SetInput(dataToSend, selectedBus, /*i*/ channel);
 								SetOutput(Data(), i);
 								break;

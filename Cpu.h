@@ -95,7 +95,7 @@ namespace Design
 
 
 
-		void Compute()
+		void Compute(int clockCycleId)
 		{
 			std::unique_lock<std::mutex> lck(*mut);
 
@@ -122,7 +122,7 @@ namespace Design
 					{
 						if (curModule->GetModuleType() != Design::ModuleType::BUS)
 						{
-							curModule->Compute();
+							curModule->Compute(clockCycleId);
 						}
 					}
 				}
@@ -131,20 +131,23 @@ namespace Design
 			// loop bus modules for n times
 			// n changes with a skill level
 			int n = 1;
-			for(int k=0;k<n;k++)
-			for (int j = 0; j < _height; j++)
+			for (int k = 0; k < n; k++)
 			{
-				for (int i = 0; i < _width; i++)
+				for (int j = 0; j < _height; j++)
 				{
-					auto curModule = _moduleGrid[i + j * _width];
-					if (curModule.get())
+					for (int i = 0; i < _width; i++)
 					{
-						if (curModule->GetModuleType() == Design::ModuleType::BUS)
-							curModule->Compute();
+						auto curModule = _moduleGrid[i + j * _width];
+						if (curModule.get())
+						{
+							if (curModule->GetModuleType() == Design::ModuleType::BUS)
+								curModule->Compute(clockCycleId);
+						}
 					}
 				}
-			}
 
+
+			}
 			for (int j = 0; j < _height; j++)
 			{
 				for (int i = 0; i < _width; i++)

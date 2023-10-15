@@ -30,13 +30,13 @@ namespace Design
 			return std::make_shared<Decoder>(frequency, lithography, parallelism);
 		}
 
-		void Compute() override
+		void Compute(int clockCycleId) override
 		{
 			SetIdle();
 			for (int i = 0; i < _parallelism; i++)
 			{
 				
-				if (GetOutput(i).dataType != Design::DataType::Null)
+				if (GetOutput(i).GetDataType() != Design::DataType::Null)
 					continue;
 
 				bool computed = false;
@@ -47,21 +47,21 @@ namespace Design
 					{
 
 						inp = _input[j][i];
-						if (inp.dataType != Design::DataType::Null)
+						if (inp.GetDataType() != Design::DataType::Null)
 						{
 
-							if (inp.dataType == Design::DataType::MicroOpDecode)
+							if (inp.GetDataType() == Design::DataType::MicroOpDecode)
 							{
 								computed = true;
-								std::cout << "decode dummy compute" << std::endl;
+								std::cout << "decode dummy compute: clock id="<< clockCycleId << std::endl;
 								SetBusy();
 								SetOutput(Data(
 									Design::DataType::Result,
 									Design::CONTROL_UNIT,
-									inp.sourceModuleId,
+									inp.GetSourceModuleId(),
 									Design::ModuleType::ALU,
 									Design::ModuleType::DECODER,
-									_id),i);
+									_id, clockCycleId),i);
 
 							}
 						}
@@ -87,10 +87,10 @@ namespace Design
 		{
 			for (int i = 0; i < _parallelism; i++)
 			{
-				if (GetOutput(i).dataType != Design::DataType::Null)
+				if (GetOutput(i).GetDataType() != Design::DataType::Null)
 				{
 
-					int idSource = GetOutput(i).targetModuleId;
+					int idSource = GetOutput(i).GetTargetModuleId();
 					bool sent = false;
 					for (int j = 0; j < 4; j++)
 					{
@@ -102,7 +102,7 @@ namespace Design
 								if (bus->GetModuleType() == Design::ModuleType::BUS)
 								{
 									
-									auto sources = bus->AsPtr<Design::Bus>()->GetFarConnectionsOfType(GetOutput(i).targetModuleType);
+									auto sources = bus->AsPtr<Design::Bus>()->GetFarConnectionsOfType(GetOutput(i).GetTargetModuleType());
 									for (auto& s : sources)
 									{
 										if (!sent)
@@ -124,7 +124,7 @@ namespace Design
 
 												for (int channel = 0; channel < bus->AsPtr<Design::Bus>()->GetParallelism(); channel++)
 												{
-													if (bus->AsPtr<Design::Bus>()->GetInput(idx, /*i*/ channel).dataType == Design::DataType::Null)
+													if (bus->AsPtr<Design::Bus>()->GetInput(idx, /*i*/ channel).GetDataType() == Design::DataType::Null)
 													{
 
 														bus->AsPtr<Design::Bus>()->SetInput(

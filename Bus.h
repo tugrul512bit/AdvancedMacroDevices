@@ -39,7 +39,7 @@ namespace Design
 			{
 				_busRegister[j].resize(_parallelism);
 				for (int i = 0; i < _parallelism; i++)
-					_busRegister[j][i].dataType = Design::DataType::Null;
+					_busRegister[j][i].SetDataType(Design::DataType::Null);
 			}
 
 			// because bus
@@ -55,9 +55,11 @@ namespace Design
 			return std::make_shared<Bus>(frequency, lithography, parallelism);
 		}
 
-		void Compute() override
+		void Compute(int clockCycleId) override
 		{
 			SetIdle();
+
+
 			// rotate 4 data points
 			// if there is deadlock, rotate n more times because neighboring BUSes can be having a circular-resonance condition with current one to have deadlock
 			for (int j = 0; j < (_deadlockRecoveryStep ? ((_id%3) + 1) : 1); j++)
@@ -68,14 +70,16 @@ namespace Design
 					auto d1 = _busRegister[1][i];
 					auto d2 = _busRegister[2][i];
 					auto d3 = _busRegister[3][i];
-					if (d0.localId == -1)
-						d0.localId = _uniqueLocalIdGenerator++;
-					if (d1.localId == -1)
-						d1.localId = _uniqueLocalIdGenerator++;
-					if (d2.localId == -1)
-						d2.localId = _uniqueLocalIdGenerator++;
-					if (d3.localId == -1)
-						d3.localId = _uniqueLocalIdGenerator++;
+					if (d0.GetLocalId() == -1)
+						d0.SetLocalId(_uniqueLocalIdGenerator++);
+					if (d1.GetLocalId() == -1)
+						d1.SetLocalId(_uniqueLocalIdGenerator++);
+					if (d2.GetLocalId() == -1)
+						d2.SetLocalId(_uniqueLocalIdGenerator++);
+					if (d3.GetLocalId() == -1)
+						d3.SetLocalId(_uniqueLocalIdGenerator++);
+
+
 					_busRegister[0][i] = d3;
 					_busRegister[1][i] = d0;
 					_busRegister[2][i] = d1;
@@ -85,17 +89,38 @@ namespace Design
 			_deadlock = ComputeDeadlock();
 			if (_deadlock)
 				_deadlockRecoveryStep = !_deadlockRecoveryStep;
+
+			// sort data on its priority (age)
+			for (int j = 0; j < 4; j++)
+			{
+
+				// simple brute-force. todo: replace with std::sort
+				for (int i = 0; i < _parallelism - 1; i++)
+				{
+					for (int i2 = i + 1; i2 < _parallelism; i2++)
+					{
+						if (_busRegister[j][i].GetClockCycleId() > _busRegister[j][i2].GetClockCycleId())
+						{
+							auto tmp = _busRegister[j][i];
+							_busRegister[j][i] = _busRegister[j][i2];
+							_busRegister[j][i2] = tmp;
+						}
+					}
+				}
+			}
+
 			for (int i = 0; i < _parallelism; i++)
 			{
 				for (int j = 0; j < 4; j++)
 				{
 					for (int channel = 0; channel < _parallelism; channel++)
 					{
-						if (_busRegister[j][/*i*/ channel].dataType == Design::DataType::Null)
+						if (_busRegister[j][/*i*/ channel].GetDataType() == Design::DataType::Null)
 						{
-							if (_input[j][i].dataType != Design::DataType::Null)
+							if (_input[j][i].GetDataType() != Design::DataType::Null)
 							{
 								SetBusy();
+								
 								_busRegister[j][/*i*/ channel] = _input[j][i];
 								_input[j][i] = Data();
 								break;
@@ -118,9 +143,9 @@ namespace Design
 			{
 				for (int j = 0; j < 4; j++)
 				{
-					if (_busRegister[j][i].dataType != Design::DataType::Null)
+					if (_busRegister[j][i].GetDataType() != Design::DataType::Null)
 					{
-						table[_busRegister[j][i].localId] = true;
+						table[_busRegister[j][i].GetLocalId()] = true;
 					}
 				}
 			}
@@ -136,7 +161,6 @@ namespace Design
 				_cloggedCycleCounter = 0;
 			_dataIdTable = table;
 
-			
 			if (_cloggedCycleCounter > _parallelism * 4)
 				return true;
 			else
@@ -145,6 +169,26 @@ namespace Design
 
 		void SendOutput() override
 		{
+
+			// sort data on its priority (age)
+			for (int j = 0; j < 4; j++)
+			{
+
+				// simple brute-force. todo: replace with std::sort
+				for (int i = 0; i < _parallelism - 1; i++)
+				{
+					for (int i2 = i + 1; i2 < _parallelism; i2++)
+					{
+						if (_busRegister[j][i].GetClockCycleId() > _busRegister[j][i2].GetClockCycleId())
+						{
+							auto tmp = _busRegister[j][i];
+							_busRegister[j][i] = _busRegister[j][i2];
+							_busRegister[j][i2] = tmp;
+						}
+					}
+				}
+			}
+
 			for (int i = 0; i < _parallelism; i++)
 			{
 				for (int j = 0; j < 4; j++)
@@ -153,12 +197,12 @@ namespace Design
 					
 					
 					// if has data, check if aligned at shortest module output, then send
-					if (reg.dataType != Design::DataType::Null)
+					if (reg.GetDataType() != Design::DataType::Null)
 					{
 
 						// check  current distance
 						int curDist = 10000;
-						auto farConn = GetFarConnectionsOfType(reg.targetModuleType);
+						auto farConn = GetFarConnectionsOfType(reg.GetTargetModuleType());
 						for (auto& fc : farConn)
 						{
 							if (curDist > fc.jumps)
@@ -177,7 +221,7 @@ namespace Design
 							if (conn.get())
 							{
 								// todo: Round-Robin for inputs ---> always picking first command = can't respond others = starvation !!!!!
-								if (reg.targetModuleId == conn->GetId() && (j == k))
+								if (reg.GetTargetModuleId() == conn->GetId() && (j == k))
 								{
 									// aligned directly, send data									
 									int idx = 0;
@@ -192,7 +236,7 @@ namespace Design
 									bool mustBreak = false;
 									for (int channel = 0; channel < conn->GetParallelism(); channel++)
 									{
-										if (conn->GetInput(idx, /*i*/ channel).dataType == Design::DataType::Null)
+										if (conn->GetInput(idx, /*i*/ channel).GetDataType() == Design::DataType::Null)
 										{
 											conn->SetInput(reg, idx, /*i*/ channel);
 											_busRegister[j][i] = Data();
@@ -210,7 +254,7 @@ namespace Design
 									
 									// check distance
 									auto connBus = conn->AsPtr<Design::Bus>(); 
-									auto jumpList = connBus->GetFarConnectionsOfType(reg.targetModuleType);
+									auto jumpList = connBus->GetFarConnectionsOfType(reg.GetTargetModuleType());
 									for (auto& jl : jumpList)
 									{
 										
@@ -245,7 +289,7 @@ namespace Design
 									idx = 1;
 								for (int channel = 0; channel < _directConnectedModules[shortestIdx]->GetParallelism(); channel++)
 								{
-									if (_directConnectedModules[shortestIdx]->GetInput(idx, /*i*/ channel).dataType == Design::DataType::Null)
+									if (_directConnectedModules[shortestIdx]->GetInput(idx, /*i*/ channel).GetDataType() == Design::DataType::Null)
 									{
 										_directConnectedModules[shortestIdx]->SetInput(reg, idx, /*i*/ channel);
 										_busRegister[j][i] = Data();

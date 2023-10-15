@@ -30,13 +30,13 @@ namespace Design
 			return std::make_shared<Alu>(frequency, lithography, parallelism);
 		}
 
-		void Compute() override
+		void Compute(int clockCycleId) override
 		{
 			SetIdle();
 			
 			for (int i = 0; i < _parallelism; i++)
 			{
-				if (GetOutput(i).dataType != Design::DataType::Null)
+				if (GetOutput(i).GetDataType() != Design::DataType::Null)
 					continue;
 
 				bool computed = false;
@@ -47,21 +47,21 @@ namespace Design
 					{
 
 						inp = _input[j][i];
-						if (inp.dataType != Design::DataType::Null)
+						if (inp.GetDataType() != Design::DataType::Null)
 						{
 
-							if (inp.dataType == Design::DataType::MicroOpAlu)
+							if (inp.GetDataType() == Design::DataType::MicroOpAlu)
 							{
 								computed = true;
-								std::cout << "alu dummy compute" << std::endl;
+								std::cout << "alu dummy compute: clock id="<< clockCycleId << std::endl;
 								SetBusy();
 								SetOutput(Data(
 									Design::DataType::Result,
 									Design::CONTROL_UNIT,
-									inp.sourceModuleId,
+									inp.GetSourceModuleId(),
 									-1,
 									Design::ModuleType::ALU,
-									_id),i);
+									_id, clockCycleId),i);
 
 							}
 						}
@@ -86,10 +86,10 @@ namespace Design
 		void SendOutput() override
 		{
 			for (int i = 0; i < _parallelism; i++)
-			if (GetOutput(i).dataType != Design::DataType::Null)
+			if (GetOutput(i).GetDataType() != Design::DataType::Null)
 			{
 
-				int idSource = GetOutput(i).targetModuleId;
+				int idSource = GetOutput(i).GetTargetModuleId();
 				bool sent = false;
 				for (int j = 0; j < 4; j++)
 				{
@@ -101,7 +101,7 @@ namespace Design
 							if (bus->GetModuleType() == Design::ModuleType::BUS)
 							{
 								
-								auto sources = bus->AsPtr<Design::Bus>()->GetFarConnectionsOfType(GetOutput(i).targetModuleType);
+								auto sources = bus->AsPtr<Design::Bus>()->GetFarConnectionsOfType(GetOutput(i).GetTargetModuleType());
 								for (auto& s : sources)
 								{
 									if (!sent)
@@ -121,7 +121,7 @@ namespace Design
 											if (j == 3)
 												idx += 1;
 
-											if (bus->AsPtr<Design::Bus>()->GetInput(idx,i).dataType == Design::DataType::Null)
+											if (bus->AsPtr<Design::Bus>()->GetInput(idx,i).GetDataType() == Design::DataType::Null)
 											{
 												bus->AsPtr<Design::Bus>()->SetInput(
 													GetOutput(i),

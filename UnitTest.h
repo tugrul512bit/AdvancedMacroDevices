@@ -12,6 +12,7 @@ namespace Window
 {
  
     static auto t1 = std::chrono::steady_clock::now();
+    static int outerClockCycle = 0;
     std::shared_ptr<AppStructure> UnitTest()
     {
 
@@ -39,16 +40,23 @@ namespace Window
                        
                 testCpu->Init();
                 testCpu->GetCell<Design::Bus>(1, 0)->PrintPaths();
-                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu,Design::ModuleType::ALU,-1,-1,Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()),0,0);
+                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(
+                    Design::Data::Data(
+                        Design::DataType::MicroOpAlu,
+                        Design::ModuleType::ALU,
+                        -1,
+                        -1,
+                        Design::ModuleType::CONTROL_UNIT, 
+                        testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId(),outerClockCycle++),0,0);
 
                 auto gridView = testCpu->GetGridView();
                 column3->AddNode(gridView);
                 
   
                 column3->OnPreRender([&,testCpu,column3]() mutable{   
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 100)
                     {
-                        testCpu->Compute();
+                        testCpu->Compute(outerClockCycle++);
 
                         column3->DeleteAllNodes();
                         auto gridView = testCpu->GetGridView();
@@ -98,16 +106,16 @@ namespace Window
 
                 testCpu->Init();
                 testCpu->GetCell<Design::Bus>(1, 0)->PrintPaths();
-                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0,0);
+                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId(), outerClockCycle++), 0,0);
                 testCpu->GetCell<Design::ControlUnit>(0, 0)->SetNearestResourceScheduling();
                 auto gridView = testCpu->GetGridView();
                 column3->AddNode(gridView);
 
 
                 column3->OnPreRender([&, testCpu, column3]() mutable {
-                        if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
+                        if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 100)
                         {
-                            testCpu->Compute();
+                            testCpu->Compute(outerClockCycle++);
                             column3->DeleteAllNodes();
                             auto gridView = testCpu->GetGridView();
                             column3->AddNode(gridView);
@@ -156,17 +164,17 @@ namespace Window
                 testCpu->Init();
 
                 testCpu->GetCell<Design::Bus>(1, 0)->PrintPaths();
-                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0,0);
+                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId(), outerClockCycle++), 0,0);
 
                 auto gridView = testCpu->GetGridView();
                 column3->AddNode(gridView);
 
 
                 column3->OnPreRender([&, testCpu, column3]() mutable {
-                        testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0,0);
-                        if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
+                        testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId(), outerClockCycle++), 0,0);
+                        if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 100)
                         {
-                            testCpu->Compute();
+                            testCpu->Compute(outerClockCycle++);
 
                             column3->DeleteAllNodes();
                             auto gridView = testCpu->GetGridView();
@@ -193,16 +201,16 @@ namespace Window
 
                 testCpu->Init();
 
-                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0,0);
+                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId(), outerClockCycle++), 0,0);
 
                 auto gridView = testCpu->GetGridView();
                 column3->AddNode(gridView);
 
 
                 column3->OnPreRender([&, testCpu, column3]() mutable {                    
-                        if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
+                        if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 100)
                         {
-                            testCpu->Compute();
+                            testCpu->Compute(outerClockCycle++);
                             column3->DeleteAllNodes();
                             auto gridView = testCpu->GetGridView();
                             column3->AddNode(gridView);
@@ -234,12 +242,12 @@ namespace Window
 
                 column3->OnPreRender([&, testCpu, column3]() mutable {
                     static int countCmd = 0;                
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 100)
                     {
                         countCmd++;
                         if (countCmd % 2 == 0)
-                            testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0,0);
-                        testCpu->Compute();
+                            testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpAlu, Design::ModuleType::ALU, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId(), outerClockCycle++), 0,0);
+                        testCpu->Compute(outerClockCycle++);
                         column3->DeleteAllNodes();
                         column3->AddNode(TextItem::Create("Num completed op.", [testCpu]() { return std::string("Completed operations=") + std::to_string(testCpu->GetCell<Design::ControlUnit>(0, 0)->GetCompletedOperationCount()); }, 2, false));
                         auto gridView = testCpu->GetGridView();
@@ -269,7 +277,7 @@ namespace Window
                 testCpu->SetCell(5, 0, Design::Alu::Create(1,1,1));
                 testCpu->SetCell(2, 1, Design::Bus::Create(1,1,1));
                 testCpu->SetCell(2, 2, Design::Decoder::Create(1,1,1));
-                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0,0);
+                testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId(), outerClockCycle++), 0,0);
                 testCpu->Init();
 
                 auto gridView = testCpu->GetGridView();
@@ -277,9 +285,9 @@ namespace Window
 
                 column3->OnPreRender([&, testCpu, column3]() mutable {
                         static int countCmd = 0;
-                        if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
+                        if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 100)
                         {
-                            testCpu->Compute();
+                            testCpu->Compute(outerClockCycle++);
                             column3->DeleteAllNodes();
                             column3->AddNode(TextItem::Create("Num completed op.", [testCpu]() { return std::string("Completed operations=") + std::to_string(testCpu->GetCell<Design::ControlUnit>(0, 0)->GetCompletedOperationCount()); }, 2, false));
                             auto gridView = testCpu->GetGridView();
@@ -311,11 +319,11 @@ namespace Window
 
                 column3->OnPreRender([&, testCpu, column3]() mutable {
                     static int countCmd = 0;
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 100)
                     {
                         if(countCmd++%3 == 0)
-                            testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0, 0);
-                        testCpu->Compute();
+                            testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId(), outerClockCycle++), 0, 0);
+                        testCpu->Compute(outerClockCycle++);
                         column3->DeleteAllNodes();
                         column3->AddNode(TextItem::Create("Num completed op.", [testCpu]() { return std::string("Completed operations=") + std::to_string(testCpu->GetCell<Design::ControlUnit>(0, 0)->GetCompletedOperationCount()); }, 2, false));
                         auto gridView = testCpu->GetGridView();
@@ -349,11 +357,11 @@ namespace Window
 
                 column3->OnPreRender([&, testCpu, column3]() mutable {
                     static int countCmd = 0;
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 100)
                     {
                         if (countCmd++ % 2 == 0)
-                            testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0, 0);
-                        testCpu->Compute();
+                            testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId(), outerClockCycle++), 0, 0);
+                        testCpu->Compute(outerClockCycle++);
                         column3->DeleteAllNodes();
                         column3->AddNode(TextItem::Create("Num completed op.", [testCpu]() { return std::string("Completed operations=") + std::to_string(testCpu->GetCell<Design::ControlUnit>(0, 0)->GetCompletedOperationCount()); }, 2, false));
                         auto gridView = testCpu->GetGridView();
@@ -386,10 +394,10 @@ namespace Window
 
                 column3->OnPreRender([&, testCpu, column3]() mutable {
                     static int countCmd = 0;
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 100)
                     {
-                        testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0, 0);
-                        testCpu->Compute();
+                        testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId(), outerClockCycle++), 0, 0);
+                        testCpu->Compute(outerClockCycle++);
                         column3->DeleteAllNodes();
                         column3->AddNode(TextItem::Create("Num completed op.", [testCpu]() { return std::string("Completed operations=") + std::to_string(testCpu->GetCell<Design::ControlUnit>(0, 0)->GetCompletedOperationCount()); }, 2, false));
                         auto gridView = testCpu->GetGridView();
@@ -422,11 +430,11 @@ namespace Window
 
                 column3->OnPreRender([&, testCpu, column3]() mutable {
                     static int countCmd = 0;
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 100)
                     {
                         if (countCmd++ % 2 == 0)
-                        testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0, 0);
-                        testCpu->Compute();
+                        testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId(), outerClockCycle++), 0, 0);
+                        testCpu->Compute(outerClockCycle++);
                         column3->DeleteAllNodes();
                         column3->AddNode(TextItem::Create("Num completed op.", [testCpu]() { return std::string("Completed operations=") + std::to_string(testCpu->GetCell<Design::ControlUnit>(0, 0)->GetCompletedOperationCount()); }, 2, false));
                         auto gridView = testCpu->GetGridView();
@@ -459,11 +467,11 @@ namespace Window
 
                 column3->OnPreRender([&, testCpu, column3]() mutable {
                     static int countCmd = 0;
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 100)
                     {
 
-                        testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0, 0);
-                        testCpu->Compute();
+                        testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId(), outerClockCycle++), 0, 0);
+                        testCpu->Compute(outerClockCycle++);
                         column3->DeleteAllNodes();
                         column3->AddNode(TextItem::Create("Num completed op.", [testCpu]() { return std::string("Completed operations=") + std::to_string(testCpu->GetCell<Design::ControlUnit>(0, 0)->GetCompletedOperationCount()); }, 2, false));
                         auto gridView = testCpu->GetGridView();
@@ -496,11 +504,11 @@ namespace Window
 
                 column3->OnPreRender([&, testCpu, column3]() mutable {
                     static int countCmd = 0;
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 100)
                     {
 
-                        testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0, 0);
-                        testCpu->Compute();
+                        testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId(), outerClockCycle++), 0, 0);
+                        testCpu->Compute(outerClockCycle++);
                         column3->DeleteAllNodes();
                         column3->AddNode(TextItem::Create("Num completed op.", [testCpu]() { return std::string("Completed operations=") + std::to_string(testCpu->GetCell<Design::ControlUnit>(0, 0)->GetCompletedOperationCount()); }, 2, false));
                         auto gridView = testCpu->GetGridView();
@@ -533,11 +541,11 @@ namespace Window
 
                 column3->OnPreRender([&, testCpu, column3]() mutable {
                     static int countCmd = 0;
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 100)
                     {
                         if(countCmd++%2 == 0)
-                            testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0, 0);
-                        testCpu->Compute();
+                            testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId(), outerClockCycle++), 0, 0);
+                        testCpu->Compute(outerClockCycle++);
                         column3->DeleteAllNodes();
                         column3->AddNode(TextItem::Create("Num completed op.", [testCpu]() { return std::string("Completed operations=") + std::to_string(testCpu->GetCell<Design::ControlUnit>(0, 0)->GetCompletedOperationCount()); }, 2, false));
                         auto gridView = testCpu->GetGridView();
@@ -570,11 +578,11 @@ namespace Window
 
                 column3->OnPreRender([&, testCpu, column3]() mutable {
                     static int countCmd = 0;
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 100)
                     {
                         if (countCmd++ % 2 == 0)
-                            testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0, 0);
-                        testCpu->Compute();
+                            testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId(), outerClockCycle++), 0, 0);
+                        testCpu->Compute(outerClockCycle++);
                         column3->DeleteAllNodes();
                         column3->AddNode(TextItem::Create("Num completed op.", [testCpu]() { return std::string("Completed operations=") + std::to_string(testCpu->GetCell<Design::ControlUnit>(0, 0)->GetCompletedOperationCount()); }, 2, false));
                         auto gridView = testCpu->GetGridView();
@@ -607,11 +615,11 @@ namespace Window
 
                 column3->OnPreRender([&, testCpu, column3]() mutable {
                     static int countCmd = 0;
-                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 500)
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 100)
                     {
                         if (countCmd++ % 2 == 0)
-                            testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId()), 0, 0);
-                        testCpu->Compute();
+                            testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId(), outerClockCycle++), 0, 0);
+                        testCpu->Compute(outerClockCycle++);
                         column3->DeleteAllNodes();
                         column3->AddNode(TextItem::Create("Num completed op.", [testCpu]() { return std::string("Completed operations=") + std::to_string(testCpu->GetCell<Design::ControlUnit>(0, 0)->GetCompletedOperationCount()); }, 2, false));
                         auto gridView = testCpu->GetGridView();
