@@ -22,27 +22,31 @@ namespace Window
         
         auto aluItem = ListItem::Create("ALU item", 2, false);
         aluItem->AddNode(TextItem::Create("ALU Tech Name", []() { return "ALU"; }, 3, false));
-        aluItem->AddNode(ImageItem::Create("ALU Image", true, Images::AluImage(),0,false));
+        aluItem->AddNode(ImageItem::Create("ALU Image", true, Images::AluImage(),0,false,1));
 
         auto cacheItem = ListItem::Create("Cache item", 2, false);
         cacheItem->AddNode(TextItem::Create("Cache Tech Name", []() { return "Cache"; }, 3, false));
-        cacheItem->AddNode(ImageItem::Create("Cache Image", true, Images::CacheImage(),0,false));
+        cacheItem->AddNode(ImageItem::Create("Cache Image", true, Images::CacheImage(),0,false,1));
 
         auto registerItem = ListItem::Create("Register item", 2, false);
         registerItem->AddNode(TextItem::Create("Register Tech Name", []() { return "Register"; }, 3, false));
-        registerItem->AddNode(ImageItem::Create("Register Image", true, Images::RegisterImage(),0,false));
+        registerItem->AddNode(ImageItem::Create("Register Image", true, Images::RegisterImage(),0,false,1));
 
         auto busItem = ListItem::Create("Bus item", 2, false);
         busItem->AddNode(TextItem::Create("Bus Tech Name", []() { return "Bus"; }, 3, false));
-        busItem->AddNode(ImageItem::Create("Bus Image", true, Images::BusImage(),0,false));
+        busItem->AddNode(ImageItem::Create("Bus Image", true, Images::BusImage(),0,false,1));
 
         auto decoderItem = ListItem::Create("Decoder item", 2, false);
         decoderItem->AddNode(TextItem::Create("Decoder Tech Name", []() { return "Decoder"; }, 3, false));
-        decoderItem->AddNode(ImageItem::Create("Decoder Image", true, Images::EmptyGridCellImage(),0,false));
+        decoderItem->AddNode(ImageItem::Create("Decoder Image", true, Images::DecoderImage(), 0, false, 1));
 
         auto fpuItem = ListItem::Create("FPU item", 2, false);
         fpuItem->AddNode(TextItem::Create("FPU Tech Name", []() { return "FPU"; }, 3, false));
-        fpuItem->AddNode(ImageItem::Create("FPU Image", true, Images::EmptyGridCellImage(),0,false));
+        fpuItem->AddNode(ImageItem::Create("FPU Image", true, Images::EmptyGridCellImage(),0,false,1));
+
+        auto controlUnitItem = ListItem::Create("Control Unit item", 2, false);
+        controlUnitItem->AddNode(TextItem::Create("Control Unit Tech Name", []() { return "Control Unit"; }, 3, false));
+        controlUnitItem->AddNode(ImageItem::Create("Control Unit Image", true, Images::ControlUnitImage(), 0, false, 1));
 
         techList->AddNode(aluItem);
         techList->AddNode(cacheItem);
@@ -50,6 +54,7 @@ namespace Window
         techList->AddNode(busItem);
         techList->AddNode(decoderItem);
         techList->AddNode(fpuItem);
+        techList->AddNode(controlUnitItem);
 
         auto cpuGrid = GridItem::Create("CpuGrid",8,8, 1.0, true);
 

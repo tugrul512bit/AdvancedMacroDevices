@@ -3,6 +3,7 @@
 #include"Window.h"
 #include"Text.h"
 #include"Button.h"
+#include"DropdownList.h"
 #include"Character.h"
 namespace Window
 {
@@ -10,6 +11,11 @@ namespace Window
 	{
 
         auto createCharacter = AppWindow::Create("Character Creation", "Character Generator");
+
+
+        createCharacter->AddNode(TextItem::Create("Player Class", []() {return "Player Class"; }, 3, false));
+        createCharacter->AddNode(DropdownListItem::Create("Class Selection", "Class Selection", []() {}, false, []() {return false; }));
+
         createCharacter->AddNode(TextItem::Create("Stats", []() {return "Stats"; }, 3, false));
 
         createCharacter->AddNode(TextItem::Create("Learning", []() {return "Learning     "; }, 2, false));

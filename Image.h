@@ -58,15 +58,14 @@ namespace Window
 	class ImageItem : public AppStructure
 	{
 	public:
-		static std::shared_ptr<AppStructure> Create(std::string name, bool sameLine, cv::Mat img, int busynessLevel, bool deadlock)
+		static std::shared_ptr<AppStructure> Create(std::string name, bool sameLine, cv::Mat img, int busynessLevel, bool deadlock, int parallelism)
 		{
-			std::shared_ptr<AppStructure> node = std::shared_ptr<ImageItem>(new ImageItem(name, sameLine, img, busynessLevel, deadlock), [](ImageItem* i) { delete i; });
+			std::shared_ptr<AppStructure> node = std::shared_ptr<ImageItem>(new ImageItem(name, sameLine, img, busynessLevel, deadlock, parallelism), [](ImageItem* i) { delete i; });
 			return node;
 		}
 
-		ImageItem(std::string name = "text", bool sameLine = false, cv::Mat img=cv::Mat(64,64,CV_8UC4), int busynessLevel = 0,bool deadlock=false)
+		ImageItem(std::string name = "text", bool sameLine = false, cv::Mat img=cv::Mat(64,64,CV_8UC4), int busynessLevel = 0,bool deadlock=false, int parallelism=0)
 		{
-
 			_name = name;
 			_sameLine = sameLine;
 			_width = img.cols;
@@ -145,10 +144,19 @@ namespace Window
 						_img.at<cv::Vec4b>(i).val[3]
 					);
 			}
+
+			if (parallelism > 0)
+			{
+				auto num = std::to_string(parallelism);
+				cv::putText(_img, cv::String(num), cv::Point2f(50, 18), 1, 1.2, cv::Scalar(44, 0, 255, 255),2);
+			}
+
 			_deadlock = deadlock;
 			_busynessLevel = busynessLevel;
 			_vec1 = ImVec2(_width, _height);
+			_parallelism = parallelism;
 			_texture = ToTexture();
+
 		}
 
 		void Compute() override
@@ -173,8 +181,9 @@ namespace Window
 		ImVec2 _vec1;
 		int _busynessLevel;
 		bool _deadlock;
+		int _parallelism;
         GLuint ToTexture() {       
-            return globalTextures.Generate(_name+std::string("_")+std::to_string(_busynessLevel)+std::string("_")+std::to_string(_deadlock), _img);
+            return globalTextures.Generate(_name+std::string("_")+std::to_string(_busynessLevel)+std::string("_")+std::to_string(_deadlock)+std::string("_")+std::to_string(_parallelism), _img);
         }
 	};
 

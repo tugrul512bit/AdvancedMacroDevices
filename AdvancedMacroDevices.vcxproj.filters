@@ -128,5 +128,8 @@
     <ClInclude Include="Decoder.h">
       <Filter>Design\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="DropdownList.h">
+      <Filter>Window\Component</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
