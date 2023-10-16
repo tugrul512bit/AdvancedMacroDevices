@@ -174,6 +174,11 @@ namespace Design
 							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("alu_img_") + std::to_string(i + j * _width), false, Window::Images::AluImage(), _moduleGrid[i + j * _width]->GetBusyness(), _moduleGrid[i + j * _width]->CheckDeadlock(), _moduleGrid[i + j * _width]->GetParallelism()));
 
 						}
+						else if (_moduleGrid[i + j * _width]->GetModuleType() == ModuleType::FPU)
+						{
+							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("fpu_img_") + std::to_string(i + j * _width), false, Window::Images::FpuImage(), _moduleGrid[i + j * _width]->GetBusyness(), _moduleGrid[i + j * _width]->CheckDeadlock(), _moduleGrid[i + j * _width]->GetParallelism()));
+
+						}
 						else if (_moduleGrid[i + j * _width]->GetModuleType() == ModuleType::CONTROL_UNIT)
 						{
 

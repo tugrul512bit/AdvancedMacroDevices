@@ -153,6 +153,7 @@
     <ClInclude Include="Dice.h" />
     <ClInclude Include="DropdownList.h" />
     <ClInclude Include="Equivalence.h" />
+    <ClInclude Include="Fpu.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="List.h" />

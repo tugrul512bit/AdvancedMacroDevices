@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "AppStructure.h"
 #include<functional>
 #include<vector>
@@ -211,6 +211,34 @@ namespace Window
 			img = Global::ImageProcessing::FloodFill(32, 37, img, 255, 255, 255, 255);
 			cv::putText(img, cv::String("+-/*"), cv::Point2f(15, 21 + yOffset), 1, 0.6, cv::Scalar(0, 0, 0, 255));
 			cv::putText(img, cv::String("ALU"), cv::Point2f(19, 22), 1, 0.9, cv::Scalar(255, 255, 255, 255));			
+			return img;
+		}
+
+		cv::Mat FpuImage()
+		{
+			cv::Mat img(64, 64, CV_8UC4);
+			img = 0;
+			// border
+			cv::line(img, cv::Point2f(0, 0), cv::Point2f(63, 0), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(63, 0), cv::Point2f(63, 63), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(63, 63), cv::Point2f(0, 63), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(0, 63), cv::Point2f(0, 0), cv::Scalar(255, 255, 255, 255), 1);
+
+			// content
+			
+			cv::line(img, cv::Point2f(5, 20 ), cv::Point2f(40, 20), cv::Scalar(255, 255, 255, 255), 2);
+			cv::line(img, cv::Point2f(5, 40), cv::Point2f(40, 40), cv::Scalar(255, 255, 255, 255), 2);
+			cv::line(img, cv::Point2f(5, 20), cv::Point2f(5, 40), cv::Scalar(255, 255, 255, 255), 2);
+			cv::line(img, cv::Point2f(40, 20), cv::Point2f(40, 40), cv::Scalar(255, 255, 255, 255), 2);
+			cv::line(img, cv::Point2f(25, 43), cv::Point2f(25, 57), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(25, 57), cv::Point2f(48, 57), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(48, 57), cv::Point2f(48, 5), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(48, 5), cv::Point2f(28, 5), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(28, 5), cv::Point2f(28, 15), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(28, 15), cv::Point2f(23, 10), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(28, 15), cv::Point2f(33, 10), cv::Scalar(255, 255, 255, 255), 1);
+
+			cv::putText(img, cv::String("sqrt"), cv::Point2f(7, 35), 1, 0.9, cv::Scalar(255, 255, 255, 255));
 			return img;
 		}
 

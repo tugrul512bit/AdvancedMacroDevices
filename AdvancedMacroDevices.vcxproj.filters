@@ -131,5 +131,8 @@
     <ClInclude Include="DropdownList.h">
       <Filter>Window\Component</Filter>
     </ClInclude>
+    <ClInclude Include="Fpu.h">
+      <Filter>Design\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

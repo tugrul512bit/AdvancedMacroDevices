@@ -15,11 +15,11 @@ namespace Design
 	// input: data from memory/cache/register
 	// output: memory/cache/register request
 	// output: result
-	class Alu :public Module
+	class Fpu :public Module
 	{
 	public:
-		Alu(int frequency, int lithography,int parallelism):
-			Module(parallelism, parallelism,lithography,/*numTransistors*/ 1, ModuleType::ALU, 
+		Fpu(int frequency, int lithography, int parallelism) :
+			Module(parallelism, parallelism, lithography,/*numTransistors*/ 1, ModuleType::FPU,
 				/* thermalDissipationPower */ 1, frequency, /* failProbability*/ 0.0f)
 		{
 
@@ -27,13 +27,13 @@ namespace Design
 
 		static std::shared_ptr<Module> Create(int frequency, int lithography, int parallelism)
 		{
-			return std::make_shared<Alu>(frequency, lithography, parallelism);
+			return std::make_shared<Fpu>(frequency, lithography, parallelism);
 		}
 
 		void Compute(int clockCycleId) override
 		{
 			SetIdle();
-			
+
 			for (int i = 0; i < _parallelism; i++)
 			{
 				if (GetOutput(i).GetDataType() != Design::DataType::Null)
@@ -50,18 +50,18 @@ namespace Design
 						if (inp.GetDataType() != Design::DataType::Null)
 						{
 
-							if (inp.GetDataType() == Design::DataType::MicroOpAlu)
+							if (inp.GetDataType() == Design::DataType::MicroOpFpu)
 							{
 								computed = true;
-								std::cout << "alu dummy compute: clock id="<< clockCycleId << std::endl;
+								std::cout << "fpu dummy compute: clock id=" << clockCycleId << std::endl;
 								SetBusy();
 								SetOutput(Data(
 									Design::DataType::Result,
 									Design::CONTROL_UNIT,
 									inp.GetSourceModuleId(),
 									-1,
-									Design::ModuleType::ALU,
-									_id, clockCycleId),i);
+									Design::ModuleType::FPU,
+									_id, clockCycleId), i);
 
 							}
 						}
@@ -86,58 +86,58 @@ namespace Design
 		void SendOutput() override
 		{
 			for (int i = 0; i < _parallelism; i++)
-			if (GetOutput(i).GetDataType() != Design::DataType::Null)
-			{
-
-				int idSource = GetOutput(i).GetTargetModuleId();
-				bool sent = false;
-				for (int j = 0; j < 4; j++)
+				if (GetOutput(i).GetDataType() != Design::DataType::Null)
 				{
-					if (!sent)
+
+					int idSource = GetOutput(i).GetTargetModuleId();
+					bool sent = false;
+					for (int j = 0; j < 4; j++)
 					{
-						auto bus = _directConnectedModules[j];
-						if (bus.get())
+						if (!sent)
 						{
-							if (bus->GetModuleType() == Design::ModuleType::BUS)
+							auto bus = _directConnectedModules[j];
+							if (bus.get())
 							{
-								
-								auto sources = bus->AsPtr<Design::Bus>()->GetFarConnectionsOfType(GetOutput(i).GetTargetModuleType());
-								for (auto& s : sources)
+								if (bus->GetModuleType() == Design::ModuleType::BUS)
 								{
-									if (!sent)
+
+									auto sources = bus->AsPtr<Design::Bus>()->GetFarConnectionsOfType(GetOutput(i).GetTargetModuleType());
+									for (auto& s : sources)
 									{
-
-										// send result back to source
-										if (s.moduleId == idSource)
+										if (!sent)
 										{
-								
-											int idx = 0;
-											if (j == 0)
-												idx += 2;
-											if (j == 1)
-												idx += 3;
-											if (j == 2)
-												idx += 0;
-											if (j == 3)
-												idx += 1;
 
-											if (bus->AsPtr<Design::Bus>()->GetInput(idx,i).GetDataType() == Design::DataType::Null)
+											// send result back to source
+											if (s.moduleId == idSource)
 											{
-												bus->AsPtr<Design::Bus>()->SetInput(
-													GetOutput(i),
-													idx,i);
-												SetOutput(Data(),i);
-												sent = true;
+
+												int idx = 0;
+												if (j == 0)
+													idx += 2;
+												if (j == 1)
+													idx += 3;
+												if (j == 2)
+													idx += 0;
+												if (j == 3)
+													idx += 1;
+
+												if (bus->AsPtr<Design::Bus>()->GetInput(idx, i).GetDataType() == Design::DataType::Null)
+												{
+													bus->AsPtr<Design::Bus>()->SetInput(
+														GetOutput(i),
+														idx, i);
+													SetOutput(Data(), i);
+													sent = true;
+												}
 											}
 										}
 									}
 								}
 							}
 						}
-					}
 
+					}
 				}
-			}
 		}
 	private:
 	};

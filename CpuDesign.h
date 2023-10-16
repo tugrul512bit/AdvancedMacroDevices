@@ -42,7 +42,7 @@ namespace Window
 
         auto fpuItem = ListItem::Create("FPU item", 2, false);
         fpuItem->AddNode(TextItem::Create("FPU Tech Name", []() { return "FPU"; }, 3, false));
-        fpuItem->AddNode(ImageItem::Create("FPU Image", true, Images::EmptyGridCellImage(),0,false,1));
+        fpuItem->AddNode(ImageItem::Create("FPU Image", true, Images::FpuImage(),0,false,1));
 
         auto controlUnitItem = ListItem::Create("Control Unit item", 2, false);
         controlUnitItem->AddNode(TextItem::Create("Control Unit Tech Name", []() { return "Control Unit"; }, 3, false));

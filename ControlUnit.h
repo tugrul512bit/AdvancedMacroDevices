@@ -77,6 +77,15 @@ namespace Design
 					
 				}
 
+				if (opcode.GetDataType() == Design::DataType::MicroOpFpu)
+				{
+
+					SetBusy();
+					SetOutput(Design::Data(opcode.GetDataType(), Design::ModuleType::FPU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id, clockCycleId), i);
+					computed = true;
+
+				}
+
 						
 				if (opcode.GetDataType() == Design::DataType::MicroOpDecode)
 				{
@@ -102,6 +111,17 @@ namespace Design
 						// todo: merge current operation to architectural state
 						computed = true;
 						
+					}
+
+					if (opcode.GetValue() == Design::ModuleType::FPU)
+					{
+
+						SetOutput(Design::Data(Design::DataType::MicroOpFpu, Design::ModuleType::FPU, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id, clockCycleId), i);
+						SetBusy();
+
+						// todo: merge current operation to architectural state
+						computed = true;
+
 					}
 
 					if (opcode.GetValue() == -1)
