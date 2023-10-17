@@ -27,7 +27,7 @@ namespace Design
 			return std::make_shared<CacheBank>(frequency, lithography, capacity, evictionPolicy, parallelism);
 		}
 
-		void Compute() override
+		void Compute(int clockCycleId) override
 		{
 
 		}

@@ -172,12 +172,10 @@ namespace Design
 						else if (_moduleGrid[i + j * _width]->GetModuleType() == ModuleType::ALU)
 						{
 							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("alu_img_") + std::to_string(i + j * _width), false, Window::Images::AluImage(), _moduleGrid[i + j * _width]->GetBusyness(), _moduleGrid[i + j * _width]->CheckDeadlock(), _moduleGrid[i + j * _width]->GetParallelism()));
-
 						}
 						else if (_moduleGrid[i + j * _width]->GetModuleType() == ModuleType::FPU)
 						{
 							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("fpu_img_") + std::to_string(i + j * _width), false, Window::Images::FpuImage(), _moduleGrid[i + j * _width]->GetBusyness(), _moduleGrid[i + j * _width]->CheckDeadlock(), _moduleGrid[i + j * _width]->GetParallelism()));
-
 						}
 						else if (_moduleGrid[i + j * _width]->GetModuleType() == ModuleType::CONTROL_UNIT)
 						{
@@ -188,6 +186,10 @@ namespace Design
 						{
 
 							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("decoder_img_") + std::to_string(i + j * _width), false, Window::Images::DecoderImage(), _moduleGrid[i + j * _width]->GetBusyness(), _moduleGrid[i + j * _width]->CheckDeadlock(), _moduleGrid[i + j * _width]->GetParallelism()));
+						}
+						else if (_moduleGrid[i + j * _width]->GetModuleType() == ModuleType::CACHE_CONTROL)
+						{
+							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("cache_control_img_") + std::to_string(i + j * _width), false, Window::Images::CacheControlImage(), _moduleGrid[i + j * _width]->GetBusyness(), _moduleGrid[i + j * _width]->CheckDeadlock(), _moduleGrid[i + j * _width]->GetParallelism()));
 						}
 					}
 				}

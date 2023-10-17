@@ -242,7 +242,7 @@ namespace Window
 			return img;
 		}
 
-		cv::Mat CacheImage()
+		cv::Mat CacheBankImage()
 		{
 			cv::Mat img(64, 64, CV_8UC4);
 			img = 0;
@@ -264,6 +264,42 @@ namespace Window
 				img = Global::ImageProcessing::FloodFill(8, 8 + i * 12, img, 255, 255, 255, 255);
 				cv::putText(img, cv::String("cache line"), cv::Point2f(5, 11 + i * 12), 1, 0.6, cv::Scalar(0, 0, 0, 255));
 			}
+			return img;
+		}
+
+
+		cv::Mat CacheControlImage()
+		{
+			cv::Mat img(64, 64, CV_8UC4);
+			img = 0;
+			// border
+			cv::line(img, cv::Point2f(0, 0), cv::Point2f(63, 0), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(63, 0), cv::Point2f(63, 63), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(63, 63), cv::Point2f(0, 63), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(0, 63), cv::Point2f(0, 0), cv::Scalar(255, 255, 255, 255), 1);
+
+			cv::line(img, cv::Point2f(25, 10), cv::Point2f(35, 10), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(25, 15), cv::Point2f(35, 15), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(25, 20), cv::Point2f(35, 20), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(25, 25), cv::Point2f(35, 25), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(25, 30), cv::Point2f(35, 30), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(25, 35), cv::Point2f(35, 35), cv::Scalar(255, 255, 255, 255), 1);
+
+
+			cv::line(img, cv::Point2f(35, 7), cv::Point2f(35, 38), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(45, 7), cv::Point2f(45, 38), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(35, 7), cv::Point2f(45, 7), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(35, 38), cv::Point2f(45, 38), cv::Scalar(255, 255, 255, 255), 1);
+
+			cv::line(img, cv::Point2f(25, 7), cv::Point2f(25, 38), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(15, 7), cv::Point2f(15, 38), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(15, 7), cv::Point2f(25, 7), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(25, 38), cv::Point2f(15, 38), cv::Scalar(255, 255, 255, 255), 1);
+
+			cv::line(img, cv::Point2f(5, 20), cv::Point2f(15, 20), cv::Scalar(255, 255, 255, 255), 1);
+
+			// content
+			cv::putText(img, cv::String("hit miss"), cv::Point2f(5, 58), 1, 0.8, cv::Scalar(255, 255, 255, 255));
 			return img;
 		}
 

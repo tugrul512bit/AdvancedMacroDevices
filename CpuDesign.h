@@ -24,9 +24,14 @@ namespace Window
         aluItem->AddNode(TextItem::Create("ALU Tech Name", []() { return "ALU"; }, 3, false));
         aluItem->AddNode(ImageItem::Create("ALU Image", true, Images::AluImage(),0,false,1));
 
-        auto cacheItem = ListItem::Create("Cache item", 2, false);
-        cacheItem->AddNode(TextItem::Create("Cache Tech Name", []() { return "Cache"; }, 3, false));
-        cacheItem->AddNode(ImageItem::Create("Cache Image", true, Images::CacheImage(),0,false,1));
+        auto cacheBankItem = ListItem::Create("Cache Bank item", 2, false);
+        cacheBankItem->AddNode(TextItem::Create("Cache Bank Tech Name", []() { return "Cache Bank"; }, 3, false));
+        cacheBankItem->AddNode(ImageItem::Create("Cache Bank Image", true, Images::CacheBankImage(),0,false,1));
+
+        auto cacheControlItem = ListItem::Create("Cache Control item", 2, false);
+        cacheControlItem->AddNode(TextItem::Create("Cache Control Tech Name", []() { return "Cache Control"; }, 3, false));
+        cacheControlItem->AddNode(ImageItem::Create("Cache Control Image", true, Images::CacheControlImage(), 0, false, 1));
+
 
         auto registerItem = ListItem::Create("Register item", 2, false);
         registerItem->AddNode(TextItem::Create("Register Tech Name", []() { return "Register"; }, 3, false));
@@ -49,7 +54,8 @@ namespace Window
         controlUnitItem->AddNode(ImageItem::Create("Control Unit Image", true, Images::ControlUnitImage(), 0, false, 1));
 
         techList->AddNode(aluItem);
-        techList->AddNode(cacheItem);
+        techList->AddNode(cacheBankItem);
+        techList->AddNode(cacheControlItem);
         techList->AddNode(registerItem);
         techList->AddNode(busItem);
         techList->AddNode(decoderItem);

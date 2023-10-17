@@ -12,6 +12,20 @@ namespace Design
 	// input: memory request
 	// output: data (cache hit)
 	// output2: memory request (cache miss)
+	// input2: memory response (from RAM or ALU or FPU or whatever that is being cached)
+	// output3: coherency update response (write)
+	// input3: coherency update request
+	/*
+		Algorithm
+		- if request is write: send coherency update to all linked cache controllers
+		- if request is sync: wait until in-flight coherency updates reaches zero (cc1->coherency->cc2->acknowledge->cc1)
+		- if request is read: check if any linked cache bank contains the address (direct mapped or LRU)
+		-   if found -> cache hit -> get data from bank -> response
+		-   if not found -> cache miss -> get from RAM -> response
+		-		if full, evict one
+
+		No limit for number of cache banks per controller. But longer path = higher latency for some data
+	*/
 	class CacheController :public Module
 	{
 	public:
@@ -44,7 +58,7 @@ namespace Design
 			return std::make_shared<CacheController>(frequency, lithography, capacity, evictionPolicy, parallelism);
 		}
 
-		void Compute() override
+		void Compute(int clockCycleId) override
 		{
 			// check command queue
 			// if command found
@@ -58,52 +72,6 @@ namespace Design
 		int _capacity;
 		int _evictionPolicy;
 
-		// finds all connected cache banks and maps them to memory requests 
-		//	for direct-mapped cache: first bank serves x % k == 0, second bank serves x % k == 1, ...
-		std::vector<Module*> FollowBusThenMapBanks()
-		{
-			struct ModuleWithSource
-			{
-				Module* target;
-				Module* source;
-			};
-			std::queue<ModuleWithSource> q;
-			std::vector<Module*> banks;
-			for (int i = 0; i < 4; i++)
-			{
-				if (_directConnectedModules[i].get())
-				{
-					if (_directConnectedModules[i]->GetModuleType() == ModuleType::BUS || _directConnectedModules[i]->GetModuleType() == ModuleType::CACHE_BANK)
-					{
-						q.push({ _directConnectedModules[i].get(),(Module*)this});
-					}
-				}
-			}
-
-			// find all connected storage modules through connections
-			while (!q.empty())
-			{
-				ModuleWithSource m = q.front();
-				q.pop();
-
-				if (m.target->GetModuleType() == ModuleType::CACHE_BANK)
-				{
-					banks.push_back(m.target);
-				}
-
-				if (m.target->GetModuleType() == ModuleType::BUS)
-				{
-					std::vector<Module*> conn = m.target->GetConnectedModulesExceptThis(m.source);
-					for (auto& c : conn)
-					{
-						q.push({ c,m.target });
-					}
-				}
-
-			}
-
-			// then map banks to memory address modulus
-			return banks;
-		}
+	
 	};
 }
