@@ -635,7 +635,7 @@ namespace Window
 
 
 
-        column1->AddNode(ButtonItem::Create("Cache Controller Test 1", "Cache Controller Test 5: Single Level Caching (incomplete)",
+        column1->AddNode(ButtonItem::Create("Cache Controller Test 1", "Cache Controller Test 1: Single Level Caching (incomplete)",
             [column3]() mutable
             {
                 column3->DeleteAllNodes();
@@ -671,6 +671,92 @@ namespace Window
                     });
 
             }, false, []() {return false; }));
+
+
+        column1->AddNode(ButtonItem::Create("Cache Controller Test 2", "Cache Controller Test 2: Two Level Caching (incomplete)",
+            [column3]() mutable
+            {
+                column3->DeleteAllNodes();
+                std::shared_ptr<Design::Cpu> testCpu = std::make_shared<Design::Cpu>(10, 10);
+                testCpu->Init();
+                auto gridView = testCpu->GetGridView();
+                column3->AddNode(gridView);
+
+                column3->OnPreRender([&, testCpu, column3]() mutable {
+                    static int countCmd = 0;
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 100)
+                    {
+                        column3->DeleteAllNodes();                    
+                        auto gridView = testCpu->GetGridView();
+                        column3->AddNode(gridView);
+                        t1 = std::chrono::steady_clock::now();
+                    }
+                    });
+            }, false, []() {return false; }));
+
+        column1->AddNode(ButtonItem::Create("Cache Controller Test 3", "Cache Controller Test 3: 2-Cache Coherence (incomplete)",
+            [column3]() mutable
+            {
+                column3->DeleteAllNodes();
+                std::shared_ptr<Design::Cpu> testCpu = std::make_shared<Design::Cpu>(10, 10);
+                testCpu->Init();
+                auto gridView = testCpu->GetGridView();
+                column3->AddNode(gridView);
+
+                column3->OnPreRender([&, testCpu, column3]() mutable {
+                    static int countCmd = 0;
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 100)
+                    {
+                        column3->DeleteAllNodes();
+                        auto gridView = testCpu->GetGridView();
+                        column3->AddNode(gridView);
+                        t1 = std::chrono::steady_clock::now();
+                    }
+                    });
+            }, false, []() {return false; }));
+
+        column1->AddNode(ButtonItem::Create("Cache Controller Test 4", "Cache Controller Test 4: 4-Cache Coherence (incomplete)",
+            [column3]() mutable
+            {
+                column3->DeleteAllNodes();
+                std::shared_ptr<Design::Cpu> testCpu = std::make_shared<Design::Cpu>(20, 20);
+                testCpu->Init();
+                auto gridView = testCpu->GetGridView();
+                column3->AddNode(gridView);
+
+                column3->OnPreRender([&, testCpu, column3]() mutable {
+                    static int countCmd = 0;
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 100)
+                    {
+                        column3->DeleteAllNodes();
+                        auto gridView = testCpu->GetGridView();
+                        column3->AddNode(gridView);
+                        t1 = std::chrono::steady_clock::now();
+                    }
+                    });
+            }, false, []() {return false; }));
+
+        column1->AddNode(ButtonItem::Create("Cache Controller Test 5", "Cache Controller Test 5: 8-Cache Coherence (incomplete)",
+            [column3]() mutable
+            {
+                column3->DeleteAllNodes();
+                std::shared_ptr<Design::Cpu> testCpu = std::make_shared<Design::Cpu>(40, 40);
+                testCpu->Init();
+                auto gridView = testCpu->GetGridView();
+                column3->AddNode(gridView);
+
+                column3->OnPreRender([&, testCpu, column3]() mutable {
+                    static int countCmd = 0;
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 100)
+                    {
+                        column3->DeleteAllNodes();
+                        auto gridView = testCpu->GetGridView();
+                        column3->AddNode(gridView);
+                        t1 = std::chrono::steady_clock::now();
+                    }
+                    });
+            }, false, []() {return false; }));
+
         unitTest->Hide();
         return unitTest;
     }
