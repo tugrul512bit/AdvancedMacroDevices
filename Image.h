@@ -303,6 +303,23 @@ namespace Window
 			return img;
 		}
 
+		cv::Mat MemoryControlImage()
+		{
+			cv::Mat img(64, 64, CV_8UC4);
+			img = 0;
+			// border
+			cv::line(img, cv::Point2f(0, 0), cv::Point2f(63, 0), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(63, 0), cv::Point2f(63, 63), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(63, 63), cv::Point2f(0, 63), cv::Scalar(255, 255, 255, 255), 1);
+			cv::line(img, cv::Point2f(0, 63), cv::Point2f(0, 0), cv::Scalar(255, 255, 255, 255), 1);
+
+
+			// content
+			cv::putText(img, cv::String("Mem"), cv::Point2f(5, 15), 1, 1.2, cv::Scalar(255, 255, 255, 255));
+			cv::putText(img, cv::String("Ctrl"), cv::Point2f(5, 35), 1, 1.1, cv::Scalar(255, 255, 255, 255));
+			return img;
+		}
+
 		cv::Mat RegisterImage()
 		{
 			cv::Mat img(64, 64, CV_8UC4);

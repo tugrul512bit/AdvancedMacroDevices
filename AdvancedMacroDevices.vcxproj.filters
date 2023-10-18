@@ -134,5 +134,8 @@
     <ClInclude Include="Fpu.h">
       <Filter>Design\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="MemoryController.h">
+      <Filter>Design\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

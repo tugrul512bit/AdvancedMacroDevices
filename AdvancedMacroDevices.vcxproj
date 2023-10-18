@@ -158,6 +158,7 @@
     <ClInclude Include="Image.h" />
     <ClInclude Include="List.h" />
     <ClInclude Include="MainWindow.h" />
+    <ClInclude Include="MemoryController.h" />
     <ClInclude Include="Module.h" />
     <ClInclude Include="Paint.h" />
     <ClInclude Include="Skill.h" />

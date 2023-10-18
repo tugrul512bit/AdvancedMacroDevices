@@ -191,6 +191,14 @@ namespace Design
 						{
 							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("cache_control_img_") + std::to_string(i + j * _width), false, Window::Images::CacheControlImage(), _moduleGrid[i + j * _width]->GetBusyness(), _moduleGrid[i + j * _width]->CheckDeadlock(), _moduleGrid[i + j * _width]->GetParallelism()));
 						}
+						else if (_moduleGrid[i + j * _width]->GetModuleType() == ModuleType::CACHE_BANK)
+						{
+							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("cache_bank_img_") + std::to_string(i + j * _width), false, Window::Images::CacheBankImage(), _moduleGrid[i + j * _width]->GetBusyness(), _moduleGrid[i + j * _width]->CheckDeadlock(), _moduleGrid[i + j * _width]->GetParallelism()));
+						}
+						else if (_moduleGrid[i + j * _width]->GetModuleType() == ModuleType::MEMORY_CONTROL)
+						{
+							result->AsPtr<Window::GridItem>()->SetCell(i, j, Window::ImageItem::Create(std::string("memory_control_img_") + std::to_string(i + j * _width), false, Window::Images::MemoryControlImage(), _moduleGrid[i + j * _width]->GetBusyness(), _moduleGrid[i + j * _width]->CheckDeadlock(), _moduleGrid[i + j * _width]->GetParallelism()));
+						}
 					}
 				}
 			}

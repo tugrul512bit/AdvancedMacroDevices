@@ -9,12 +9,12 @@
 namespace Design
 {
 	// cache controller receives memory read/write requests, then serves data from cache banks or RAM
-	// input: memory request
-	// output: data (cache hit)
-	// output2: memory request (cache miss)
-	// input2: memory response (from RAM or ALU or FPU or whatever that is being cached)
-	// output3: coherency update response (write)
-	// input3: coherency update request
+	// input-1: memory request coming from client
+	// input-2: memory response coming from Memory Controller (RAM)
+	// input-3: memory response coming from Cache Bank(s)
+	// output-1: memory response going to client
+	// output-2: memory request going to Memory Controller (RAM)
+	// output-3: memory request going to Cache Bank(s)
 	/*
 		Algorithm
 		- if request is write: send coherency update to all linked cache controllers

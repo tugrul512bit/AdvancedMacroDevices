@@ -9,6 +9,8 @@
 #include"Cpu.h"
 #include"Decoder.h"
 #include"CacheController.h"
+#include"CacheBank.h"
+#include"MemoryController.h"
 namespace Window
 {
  
@@ -633,19 +635,20 @@ namespace Window
 
 
 
-        column1->AddNode(ButtonItem::Create("Cache Controller Test 1", "Cache Controller Test 15: Single Level Caching (incomplete)",
+        column1->AddNode(ButtonItem::Create("Cache Controller Test 1", "Cache Controller Test 5: Single Level Caching (incomplete)",
             [column3]() mutable
             {
                 column3->DeleteAllNodes();
                 std::shared_ptr<Design::Cpu> testCpu = std::make_shared<Design::Cpu>(6, 3);
                 testCpu->SetCell(0, 0, Design::ControlUnit::Create(1, 1, 1));
-                testCpu->SetCell(1, 0, Design::Bus::Create(1, 1, 5));
-                testCpu->SetCell(2, 0, Design::Bus::Create(1, 1, 5));
-                testCpu->SetCell(3, 0, Design::Bus::Create(1, 1, 5));
-                testCpu->SetCell(4, 0, Design::Bus::Create(1, 1, 5));
-                testCpu->SetCell(5, 0, Design::CacheController::Create(1, 1, 1,4,0));
-                testCpu->SetCell(2, 1, Design::Bus::Create(1, 1, 5));
-                testCpu->SetCell(2, 2, Design::Decoder::Create(1, 1, 1));
+                testCpu->SetCell(1, 0, Design::Bus::Create(1, 1, 1));                                
+                testCpu->SetCell(2, 0, Design::Bus::Create(1, 1, 1));
+                testCpu->SetCell(3, 0, Design::CacheController::Create(1, 1, 1,4,0));
+                testCpu->SetCell(4, 0, Design::Bus::Create(1, 1, 1));
+                testCpu->SetCell(5, 0, Design::Bus::Create(1, 1, 1));
+                testCpu->SetCell(5, 1, Design::CacheBank::Create(1, 1, 1,4,0));
+                testCpu->SetCell(3, 1, Design::Bus::Create(1, 1, 1));
+                testCpu->SetCell(3, 2, Design::MemoryController::Create(1, 1, 1,1024));
 
                 testCpu->Init();
 

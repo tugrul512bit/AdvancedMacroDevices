@@ -3,7 +3,7 @@
 /*
 
 This is a processor design game where players create competitive CPUs 
-by connecting different modules to beat other players, NPCs and win with total market domination.
+by connecting different modules to beat other players, NPCs and win with total market domination by selling more CPUs.
 
 Gain skills by experience, distribute new stat/skill points to unique stats and skills. Unlock technologies. Design better CPUs. 
 Making a CPU design game is not an easy task. It is planned to be done this way:
@@ -16,6 +16,19 @@ Making a CPU design game is not an easy task. It is planned to be done this way:
 - but still give them opportunities like Banker's Algorithm, Round-Robin Scheduling, Auto-load-balancing & fully pipelined bidirectional bus framework
 
 Game type: RPG/Simulation/RTS elements
+
+CPU architecture:
+
+- Harward Architecture: optional
+- Von Neumann Architecture: optional
+- Shared-Distributed Memory Model: optional
+- Software-Based Cache Coherence: optional
+- Snoop-Cache Coherence: optional
+- Directory-Based Cache Coherence: optional
+- Out-of-Order-Execution: optional
+- Branch-Prediction: optional
+- SIMD: optional
+- SIMT: optional
 
 Author: Huseyin Tugrul Buyukisik
 */
