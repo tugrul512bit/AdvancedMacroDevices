@@ -659,8 +659,8 @@ namespace Window
                     static int countCmd = 0;
                     if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - t1).count() > 100)
                     {
-                        if (countCmd++ % 2 == 0)
-                            testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpDecode, Design::ModuleType::DECODER, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId(), outerClockCycle++), 0, 0);
+                        if (countCmd++ == 0)
+                            testCpu->GetCell<Design::ControlUnit>(0, 0)->SetInput(Design::Data(Design::DataType::MicroOpMemRead, Design::ModuleType::CACHE_CONTROL, -1, -1, Design::ModuleType::CONTROL_UNIT, testCpu->GetCell<Design::ControlUnit>(0, 0)->GetId(), outerClockCycle++), 0, 0);
                         testCpu->Compute(outerClockCycle++);
                         column3->DeleteAllNodes();
                         column3->AddNode(TextItem::Create("Num completed op.", [testCpu]() { return std::string("Completed operations=") + std::to_string(testCpu->GetCell<Design::ControlUnit>(0, 0)->GetCompletedOperationCount()); }, 2, false));

@@ -98,6 +98,15 @@ namespace Design
 					}
 				}
 
+
+
+				if (opcode.GetDataType() == Design::DataType::MicroOpMemRead)
+				{
+					SetBusy();
+					SetOutput(Design::Data(opcode.GetDataType(), Design::ModuleType::DECODER, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id, clockCycleId), i);
+					computed = true;		
+				}
+
 					
 				if (opcode.GetDataType() == Design::DataType::Result)
 				{
@@ -147,6 +156,7 @@ namespace Design
 			{
 				if (GetOutput(i).GetDataType() != Design::DataType::Null)
 				{
+				
 					// resource -> bus , jumps
 					std::map<int, std::map<int, int>> validOutputResourceBus;
 					// check bus connections for target module
