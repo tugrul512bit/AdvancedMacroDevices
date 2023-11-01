@@ -103,7 +103,8 @@ namespace Design
 				if (opcode.GetDataType() == Design::DataType::MicroOpMemRead)
 				{
 					SetBusy();
-					SetOutput(Design::Data(opcode.GetDataType(), Design::ModuleType::DECODER, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id, clockCycleId), i);
+					// todo: set output to cache control only if there is a cache connected. or just use ANY
+					SetOutput(Design::Data(opcode.GetDataType(), Design::ModuleType::CACHE_CONTROL, -1 /* filled when output is sent*/, -1, Design::ModuleType::CONTROL_UNIT, _id, clockCycleId), i);
 					computed = true;		
 				}
 
