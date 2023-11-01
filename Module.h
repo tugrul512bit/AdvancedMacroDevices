@@ -91,14 +91,44 @@ namespace Design
 		BUS,
 		CONTROL_UNIT,
 		CACHE_CONTROL,
+		CACHE_CONTROL_CACHE,	// cache can be cached (by a closer & smaller cache)
+		CACHE_CONTROL_CONTROL,	// context data (thread variables, register states, etc) can be cached
+		CACHE_CONTROL_RAM,		// data can be cached
+		CACHE_CONTROL_DECODER, // instructions (between RAM and DECODER) can be cached
+		CACHE_CONTROL_ALU, // there's no harm in caching integer operations if ALU is as slow as 100 cycles per integer-division
+		CACHE_CONTROL_FPU, // even fp operations can be cached (i.e. 16 bit fp power/exp/log/etc --> 128kB cache required)
 		MEMORY_CONTROL,
 		ALU,
 		FPU,
+		FPU_CLOSEST,
+		FPU_WIDEST,
+		FPU_WIDTH2,
+		FPU_WIDTH4,
+		FPU_WIDTH8,
+		FPU_WIDTH16,
+		FPU_WIDTH32,
+		FPU_WIDTH64,
+		FPU_WIDTH128,
+		FPU_WIDTH256,
+		FPU_SPECIAL_FUNCTION,	// any fpu that can compute square root / exponential / power / logarithm / erf / sin / cos / etc
+		FPU_SQRT,				// any fpu that has square-root capability
+		FPU_DIV,
+		FPU_MUL,
+		FPU_ADD,				// also works as FPU_SUB. just negate an input to do subtraction
+		FPU_EXP,
+		FPU_RND,				// FPU with random number generation
 		CACHE_BANK,
 		BRANCH_PREDICTOR,
 		DECODER,
 		// for searching modules through bus connections
-		ANY
+		ANY,
+		ANY_MEMORY_READ_CAPABLE,
+		ANY_MEMORY_WRITE_CAPABLE,
+		ANY_COMPUTE_CAPABLE,
+		ANY_WITH_EMPTY_SLOT,
+		ANY_EMPTY,
+		ANY_EMPTY_ROUND_ROBIN_BUS_PATH,
+		ANY_EMPTY_ROUND_ROBIN_RESOURCE
 	};
 
 	// the data that is passing between modules
