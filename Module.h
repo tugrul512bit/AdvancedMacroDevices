@@ -74,6 +74,10 @@ namespace Design
 		MicroOpSync,
 		MicroOpDecode,
 
+		MicroOpCacheBankReadTag,
+		MicroOpCacheBankWriteDataToTag,
+		MicroOpCacheBankInvalidateTag,
+
 		// result (which has a target module type or id to go)
 		Result
 	};

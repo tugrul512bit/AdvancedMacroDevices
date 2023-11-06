@@ -51,6 +51,7 @@ namespace Design
 
 			_evictionPolicy = evictionPolicy;
 
+			_nMappedTags = 0;
 		}
 
 		static std::shared_ptr<Module> Create(int frequency, int lithography, int parallelism, int capacity, int evictionPolicy)
@@ -66,12 +67,83 @@ namespace Design
 			//		return data to output queue
 			//	else
 			//		pass command to output queue (RAM/other cache)
+
+
+			SetIdle();
+			for (int i = 0; i < _parallelism; i++)
+			{
+
+				if (GetOutput(i).GetDataType() != Design::DataType::Null)
+					continue;
+
+				bool computed = false;
+				auto inp = Data();
+				for (int j = 0; j < 4; j++)
+				{
+					if (!computed)
+					{
+
+						inp = _input[j][i];
+						if (inp.GetDataType() != Design::DataType::Null)
+						{
+
+							if (inp.GetDataType() == Design::DataType::MicroOpMemRead)
+							{
+								computed = true;
+								std::cout << "cache control dummy compute: clock id=" << clockCycleId << std::endl;
+								SetBusy();
+
+								// memread operation comes from a client
+								// check cache tags for address
+								std::cout << "cache controller received memory read request" << std::endl;
+								std::cout << "finding a cache bank module..." << std::endl;
+
+								// direct-mapped cache
+								int address = inp.GetValue();
+								int tagId = address % _nMappedTags;
+
+
+								int bankId = -1;
+								// output logic will send this to necessary cache bank connected
+								// all cache banks will be already mapped before cpu starts working
+								SetOutput(Data(
+									Design::DataType::MicroOpCacheBankReadTag, // message is "read this tag"
+									Design::CACHE_BANK, // a cache bank will receive this message
+									bankId, // any cache bank (but selected with eviction policy. direct mapped = modulo)
+									tagId,
+									Design::ModuleType::CACHE_CONTROL,
+									_id, clockCycleId), i);
+								
+							}
+						}
+
+					}
+
+					if (!computed)
+					{
+						// if not computed, put the data back
+						_input[j][i] = inp;
+					}
+					else
+					{
+						// if computed, input is cleared for new data
+						_input[j][i] = Data();
+					}
+
+				}
+			}
+		}
+
+		// one-time preparation
+		void MapConnectedCacheBanksToAddresses()
+		{
+
 		}
 	private:
 
 		int _capacity;
 		int _evictionPolicy;
-
+		int _nMappedTags;
 	
 	};
 }
