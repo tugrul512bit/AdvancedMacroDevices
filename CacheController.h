@@ -100,6 +100,8 @@ namespace Design
 
 								// direct-mapped cache
 								int address = inp.GetValue();
+
+								// todo: mapping of threads will be required first --> division by zero otherwise
 								int tagId = address % _nMappedTags;
 
 
