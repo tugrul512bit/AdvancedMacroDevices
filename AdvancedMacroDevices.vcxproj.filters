@@ -137,5 +137,8 @@
     <ClInclude Include="MemoryController.h">
       <Filter>Design\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="World.h">
+      <Filter>Character</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
