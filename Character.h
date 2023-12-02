@@ -264,6 +264,8 @@ public:
 private:
 	// every character has own dice (for future parallelizations & fairness)
 
+	// location in world to affect shipment price
+	int _location;
 
 	// stats
 	int _freeStatPoints;

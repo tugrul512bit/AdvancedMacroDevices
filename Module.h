@@ -87,7 +87,11 @@ namespace Design
 		Add,
 		Mul,
 		Sub,
-		Div
+		Div,
+		Sqrt,
+		Exp,
+		Pow,
+		FMA
 	};
 
 	enum ModuleType

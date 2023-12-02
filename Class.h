@@ -14,6 +14,10 @@ private:
 
 	// level --> amount of coins (mostly at level 1)
 	std::map<int, int> _bonusCoins;
+
+	int _expBoostPercentage;
+	int _coinBoostPercentage;
+	int _levelProgressionSpeed;
 public:
 };
 
